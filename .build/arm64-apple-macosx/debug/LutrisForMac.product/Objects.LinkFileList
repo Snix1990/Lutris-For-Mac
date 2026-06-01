@@ -1,60 +1,60 @@
-'/Users/mac/Documents/Lutris for mac/.build/arm64-apple-macosx/debug/LutrisForMacApp.build/AddGameSelectionView.swift.o'
-'/Users/mac/Documents/Lutris for mac/.build/arm64-apple-macosx/debug/LutrisForMacApp.build/AddRunnerSheet.swift.o'
-'/Users/mac/Documents/Lutris for mac/.build/arm64-apple-macosx/debug/LutrisForMacApp.build/CommunityInstallerService.swift.o'
-'/Users/mac/Documents/Lutris for mac/.build/arm64-apple-macosx/debug/LutrisForMacApp.build/CommunityInstallerView.swift.o'
-'/Users/mac/Documents/Lutris for mac/.build/arm64-apple-macosx/debug/LutrisForMacApp.build/CommunityScript.swift.o'
-'/Users/mac/Documents/Lutris for mac/.build/arm64-apple-macosx/debug/LutrisForMacApp.build/ContentView.swift.o'
-'/Users/mac/Documents/Lutris for mac/.build/arm64-apple-macosx/debug/LutrisForMacApp.build/ControllerManager.swift.o'
-'/Users/mac/Documents/Lutris for mac/.build/arm64-apple-macosx/debug/LutrisForMacApp.build/ControllerSettingsView.swift.o'
-'/Users/mac/Documents/Lutris for mac/.build/arm64-apple-macosx/debug/LutrisForMacApp.build/CoverSearchView.swift.o'
-'/Users/mac/Documents/Lutris for mac/.build/arm64-apple-macosx/debug/LutrisForMacApp.build/CrossOverInstallation.swift.o'
-'/Users/mac/Documents/Lutris for mac/.build/arm64-apple-macosx/debug/LutrisForMacApp.build/CrossOverTricksManager.swift.o'
-'/Users/mac/Documents/Lutris for mac/.build/arm64-apple-macosx/debug/LutrisForMacApp.build/CrossOverTricksView.swift.o'
-'/Users/mac/Documents/Lutris for mac/.build/arm64-apple-macosx/debug/LutrisForMacApp.build/DesktopIntegration.swift.o'
-'/Users/mac/Documents/Lutris for mac/.build/arm64-apple-macosx/debug/LutrisForMacApp.build/DesktopIntegrationView.swift.o'
-'/Users/mac/Documents/Lutris for mac/.build/arm64-apple-macosx/debug/LutrisForMacApp.build/Emulator.swift.o'
-'/Users/mac/Documents/Lutris for mac/.build/arm64-apple-macosx/debug/LutrisForMacApp.build/EmulatorManager.swift.o'
-'/Users/mac/Documents/Lutris for mac/.build/arm64-apple-macosx/debug/LutrisForMacApp.build/EmulatorSetupView.swift.o'
-'/Users/mac/Documents/Lutris for mac/.build/arm64-apple-macosx/debug/LutrisForMacApp.build/Game.swift.o'
-'/Users/mac/Documents/Lutris for mac/.build/arm64-apple-macosx/debug/LutrisForMacApp.build/GameDetailView.swift.o'
-'/Users/mac/Documents/Lutris for mac/.build/arm64-apple-macosx/debug/LutrisForMacApp.build/GameEditorView.swift.o'
-'/Users/mac/Documents/Lutris for mac/.build/arm64-apple-macosx/debug/LutrisForMacApp.build/GameLibraryViewModel.swift.o'
-'/Users/mac/Documents/Lutris for mac/.build/arm64-apple-macosx/debug/LutrisForMacApp.build/GameRowView.swift.o'
-'/Users/mac/Documents/Lutris for mac/.build/arm64-apple-macosx/debug/LutrisForMacApp.build/GameService.swift.o'
-'/Users/mac/Documents/Lutris for mac/.build/arm64-apple-macosx/debug/LutrisForMacApp.build/GameTileView.swift.o'
-'/Users/mac/Documents/Lutris for mac/.build/arm64-apple-macosx/debug/LutrisForMacApp.build/InstallerEngine.swift.o'
-'/Users/mac/Documents/Lutris for mac/.build/arm64-apple-macosx/debug/LutrisForMacApp.build/InstallerScript.swift.o'
-'/Users/mac/Documents/Lutris for mac/.build/arm64-apple-macosx/debug/LutrisForMacApp.build/InstallerView.swift.o'
-'/Users/mac/Documents/Lutris for mac/.build/arm64-apple-macosx/debug/LutrisForMacApp.build/InstallerWindowView.swift.o'
-'/Users/mac/Documents/Lutris for mac/.build/arm64-apple-macosx/debug/LutrisForMacApp.build/LanguageManager.swift.o'
-'/Users/mac/Documents/Lutris for mac/.build/arm64-apple-macosx/debug/LutrisForMacApp.build/LibraryView.swift.o'
-'/Users/mac/Documents/Lutris for mac/.build/arm64-apple-macosx/debug/LutrisForMacApp.build/LocalizedTextView.swift.o'
-'/Users/mac/Documents/Lutris for mac/.build/arm64-apple-macosx/debug/LutrisForMacApp.build/LutrisForMacApp.swift.o'
-'/Users/mac/Documents/Lutris for mac/.build/arm64-apple-macosx/debug/LutrisForMacApp.build/MediaStore.swift.o'
-'/Users/mac/Documents/Lutris for mac/.build/arm64-apple-macosx/debug/LutrisForMacApp.build/NewPrefixSheet.swift.o'
-'/Users/mac/Documents/Lutris for mac/.build/arm64-apple-macosx/debug/LutrisForMacApp.build/ProcessError.swift.o'
-'/Users/mac/Documents/Lutris for mac/.build/arm64-apple-macosx/debug/LutrisForMacApp.build/ProcessRunner.swift.o'
-'/Users/mac/Documents/Lutris for mac/.build/arm64-apple-macosx/debug/LutrisForMacApp.build/Runner.swift.o'
-'/Users/mac/Documents/Lutris for mac/.build/arm64-apple-macosx/debug/LutrisForMacApp.build/RunnerManagementView.swift.o'
-'/Users/mac/Documents/Lutris for mac/.build/arm64-apple-macosx/debug/LutrisForMacApp.build/RunnerManager.swift.o'
-'/Users/mac/Documents/Lutris for mac/.build/arm64-apple-macosx/debug/LutrisForMacApp.build/ServiceManager.swift.o'
-'/Users/mac/Documents/Lutris for mac/.build/arm64-apple-macosx/debug/LutrisForMacApp.build/ServiceSettingsView.swift.o'
-'/Users/mac/Documents/Lutris for mac/.build/arm64-apple-macosx/debug/LutrisForMacApp.build/SettingsView.swift.o'
-'/Users/mac/Documents/Lutris for mac/.build/arm64-apple-macosx/debug/LutrisForMacApp.build/SidebarView.swift.o'
-'/Users/mac/Documents/Lutris for mac/.build/arm64-apple-macosx/debug/LutrisForMacApp.build/StatisticsView.swift.o'
-'/Users/mac/Documents/Lutris for mac/.build/arm64-apple-macosx/debug/LutrisForMacApp.build/SteamAPI.swift.o'
-'/Users/mac/Documents/Lutris for mac/.build/arm64-apple-macosx/debug/LutrisForMacApp.build/SteamEmulatorManager.swift.o'
-'/Users/mac/Documents/Lutris for mac/.build/arm64-apple-macosx/debug/LutrisForMacApp.build/SteamGridDBSearcher.swift.o'
-'/Users/mac/Documents/Lutris for mac/.build/arm64-apple-macosx/debug/LutrisForMacApp.build/SteamLibrarySyncView.swift.o'
-'/Users/mac/Documents/Lutris for mac/.build/arm64-apple-macosx/debug/LutrisForMacApp.build/SteamLoginView.swift.o'
-'/Users/mac/Documents/Lutris for mac/.build/arm64-apple-macosx/debug/LutrisForMacApp.build/SteamModels.swift.o'
-'/Users/mac/Documents/Lutris for mac/.build/arm64-apple-macosx/debug/LutrisForMacApp.build/WineConfigView.swift.o'
-'/Users/mac/Documents/Lutris for mac/.build/arm64-apple-macosx/debug/LutrisForMacApp.build/WineManager.swift.o'
-'/Users/mac/Documents/Lutris for mac/.build/arm64-apple-macosx/debug/LutrisForMacApp.build/WineMenuCommands.swift.o'
-'/Users/mac/Documents/Lutris for mac/.build/arm64-apple-macosx/debug/LutrisForMacApp.build/WinePrefix.swift.o'
-'/Users/mac/Documents/Lutris for mac/.build/arm64-apple-macosx/debug/LutrisForMacApp.build/WineRenderMode.swift.o'
-'/Users/mac/Documents/Lutris for mac/.build/arm64-apple-macosx/debug/LutrisForMacApp.build/WineSettingsView.swift.o'
-'/Users/mac/Documents/Lutris for mac/.build/arm64-apple-macosx/debug/LutrisForMacApp.build/WineVersion.swift.o'
-'/Users/mac/Documents/Lutris for mac/.build/arm64-apple-macosx/debug/LutrisForMacApp.build/WinetricksManager.swift.o'
-'/Users/mac/Documents/Lutris for mac/.build/arm64-apple-macosx/debug/LutrisForMacApp.build/WinetricksView.swift.o'
-'/Users/mac/Documents/Lutris for mac/.build/arm64-apple-macosx/debug/LutrisForMacApp.build/resource_bundle_accessor.swift.o'
+/Users/mac/Documents/Lutris-For-Mac/.build/arm64-apple-macosx/debug/LutrisForMacApp.build/AddGameSelectionView.swift.o
+/Users/mac/Documents/Lutris-For-Mac/.build/arm64-apple-macosx/debug/LutrisForMacApp.build/AddRunnerSheet.swift.o
+/Users/mac/Documents/Lutris-For-Mac/.build/arm64-apple-macosx/debug/LutrisForMacApp.build/CommunityInstallerService.swift.o
+/Users/mac/Documents/Lutris-For-Mac/.build/arm64-apple-macosx/debug/LutrisForMacApp.build/CommunityInstallerView.swift.o
+/Users/mac/Documents/Lutris-For-Mac/.build/arm64-apple-macosx/debug/LutrisForMacApp.build/CommunityScript.swift.o
+/Users/mac/Documents/Lutris-For-Mac/.build/arm64-apple-macosx/debug/LutrisForMacApp.build/ContentView.swift.o
+/Users/mac/Documents/Lutris-For-Mac/.build/arm64-apple-macosx/debug/LutrisForMacApp.build/ControllerManager.swift.o
+/Users/mac/Documents/Lutris-For-Mac/.build/arm64-apple-macosx/debug/LutrisForMacApp.build/ControllerSettingsView.swift.o
+/Users/mac/Documents/Lutris-For-Mac/.build/arm64-apple-macosx/debug/LutrisForMacApp.build/CoverSearchView.swift.o
+/Users/mac/Documents/Lutris-For-Mac/.build/arm64-apple-macosx/debug/LutrisForMacApp.build/CrossOverInstallation.swift.o
+/Users/mac/Documents/Lutris-For-Mac/.build/arm64-apple-macosx/debug/LutrisForMacApp.build/CrossOverTricksManager.swift.o
+/Users/mac/Documents/Lutris-For-Mac/.build/arm64-apple-macosx/debug/LutrisForMacApp.build/CrossOverTricksView.swift.o
+/Users/mac/Documents/Lutris-For-Mac/.build/arm64-apple-macosx/debug/LutrisForMacApp.build/DesktopIntegration.swift.o
+/Users/mac/Documents/Lutris-For-Mac/.build/arm64-apple-macosx/debug/LutrisForMacApp.build/DesktopIntegrationView.swift.o
+/Users/mac/Documents/Lutris-For-Mac/.build/arm64-apple-macosx/debug/LutrisForMacApp.build/Emulator.swift.o
+/Users/mac/Documents/Lutris-For-Mac/.build/arm64-apple-macosx/debug/LutrisForMacApp.build/EmulatorManager.swift.o
+/Users/mac/Documents/Lutris-For-Mac/.build/arm64-apple-macosx/debug/LutrisForMacApp.build/EmulatorSetupView.swift.o
+/Users/mac/Documents/Lutris-For-Mac/.build/arm64-apple-macosx/debug/LutrisForMacApp.build/Game.swift.o
+/Users/mac/Documents/Lutris-For-Mac/.build/arm64-apple-macosx/debug/LutrisForMacApp.build/GameDetailView.swift.o
+/Users/mac/Documents/Lutris-For-Mac/.build/arm64-apple-macosx/debug/LutrisForMacApp.build/GameEditorView.swift.o
+/Users/mac/Documents/Lutris-For-Mac/.build/arm64-apple-macosx/debug/LutrisForMacApp.build/GameLibraryViewModel.swift.o
+/Users/mac/Documents/Lutris-For-Mac/.build/arm64-apple-macosx/debug/LutrisForMacApp.build/GameRowView.swift.o
+/Users/mac/Documents/Lutris-For-Mac/.build/arm64-apple-macosx/debug/LutrisForMacApp.build/GameService.swift.o
+/Users/mac/Documents/Lutris-For-Mac/.build/arm64-apple-macosx/debug/LutrisForMacApp.build/GameTileView.swift.o
+/Users/mac/Documents/Lutris-For-Mac/.build/arm64-apple-macosx/debug/LutrisForMacApp.build/InstallerEngine.swift.o
+/Users/mac/Documents/Lutris-For-Mac/.build/arm64-apple-macosx/debug/LutrisForMacApp.build/InstallerScript.swift.o
+/Users/mac/Documents/Lutris-For-Mac/.build/arm64-apple-macosx/debug/LutrisForMacApp.build/InstallerView.swift.o
+/Users/mac/Documents/Lutris-For-Mac/.build/arm64-apple-macosx/debug/LutrisForMacApp.build/InstallerWindowView.swift.o
+/Users/mac/Documents/Lutris-For-Mac/.build/arm64-apple-macosx/debug/LutrisForMacApp.build/LanguageManager.swift.o
+/Users/mac/Documents/Lutris-For-Mac/.build/arm64-apple-macosx/debug/LutrisForMacApp.build/LibraryView.swift.o
+/Users/mac/Documents/Lutris-For-Mac/.build/arm64-apple-macosx/debug/LutrisForMacApp.build/LocalizedTextView.swift.o
+/Users/mac/Documents/Lutris-For-Mac/.build/arm64-apple-macosx/debug/LutrisForMacApp.build/LutrisForMacApp.swift.o
+/Users/mac/Documents/Lutris-For-Mac/.build/arm64-apple-macosx/debug/LutrisForMacApp.build/MediaStore.swift.o
+/Users/mac/Documents/Lutris-For-Mac/.build/arm64-apple-macosx/debug/LutrisForMacApp.build/NewPrefixSheet.swift.o
+/Users/mac/Documents/Lutris-For-Mac/.build/arm64-apple-macosx/debug/LutrisForMacApp.build/ProcessError.swift.o
+/Users/mac/Documents/Lutris-For-Mac/.build/arm64-apple-macosx/debug/LutrisForMacApp.build/ProcessRunner.swift.o
+/Users/mac/Documents/Lutris-For-Mac/.build/arm64-apple-macosx/debug/LutrisForMacApp.build/Runner.swift.o
+/Users/mac/Documents/Lutris-For-Mac/.build/arm64-apple-macosx/debug/LutrisForMacApp.build/RunnerManagementView.swift.o
+/Users/mac/Documents/Lutris-For-Mac/.build/arm64-apple-macosx/debug/LutrisForMacApp.build/RunnerManager.swift.o
+/Users/mac/Documents/Lutris-For-Mac/.build/arm64-apple-macosx/debug/LutrisForMacApp.build/ServiceManager.swift.o
+/Users/mac/Documents/Lutris-For-Mac/.build/arm64-apple-macosx/debug/LutrisForMacApp.build/ServiceSettingsView.swift.o
+/Users/mac/Documents/Lutris-For-Mac/.build/arm64-apple-macosx/debug/LutrisForMacApp.build/SettingsView.swift.o
+/Users/mac/Documents/Lutris-For-Mac/.build/arm64-apple-macosx/debug/LutrisForMacApp.build/SidebarView.swift.o
+/Users/mac/Documents/Lutris-For-Mac/.build/arm64-apple-macosx/debug/LutrisForMacApp.build/StatisticsView.swift.o
+/Users/mac/Documents/Lutris-For-Mac/.build/arm64-apple-macosx/debug/LutrisForMacApp.build/SteamAPI.swift.o
+/Users/mac/Documents/Lutris-For-Mac/.build/arm64-apple-macosx/debug/LutrisForMacApp.build/SteamEmulatorManager.swift.o
+/Users/mac/Documents/Lutris-For-Mac/.build/arm64-apple-macosx/debug/LutrisForMacApp.build/SteamGridDBSearcher.swift.o
+/Users/mac/Documents/Lutris-For-Mac/.build/arm64-apple-macosx/debug/LutrisForMacApp.build/SteamLibrarySyncView.swift.o
+/Users/mac/Documents/Lutris-For-Mac/.build/arm64-apple-macosx/debug/LutrisForMacApp.build/SteamLoginView.swift.o
+/Users/mac/Documents/Lutris-For-Mac/.build/arm64-apple-macosx/debug/LutrisForMacApp.build/SteamModels.swift.o
+/Users/mac/Documents/Lutris-For-Mac/.build/arm64-apple-macosx/debug/LutrisForMacApp.build/WineConfigView.swift.o
+/Users/mac/Documents/Lutris-For-Mac/.build/arm64-apple-macosx/debug/LutrisForMacApp.build/WineManager.swift.o
+/Users/mac/Documents/Lutris-For-Mac/.build/arm64-apple-macosx/debug/LutrisForMacApp.build/WineMenuCommands.swift.o
+/Users/mac/Documents/Lutris-For-Mac/.build/arm64-apple-macosx/debug/LutrisForMacApp.build/WinePrefix.swift.o
+/Users/mac/Documents/Lutris-For-Mac/.build/arm64-apple-macosx/debug/LutrisForMacApp.build/WineRenderMode.swift.o
+/Users/mac/Documents/Lutris-For-Mac/.build/arm64-apple-macosx/debug/LutrisForMacApp.build/WineSettingsView.swift.o
+/Users/mac/Documents/Lutris-For-Mac/.build/arm64-apple-macosx/debug/LutrisForMacApp.build/WineVersion.swift.o
+/Users/mac/Documents/Lutris-For-Mac/.build/arm64-apple-macosx/debug/LutrisForMacApp.build/WinetricksManager.swift.o
+/Users/mac/Documents/Lutris-For-Mac/.build/arm64-apple-macosx/debug/LutrisForMacApp.build/WinetricksView.swift.o
+/Users/mac/Documents/Lutris-For-Mac/.build/arm64-apple-macosx/debug/LutrisForMacApp.build/resource_bundle_accessor.swift.o

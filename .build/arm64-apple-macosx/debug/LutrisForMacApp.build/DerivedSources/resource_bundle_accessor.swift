@@ -3,7 +3,7 @@ import Foundation
 extension Foundation.Bundle {
     static nonisolated let module: Bundle = {
         let mainPath = Bundle.main.bundleURL.appendingPathComponent("LutrisForMac_LutrisForMacApp.bundle").path
-        let buildPath = "/Users/mac/Documents/Lutris for mac/.build/arm64-apple-macosx/debug/LutrisForMac_LutrisForMacApp.bundle"
+        let buildPath = "/Users/mac/Documents/Lutris-For-Mac/.build/arm64-apple-macosx/debug/LutrisForMac_LutrisForMacApp.bundle"
 
         let preferredBundle = Bundle(path: mainPath)
 

@@ -82,6 +82,7 @@ final class DesktopIntegrationManager: ObservableObject {
         let isNative = game.runner == "Native" || game.platform == "macOS"
         let isEmulator = !isWine && !isNative && RunnerManager.shared.runners.contains(where: { $0.name == game.runner && $0.installed })
 
+        // === Native .app ===
         if isNative || game.installPath.hasSuffix(".app") {
             return """
             #!/bin/bash
@@ -89,6 +90,7 @@ final class DesktopIntegrationManager: ObservableObject {
             """
         }
 
+        // === Emulator runners ===
         if isEmulator {
             let runner = RunnerManager.shared.runners.first(where: { $0.name == game.runner })
             let cmd = emulatorLaunchCommand(for: game, runner: runner)
@@ -98,6 +100,7 @@ final class DesktopIntegrationManager: ObservableObject {
             """
         }
 
+        // === URL schemes (steam://, etc.) ===
         if game.installPath.contains("://") {
             return """
             #!/bin/bash
@@ -105,17 +108,10 @@ final class DesktopIntegrationManager: ObservableObject {
             """
         }
 
-        // Wine / CrossOver
+        // === Wine / CrossOver / Whisky / Kegworks ===
         let wineManager = WineManager.shared
         let wineVersion = wineManager.resolveWineVersion(for: game.wineVersionName)
         let prefix = wineManager.prefixForGame(game)
-
-        guard let wineVersion, FileManager.default.isExecutableFile(atPath: wineVersion.wineBinaryPath) else {
-            return """
-            #!/bin/bash
-            open "lutrisformac://launch/\(game.id.uuidString)"
-            """
-        }
 
         var envLines: [String] = []
         let gameEnv: [String: String]
@@ -143,28 +139,98 @@ final class DesktopIntegrationManager: ObservableObject {
             }
         }
 
-        var cmd = wineVersion.wineBinaryPath
-        if !game.wineLaunchArguments.isEmpty {
-            cmd += " \(game.wineLaunchArguments)"
-        }
-        if game.launchViaSteam == true, let sid = game.steamAppID, !sid.isEmpty {
-            cmd += " -applaunch \(sid)"
-        } else {
-            cmd += " \"\(game.installPath)\""
-        }
-
-        if !game.launcherCommand.isEmpty {
-            cmd = game.launcherCommand
-                .replacingOccurrences(of: "{gamePath}", with: game.installPath)
-                .replacingOccurrences(of: "{wineBinary}", with: wineVersion.wineBinaryPath)
-        }
-
         let envBlock = envLines.joined(separator: "\n")
+
+        let wineBinary = wineVersion?.wineBinaryPath ?? ""
+        let prefixPath = prefix?.path ?? ""
+        let installPath = game.installPath
+        let launchArgs = game.wineLaunchArguments
+
+        let steamID = game.steamAppID ?? ""
+        let launchViaSteam = game.launchViaSteam == true && !steamID.isEmpty
+
+        // Launcher command with template substitution
+        let launcherCommand: String
+        if game.launcherCommand.isEmpty {
+            launcherCommand = ""
+        } else {
+            launcherCommand = game.launcherCommand
+                .replacingOccurrences(of: "{gamePath}", with: installPath)
+                .replacingOccurrences(of: "{wineBinary}", with: wineBinary)
+        }
+
+        // Wine binary nicht gefunden → Fehlermeldung statt Lutris-URL-Scheme
+        guard !wineBinary.isEmpty, FileManager.default.isExecutableFile(atPath: wineBinary) else {
+            return """
+            #!/bin/bash
+            echo "Fehler: Keine Wine-Version für '\(game.name)' gefunden."
+            echo "Öffne LutrisForMac, lade eine Wine-Version herunter und erstelle den Shortcut neu."
+            exit 1
+            """
+        }
+
+        // Benutzerdefinierter Launcher-Befehl
+        if !launcherCommand.isEmpty {
+            return """
+            #!/bin/bash
+            # === LutrisForMac Launcher: '\(game.name)' ===
+            \(envBlock)
+
+            exec \(launcherCommand)
+            """
+        }
+
+        // Launch via Steam (-applaunch)
+        if launchViaSteam {
+            let steamBlock: String
+            if !prefixPath.isEmpty {
+                steamBlock = """
+                STEAM_EXE=$(find "\(prefixPath)/drive_c" -maxdepth 4 -name "steam.exe" -type f 2>/dev/null | head -1)
+                if [ -n "$STEAM_EXE" ]; then
+                    exec "\(wineBinary)" \(launchArgs) "$STEAM_EXE" -applaunch \(steamID)
+                else
+                    exec "\(wineBinary)" \(launchArgs) -applaunch \(steamID)
+                fi
+                """
+            } else {
+                steamBlock = "exec \"\(wineBinary)\" \(launchArgs) -applaunch \(steamID)"
+            }
+            return """
+            #!/bin/bash
+            # === LutrisForMac Launcher: '\(game.name)' ===
+            \(envBlock)
+            \(steamBlock)
+            """
+        }
+
+        // Standard Wine launch mit exe-Autoerkennung
+        let exeFallback: String
+        if !prefixPath.isEmpty {
+            exeFallback = """
+            if [ ! -f "$INSTALL_PATH" ] && [ -d "\(prefixPath)/drive_c" ]; then
+                FOUND=$(find "\(prefixPath)/drive_c" -type f -name "*.exe" 2>/dev/null \\
+                    -not -iname "*unins*" -not -iname "*setup*" -not -iname "*redist*" \\
+                    -not -iname "*dotnet*" -not -iname "*vc_redist*" \\
+                    -exec ls -1S {} + 2>/dev/null | head -1)
+                [ -n "$FOUND" ] && INSTALL_PATH="$FOUND"
+            fi
+            """
+        } else {
+            exeFallback = ""
+        }
+
         return """
         #!/bin/bash
+        # === LutrisForMac Launcher: '\(game.name)' ===
+        INSTALL_PATH="\(installPath)"
         \(envBlock)
-
-        \(cmd)
+        \(exeFallback)
+        if [ ! -f "$INSTALL_PATH" ]; then
+            echo "Fehler: Installationspfad nicht gefunden: $INSTALL_PATH"
+            echo "Öffne LutrisForMac und aktualisiere den Pfad für '\(game.name)'."
+            exit 1
+        fi
+        exec "\(wineBinary)" \(launchArgs) "$INSTALL_PATH"
         """
     }
 
