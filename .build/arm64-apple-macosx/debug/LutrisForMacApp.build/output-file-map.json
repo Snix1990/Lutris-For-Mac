@@ -1,0 +1,425 @@
+{
+  "": {
+    "swift-dependencies": "/Users/mac/Documents/Lutris for mac/.build/arm64-apple-macosx/debug/LutrisForMacApp.build/primary.swiftdeps"
+  },
+  "/Users/mac/Documents/Lutris for mac/Sources/LutrisForMacApp/App/ContentView.swift": {
+    "dependencies": "/Users/mac/Documents/Lutris for mac/.build/arm64-apple-macosx/debug/LutrisForMacApp.build/ContentView.d",
+    "object": "/Users/mac/Documents/Lutris for mac/.build/arm64-apple-macosx/debug/LutrisForMacApp.build/ContentView.swift.o",
+    "swiftmodule": "/Users/mac/Documents/Lutris for mac/.build/arm64-apple-macosx/debug/LutrisForMacApp.build/ContentView~partial.swiftmodule",
+    "swift-dependencies": "/Users/mac/Documents/Lutris for mac/.build/arm64-apple-macosx/debug/LutrisForMacApp.build/ContentView.swiftdeps",
+    "diagnostics": "/Users/mac/Documents/Lutris for mac/.build/arm64-apple-macosx/debug/LutrisForMacApp.build/ContentView.dia"
+  },
+  "/Users/mac/Documents/Lutris for mac/Sources/LutrisForMacApp/App/LutrisForMacApp.swift": {
+    "dependencies": "/Users/mac/Documents/Lutris for mac/.build/arm64-apple-macosx/debug/LutrisForMacApp.build/LutrisForMacApp.d",
+    "object": "/Users/mac/Documents/Lutris for mac/.build/arm64-apple-macosx/debug/LutrisForMacApp.build/LutrisForMacApp.swift.o",
+    "swiftmodule": "/Users/mac/Documents/Lutris for mac/.build/arm64-apple-macosx/debug/LutrisForMacApp.build/LutrisForMacApp~partial.swiftmodule",
+    "swift-dependencies": "/Users/mac/Documents/Lutris for mac/.build/arm64-apple-macosx/debug/LutrisForMacApp.build/LutrisForMacApp.swiftdeps",
+    "diagnostics": "/Users/mac/Documents/Lutris for mac/.build/arm64-apple-macosx/debug/LutrisForMacApp.build/LutrisForMacApp.dia"
+  },
+  "/Users/mac/Documents/Lutris for mac/Sources/LutrisForMacApp/App/WineMenuCommands.swift": {
+    "dependencies": "/Users/mac/Documents/Lutris for mac/.build/arm64-apple-macosx/debug/LutrisForMacApp.build/WineMenuCommands.d",
+    "object": "/Users/mac/Documents/Lutris for mac/.build/arm64-apple-macosx/debug/LutrisForMacApp.build/WineMenuCommands.swift.o",
+    "swiftmodule": "/Users/mac/Documents/Lutris for mac/.build/arm64-apple-macosx/debug/LutrisForMacApp.build/WineMenuCommands~partial.swiftmodule",
+    "swift-dependencies": "/Users/mac/Documents/Lutris for mac/.build/arm64-apple-macosx/debug/LutrisForMacApp.build/WineMenuCommands.swiftdeps",
+    "diagnostics": "/Users/mac/Documents/Lutris for mac/.build/arm64-apple-macosx/debug/LutrisForMacApp.build/WineMenuCommands.dia"
+  },
+  "/Users/mac/Documents/Lutris for mac/Sources/LutrisForMacApp/Models/CommunityScript.swift": {
+    "dependencies": "/Users/mac/Documents/Lutris for mac/.build/arm64-apple-macosx/debug/LutrisForMacApp.build/CommunityScript.d",
+    "object": "/Users/mac/Documents/Lutris for mac/.build/arm64-apple-macosx/debug/LutrisForMacApp.build/CommunityScript.swift.o",
+    "swiftmodule": "/Users/mac/Documents/Lutris for mac/.build/arm64-apple-macosx/debug/LutrisForMacApp.build/CommunityScript~partial.swiftmodule",
+    "swift-dependencies": "/Users/mac/Documents/Lutris for mac/.build/arm64-apple-macosx/debug/LutrisForMacApp.build/CommunityScript.swiftdeps",
+    "diagnostics": "/Users/mac/Documents/Lutris for mac/.build/arm64-apple-macosx/debug/LutrisForMacApp.build/CommunityScript.dia"
+  },
+  "/Users/mac/Documents/Lutris for mac/Sources/LutrisForMacApp/Models/CrossOverInstallation.swift": {
+    "dependencies": "/Users/mac/Documents/Lutris for mac/.build/arm64-apple-macosx/debug/LutrisForMacApp.build/CrossOverInstallation.d",
+    "object": "/Users/mac/Documents/Lutris for mac/.build/arm64-apple-macosx/debug/LutrisForMacApp.build/CrossOverInstallation.swift.o",
+    "swiftmodule": "/Users/mac/Documents/Lutris for mac/.build/arm64-apple-macosx/debug/LutrisForMacApp.build/CrossOverInstallation~partial.swiftmodule",
+    "swift-dependencies": "/Users/mac/Documents/Lutris for mac/.build/arm64-apple-macosx/debug/LutrisForMacApp.build/CrossOverInstallation.swiftdeps",
+    "diagnostics": "/Users/mac/Documents/Lutris for mac/.build/arm64-apple-macosx/debug/LutrisForMacApp.build/CrossOverInstallation.dia"
+  },
+  "/Users/mac/Documents/Lutris for mac/Sources/LutrisForMacApp/Models/Emulator.swift": {
+    "dependencies": "/Users/mac/Documents/Lutris for mac/.build/arm64-apple-macosx/debug/LutrisForMacApp.build/Emulator.d",
+    "object": "/Users/mac/Documents/Lutris for mac/.build/arm64-apple-macosx/debug/LutrisForMacApp.build/Emulator.swift.o",
+    "swiftmodule": "/Users/mac/Documents/Lutris for mac/.build/arm64-apple-macosx/debug/LutrisForMacApp.build/Emulator~partial.swiftmodule",
+    "swift-dependencies": "/Users/mac/Documents/Lutris for mac/.build/arm64-apple-macosx/debug/LutrisForMacApp.build/Emulator.swiftdeps",
+    "diagnostics": "/Users/mac/Documents/Lutris for mac/.build/arm64-apple-macosx/debug/LutrisForMacApp.build/Emulator.dia"
+  },
+  "/Users/mac/Documents/Lutris for mac/Sources/LutrisForMacApp/Models/Game.swift": {
+    "dependencies": "/Users/mac/Documents/Lutris for mac/.build/arm64-apple-macosx/debug/LutrisForMacApp.build/Game.d",
+    "object": "/Users/mac/Documents/Lutris for mac/.build/arm64-apple-macosx/debug/LutrisForMacApp.build/Game.swift.o",
+    "swiftmodule": "/Users/mac/Documents/Lutris for mac/.build/arm64-apple-macosx/debug/LutrisForMacApp.build/Game~partial.swiftmodule",
+    "swift-dependencies": "/Users/mac/Documents/Lutris for mac/.build/arm64-apple-macosx/debug/LutrisForMacApp.build/Game.swiftdeps",
+    "diagnostics": "/Users/mac/Documents/Lutris for mac/.build/arm64-apple-macosx/debug/LutrisForMacApp.build/Game.dia"
+  },
+  "/Users/mac/Documents/Lutris for mac/Sources/LutrisForMacApp/Models/GameService.swift": {
+    "dependencies": "/Users/mac/Documents/Lutris for mac/.build/arm64-apple-macosx/debug/LutrisForMacApp.build/GameService.d",
+    "object": "/Users/mac/Documents/Lutris for mac/.build/arm64-apple-macosx/debug/LutrisForMacApp.build/GameService.swift.o",
+    "swiftmodule": "/Users/mac/Documents/Lutris for mac/.build/arm64-apple-macosx/debug/LutrisForMacApp.build/GameService~partial.swiftmodule",
+    "swift-dependencies": "/Users/mac/Documents/Lutris for mac/.build/arm64-apple-macosx/debug/LutrisForMacApp.build/GameService.swiftdeps",
+    "diagnostics": "/Users/mac/Documents/Lutris for mac/.build/arm64-apple-macosx/debug/LutrisForMacApp.build/GameService.dia"
+  },
+  "/Users/mac/Documents/Lutris for mac/Sources/LutrisForMacApp/Models/InstallerScript.swift": {
+    "dependencies": "/Users/mac/Documents/Lutris for mac/.build/arm64-apple-macosx/debug/LutrisForMacApp.build/InstallerScript.d",
+    "object": "/Users/mac/Documents/Lutris for mac/.build/arm64-apple-macosx/debug/LutrisForMacApp.build/InstallerScript.swift.o",
+    "swiftmodule": "/Users/mac/Documents/Lutris for mac/.build/arm64-apple-macosx/debug/LutrisForMacApp.build/InstallerScript~partial.swiftmodule",
+    "swift-dependencies": "/Users/mac/Documents/Lutris for mac/.build/arm64-apple-macosx/debug/LutrisForMacApp.build/InstallerScript.swiftdeps",
+    "diagnostics": "/Users/mac/Documents/Lutris for mac/.build/arm64-apple-macosx/debug/LutrisForMacApp.build/InstallerScript.dia"
+  },
+  "/Users/mac/Documents/Lutris for mac/Sources/LutrisForMacApp/Models/Runner.swift": {
+    "dependencies": "/Users/mac/Documents/Lutris for mac/.build/arm64-apple-macosx/debug/LutrisForMacApp.build/Runner.d",
+    "object": "/Users/mac/Documents/Lutris for mac/.build/arm64-apple-macosx/debug/LutrisForMacApp.build/Runner.swift.o",
+    "swiftmodule": "/Users/mac/Documents/Lutris for mac/.build/arm64-apple-macosx/debug/LutrisForMacApp.build/Runner~partial.swiftmodule",
+    "swift-dependencies": "/Users/mac/Documents/Lutris for mac/.build/arm64-apple-macosx/debug/LutrisForMacApp.build/Runner.swiftdeps",
+    "diagnostics": "/Users/mac/Documents/Lutris for mac/.build/arm64-apple-macosx/debug/LutrisForMacApp.build/Runner.dia"
+  },
+  "/Users/mac/Documents/Lutris for mac/Sources/LutrisForMacApp/Models/SteamModels.swift": {
+    "dependencies": "/Users/mac/Documents/Lutris for mac/.build/arm64-apple-macosx/debug/LutrisForMacApp.build/SteamModels.d",
+    "object": "/Users/mac/Documents/Lutris for mac/.build/arm64-apple-macosx/debug/LutrisForMacApp.build/SteamModels.swift.o",
+    "swiftmodule": "/Users/mac/Documents/Lutris for mac/.build/arm64-apple-macosx/debug/LutrisForMacApp.build/SteamModels~partial.swiftmodule",
+    "swift-dependencies": "/Users/mac/Documents/Lutris for mac/.build/arm64-apple-macosx/debug/LutrisForMacApp.build/SteamModels.swiftdeps",
+    "diagnostics": "/Users/mac/Documents/Lutris for mac/.build/arm64-apple-macosx/debug/LutrisForMacApp.build/SteamModels.dia"
+  },
+  "/Users/mac/Documents/Lutris for mac/Sources/LutrisForMacApp/Models/WinePrefix.swift": {
+    "dependencies": "/Users/mac/Documents/Lutris for mac/.build/arm64-apple-macosx/debug/LutrisForMacApp.build/WinePrefix.d",
+    "object": "/Users/mac/Documents/Lutris for mac/.build/arm64-apple-macosx/debug/LutrisForMacApp.build/WinePrefix.swift.o",
+    "swiftmodule": "/Users/mac/Documents/Lutris for mac/.build/arm64-apple-macosx/debug/LutrisForMacApp.build/WinePrefix~partial.swiftmodule",
+    "swift-dependencies": "/Users/mac/Documents/Lutris for mac/.build/arm64-apple-macosx/debug/LutrisForMacApp.build/WinePrefix.swiftdeps",
+    "diagnostics": "/Users/mac/Documents/Lutris for mac/.build/arm64-apple-macosx/debug/LutrisForMacApp.build/WinePrefix.dia"
+  },
+  "/Users/mac/Documents/Lutris for mac/Sources/LutrisForMacApp/Models/WineRenderMode.swift": {
+    "dependencies": "/Users/mac/Documents/Lutris for mac/.build/arm64-apple-macosx/debug/LutrisForMacApp.build/WineRenderMode.d",
+    "object": "/Users/mac/Documents/Lutris for mac/.build/arm64-apple-macosx/debug/LutrisForMacApp.build/WineRenderMode.swift.o",
+    "swiftmodule": "/Users/mac/Documents/Lutris for mac/.build/arm64-apple-macosx/debug/LutrisForMacApp.build/WineRenderMode~partial.swiftmodule",
+    "swift-dependencies": "/Users/mac/Documents/Lutris for mac/.build/arm64-apple-macosx/debug/LutrisForMacApp.build/WineRenderMode.swiftdeps",
+    "diagnostics": "/Users/mac/Documents/Lutris for mac/.build/arm64-apple-macosx/debug/LutrisForMacApp.build/WineRenderMode.dia"
+  },
+  "/Users/mac/Documents/Lutris for mac/Sources/LutrisForMacApp/Models/WineVersion.swift": {
+    "dependencies": "/Users/mac/Documents/Lutris for mac/.build/arm64-apple-macosx/debug/LutrisForMacApp.build/WineVersion.d",
+    "object": "/Users/mac/Documents/Lutris for mac/.build/arm64-apple-macosx/debug/LutrisForMacApp.build/WineVersion.swift.o",
+    "swiftmodule": "/Users/mac/Documents/Lutris for mac/.build/arm64-apple-macosx/debug/LutrisForMacApp.build/WineVersion~partial.swiftmodule",
+    "swift-dependencies": "/Users/mac/Documents/Lutris for mac/.build/arm64-apple-macosx/debug/LutrisForMacApp.build/WineVersion.swiftdeps",
+    "diagnostics": "/Users/mac/Documents/Lutris for mac/.build/arm64-apple-macosx/debug/LutrisForMacApp.build/WineVersion.dia"
+  },
+  "/Users/mac/Documents/Lutris for mac/Sources/LutrisForMacApp/Services/CommunityInstallerService.swift": {
+    "dependencies": "/Users/mac/Documents/Lutris for mac/.build/arm64-apple-macosx/debug/LutrisForMacApp.build/CommunityInstallerService.d",
+    "object": "/Users/mac/Documents/Lutris for mac/.build/arm64-apple-macosx/debug/LutrisForMacApp.build/CommunityInstallerService.swift.o",
+    "swiftmodule": "/Users/mac/Documents/Lutris for mac/.build/arm64-apple-macosx/debug/LutrisForMacApp.build/CommunityInstallerService~partial.swiftmodule",
+    "swift-dependencies": "/Users/mac/Documents/Lutris for mac/.build/arm64-apple-macosx/debug/LutrisForMacApp.build/CommunityInstallerService.swiftdeps",
+    "diagnostics": "/Users/mac/Documents/Lutris for mac/.build/arm64-apple-macosx/debug/LutrisForMacApp.build/CommunityInstallerService.dia"
+  },
+  "/Users/mac/Documents/Lutris for mac/Sources/LutrisForMacApp/Services/ControllerManager.swift": {
+    "dependencies": "/Users/mac/Documents/Lutris for mac/.build/arm64-apple-macosx/debug/LutrisForMacApp.build/ControllerManager.d",
+    "object": "/Users/mac/Documents/Lutris for mac/.build/arm64-apple-macosx/debug/LutrisForMacApp.build/ControllerManager.swift.o",
+    "swiftmodule": "/Users/mac/Documents/Lutris for mac/.build/arm64-apple-macosx/debug/LutrisForMacApp.build/ControllerManager~partial.swiftmodule",
+    "swift-dependencies": "/Users/mac/Documents/Lutris for mac/.build/arm64-apple-macosx/debug/LutrisForMacApp.build/ControllerManager.swiftdeps",
+    "diagnostics": "/Users/mac/Documents/Lutris for mac/.build/arm64-apple-macosx/debug/LutrisForMacApp.build/ControllerManager.dia"
+  },
+  "/Users/mac/Documents/Lutris for mac/Sources/LutrisForMacApp/Services/CrossOverTricksManager.swift": {
+    "dependencies": "/Users/mac/Documents/Lutris for mac/.build/arm64-apple-macosx/debug/LutrisForMacApp.build/CrossOverTricksManager.d",
+    "object": "/Users/mac/Documents/Lutris for mac/.build/arm64-apple-macosx/debug/LutrisForMacApp.build/CrossOverTricksManager.swift.o",
+    "swiftmodule": "/Users/mac/Documents/Lutris for mac/.build/arm64-apple-macosx/debug/LutrisForMacApp.build/CrossOverTricksManager~partial.swiftmodule",
+    "swift-dependencies": "/Users/mac/Documents/Lutris for mac/.build/arm64-apple-macosx/debug/LutrisForMacApp.build/CrossOverTricksManager.swiftdeps",
+    "diagnostics": "/Users/mac/Documents/Lutris for mac/.build/arm64-apple-macosx/debug/LutrisForMacApp.build/CrossOverTricksManager.dia"
+  },
+  "/Users/mac/Documents/Lutris for mac/Sources/LutrisForMacApp/Services/DesktopIntegration.swift": {
+    "dependencies": "/Users/mac/Documents/Lutris for mac/.build/arm64-apple-macosx/debug/LutrisForMacApp.build/DesktopIntegration.d",
+    "object": "/Users/mac/Documents/Lutris for mac/.build/arm64-apple-macosx/debug/LutrisForMacApp.build/DesktopIntegration.swift.o",
+    "swiftmodule": "/Users/mac/Documents/Lutris for mac/.build/arm64-apple-macosx/debug/LutrisForMacApp.build/DesktopIntegration~partial.swiftmodule",
+    "swift-dependencies": "/Users/mac/Documents/Lutris for mac/.build/arm64-apple-macosx/debug/LutrisForMacApp.build/DesktopIntegration.swiftdeps",
+    "diagnostics": "/Users/mac/Documents/Lutris for mac/.build/arm64-apple-macosx/debug/LutrisForMacApp.build/DesktopIntegration.dia"
+  },
+  "/Users/mac/Documents/Lutris for mac/Sources/LutrisForMacApp/Services/EmulatorManager.swift": {
+    "dependencies": "/Users/mac/Documents/Lutris for mac/.build/arm64-apple-macosx/debug/LutrisForMacApp.build/EmulatorManager.d",
+    "object": "/Users/mac/Documents/Lutris for mac/.build/arm64-apple-macosx/debug/LutrisForMacApp.build/EmulatorManager.swift.o",
+    "swiftmodule": "/Users/mac/Documents/Lutris for mac/.build/arm64-apple-macosx/debug/LutrisForMacApp.build/EmulatorManager~partial.swiftmodule",
+    "swift-dependencies": "/Users/mac/Documents/Lutris for mac/.build/arm64-apple-macosx/debug/LutrisForMacApp.build/EmulatorManager.swiftdeps",
+    "diagnostics": "/Users/mac/Documents/Lutris for mac/.build/arm64-apple-macosx/debug/LutrisForMacApp.build/EmulatorManager.dia"
+  },
+  "/Users/mac/Documents/Lutris for mac/Sources/LutrisForMacApp/Services/InstallerEngine.swift": {
+    "dependencies": "/Users/mac/Documents/Lutris for mac/.build/arm64-apple-macosx/debug/LutrisForMacApp.build/InstallerEngine.d",
+    "object": "/Users/mac/Documents/Lutris for mac/.build/arm64-apple-macosx/debug/LutrisForMacApp.build/InstallerEngine.swift.o",
+    "swiftmodule": "/Users/mac/Documents/Lutris for mac/.build/arm64-apple-macosx/debug/LutrisForMacApp.build/InstallerEngine~partial.swiftmodule",
+    "swift-dependencies": "/Users/mac/Documents/Lutris for mac/.build/arm64-apple-macosx/debug/LutrisForMacApp.build/InstallerEngine.swiftdeps",
+    "diagnostics": "/Users/mac/Documents/Lutris for mac/.build/arm64-apple-macosx/debug/LutrisForMacApp.build/InstallerEngine.dia"
+  },
+  "/Users/mac/Documents/Lutris for mac/Sources/LutrisForMacApp/Services/LanguageManager.swift": {
+    "dependencies": "/Users/mac/Documents/Lutris for mac/.build/arm64-apple-macosx/debug/LutrisForMacApp.build/LanguageManager.d",
+    "object": "/Users/mac/Documents/Lutris for mac/.build/arm64-apple-macosx/debug/LutrisForMacApp.build/LanguageManager.swift.o",
+    "swiftmodule": "/Users/mac/Documents/Lutris for mac/.build/arm64-apple-macosx/debug/LutrisForMacApp.build/LanguageManager~partial.swiftmodule",
+    "swift-dependencies": "/Users/mac/Documents/Lutris for mac/.build/arm64-apple-macosx/debug/LutrisForMacApp.build/LanguageManager.swiftdeps",
+    "diagnostics": "/Users/mac/Documents/Lutris for mac/.build/arm64-apple-macosx/debug/LutrisForMacApp.build/LanguageManager.dia"
+  },
+  "/Users/mac/Documents/Lutris for mac/Sources/LutrisForMacApp/Services/MediaStore.swift": {
+    "dependencies": "/Users/mac/Documents/Lutris for mac/.build/arm64-apple-macosx/debug/LutrisForMacApp.build/MediaStore.d",
+    "object": "/Users/mac/Documents/Lutris for mac/.build/arm64-apple-macosx/debug/LutrisForMacApp.build/MediaStore.swift.o",
+    "swiftmodule": "/Users/mac/Documents/Lutris for mac/.build/arm64-apple-macosx/debug/LutrisForMacApp.build/MediaStore~partial.swiftmodule",
+    "swift-dependencies": "/Users/mac/Documents/Lutris for mac/.build/arm64-apple-macosx/debug/LutrisForMacApp.build/MediaStore.swiftdeps",
+    "diagnostics": "/Users/mac/Documents/Lutris for mac/.build/arm64-apple-macosx/debug/LutrisForMacApp.build/MediaStore.dia"
+  },
+  "/Users/mac/Documents/Lutris for mac/Sources/LutrisForMacApp/Services/ProcessError.swift": {
+    "dependencies": "/Users/mac/Documents/Lutris for mac/.build/arm64-apple-macosx/debug/LutrisForMacApp.build/ProcessError.d",
+    "object": "/Users/mac/Documents/Lutris for mac/.build/arm64-apple-macosx/debug/LutrisForMacApp.build/ProcessError.swift.o",
+    "swiftmodule": "/Users/mac/Documents/Lutris for mac/.build/arm64-apple-macosx/debug/LutrisForMacApp.build/ProcessError~partial.swiftmodule",
+    "swift-dependencies": "/Users/mac/Documents/Lutris for mac/.build/arm64-apple-macosx/debug/LutrisForMacApp.build/ProcessError.swiftdeps",
+    "diagnostics": "/Users/mac/Documents/Lutris for mac/.build/arm64-apple-macosx/debug/LutrisForMacApp.build/ProcessError.dia"
+  },
+  "/Users/mac/Documents/Lutris for mac/Sources/LutrisForMacApp/Services/ProcessRunner.swift": {
+    "dependencies": "/Users/mac/Documents/Lutris for mac/.build/arm64-apple-macosx/debug/LutrisForMacApp.build/ProcessRunner.d",
+    "object": "/Users/mac/Documents/Lutris for mac/.build/arm64-apple-macosx/debug/LutrisForMacApp.build/ProcessRunner.swift.o",
+    "swiftmodule": "/Users/mac/Documents/Lutris for mac/.build/arm64-apple-macosx/debug/LutrisForMacApp.build/ProcessRunner~partial.swiftmodule",
+    "swift-dependencies": "/Users/mac/Documents/Lutris for mac/.build/arm64-apple-macosx/debug/LutrisForMacApp.build/ProcessRunner.swiftdeps",
+    "diagnostics": "/Users/mac/Documents/Lutris for mac/.build/arm64-apple-macosx/debug/LutrisForMacApp.build/ProcessRunner.dia"
+  },
+  "/Users/mac/Documents/Lutris for mac/Sources/LutrisForMacApp/Services/RunnerManager.swift": {
+    "dependencies": "/Users/mac/Documents/Lutris for mac/.build/arm64-apple-macosx/debug/LutrisForMacApp.build/RunnerManager.d",
+    "object": "/Users/mac/Documents/Lutris for mac/.build/arm64-apple-macosx/debug/LutrisForMacApp.build/RunnerManager.swift.o",
+    "swiftmodule": "/Users/mac/Documents/Lutris for mac/.build/arm64-apple-macosx/debug/LutrisForMacApp.build/RunnerManager~partial.swiftmodule",
+    "swift-dependencies": "/Users/mac/Documents/Lutris for mac/.build/arm64-apple-macosx/debug/LutrisForMacApp.build/RunnerManager.swiftdeps",
+    "diagnostics": "/Users/mac/Documents/Lutris for mac/.build/arm64-apple-macosx/debug/LutrisForMacApp.build/RunnerManager.dia"
+  },
+  "/Users/mac/Documents/Lutris for mac/Sources/LutrisForMacApp/Services/ServiceManager.swift": {
+    "dependencies": "/Users/mac/Documents/Lutris for mac/.build/arm64-apple-macosx/debug/LutrisForMacApp.build/ServiceManager.d",
+    "object": "/Users/mac/Documents/Lutris for mac/.build/arm64-apple-macosx/debug/LutrisForMacApp.build/ServiceManager.swift.o",
+    "swiftmodule": "/Users/mac/Documents/Lutris for mac/.build/arm64-apple-macosx/debug/LutrisForMacApp.build/ServiceManager~partial.swiftmodule",
+    "swift-dependencies": "/Users/mac/Documents/Lutris for mac/.build/arm64-apple-macosx/debug/LutrisForMacApp.build/ServiceManager.swiftdeps",
+    "diagnostics": "/Users/mac/Documents/Lutris for mac/.build/arm64-apple-macosx/debug/LutrisForMacApp.build/ServiceManager.dia"
+  },
+  "/Users/mac/Documents/Lutris for mac/Sources/LutrisForMacApp/Services/SteamAPI.swift": {
+    "dependencies": "/Users/mac/Documents/Lutris for mac/.build/arm64-apple-macosx/debug/LutrisForMacApp.build/SteamAPI.d",
+    "object": "/Users/mac/Documents/Lutris for mac/.build/arm64-apple-macosx/debug/LutrisForMacApp.build/SteamAPI.swift.o",
+    "swiftmodule": "/Users/mac/Documents/Lutris for mac/.build/arm64-apple-macosx/debug/LutrisForMacApp.build/SteamAPI~partial.swiftmodule",
+    "swift-dependencies": "/Users/mac/Documents/Lutris for mac/.build/arm64-apple-macosx/debug/LutrisForMacApp.build/SteamAPI.swiftdeps",
+    "diagnostics": "/Users/mac/Documents/Lutris for mac/.build/arm64-apple-macosx/debug/LutrisForMacApp.build/SteamAPI.dia"
+  },
+  "/Users/mac/Documents/Lutris for mac/Sources/LutrisForMacApp/Services/SteamEmulatorManager.swift": {
+    "dependencies": "/Users/mac/Documents/Lutris for mac/.build/arm64-apple-macosx/debug/LutrisForMacApp.build/SteamEmulatorManager.d",
+    "object": "/Users/mac/Documents/Lutris for mac/.build/arm64-apple-macosx/debug/LutrisForMacApp.build/SteamEmulatorManager.swift.o",
+    "swiftmodule": "/Users/mac/Documents/Lutris for mac/.build/arm64-apple-macosx/debug/LutrisForMacApp.build/SteamEmulatorManager~partial.swiftmodule",
+    "swift-dependencies": "/Users/mac/Documents/Lutris for mac/.build/arm64-apple-macosx/debug/LutrisForMacApp.build/SteamEmulatorManager.swiftdeps",
+    "diagnostics": "/Users/mac/Documents/Lutris for mac/.build/arm64-apple-macosx/debug/LutrisForMacApp.build/SteamEmulatorManager.dia"
+  },
+  "/Users/mac/Documents/Lutris for mac/Sources/LutrisForMacApp/Services/SteamGridDBSearcher.swift": {
+    "dependencies": "/Users/mac/Documents/Lutris for mac/.build/arm64-apple-macosx/debug/LutrisForMacApp.build/SteamGridDBSearcher.d",
+    "object": "/Users/mac/Documents/Lutris for mac/.build/arm64-apple-macosx/debug/LutrisForMacApp.build/SteamGridDBSearcher.swift.o",
+    "swiftmodule": "/Users/mac/Documents/Lutris for mac/.build/arm64-apple-macosx/debug/LutrisForMacApp.build/SteamGridDBSearcher~partial.swiftmodule",
+    "swift-dependencies": "/Users/mac/Documents/Lutris for mac/.build/arm64-apple-macosx/debug/LutrisForMacApp.build/SteamGridDBSearcher.swiftdeps",
+    "diagnostics": "/Users/mac/Documents/Lutris for mac/.build/arm64-apple-macosx/debug/LutrisForMacApp.build/SteamGridDBSearcher.dia"
+  },
+  "/Users/mac/Documents/Lutris for mac/Sources/LutrisForMacApp/Services/WineManager.swift": {
+    "dependencies": "/Users/mac/Documents/Lutris for mac/.build/arm64-apple-macosx/debug/LutrisForMacApp.build/WineManager.d",
+    "object": "/Users/mac/Documents/Lutris for mac/.build/arm64-apple-macosx/debug/LutrisForMacApp.build/WineManager.swift.o",
+    "swiftmodule": "/Users/mac/Documents/Lutris for mac/.build/arm64-apple-macosx/debug/LutrisForMacApp.build/WineManager~partial.swiftmodule",
+    "swift-dependencies": "/Users/mac/Documents/Lutris for mac/.build/arm64-apple-macosx/debug/LutrisForMacApp.build/WineManager.swiftdeps",
+    "diagnostics": "/Users/mac/Documents/Lutris for mac/.build/arm64-apple-macosx/debug/LutrisForMacApp.build/WineManager.dia"
+  },
+  "/Users/mac/Documents/Lutris for mac/Sources/LutrisForMacApp/Services/WinetricksManager.swift": {
+    "dependencies": "/Users/mac/Documents/Lutris for mac/.build/arm64-apple-macosx/debug/LutrisForMacApp.build/WinetricksManager.d",
+    "object": "/Users/mac/Documents/Lutris for mac/.build/arm64-apple-macosx/debug/LutrisForMacApp.build/WinetricksManager.swift.o",
+    "swiftmodule": "/Users/mac/Documents/Lutris for mac/.build/arm64-apple-macosx/debug/LutrisForMacApp.build/WinetricksManager~partial.swiftmodule",
+    "swift-dependencies": "/Users/mac/Documents/Lutris for mac/.build/arm64-apple-macosx/debug/LutrisForMacApp.build/WinetricksManager.swiftdeps",
+    "diagnostics": "/Users/mac/Documents/Lutris for mac/.build/arm64-apple-macosx/debug/LutrisForMacApp.build/WinetricksManager.dia"
+  },
+  "/Users/mac/Documents/Lutris for mac/Sources/LutrisForMacApp/ViewModels/GameLibraryViewModel.swift": {
+    "dependencies": "/Users/mac/Documents/Lutris for mac/.build/arm64-apple-macosx/debug/LutrisForMacApp.build/GameLibraryViewModel.d",
+    "object": "/Users/mac/Documents/Lutris for mac/.build/arm64-apple-macosx/debug/LutrisForMacApp.build/GameLibraryViewModel.swift.o",
+    "swiftmodule": "/Users/mac/Documents/Lutris for mac/.build/arm64-apple-macosx/debug/LutrisForMacApp.build/GameLibraryViewModel~partial.swiftmodule",
+    "swift-dependencies": "/Users/mac/Documents/Lutris for mac/.build/arm64-apple-macosx/debug/LutrisForMacApp.build/GameLibraryViewModel.swiftdeps",
+    "diagnostics": "/Users/mac/Documents/Lutris for mac/.build/arm64-apple-macosx/debug/LutrisForMacApp.build/GameLibraryViewModel.dia"
+  },
+  "/Users/mac/Documents/Lutris for mac/Sources/LutrisForMacApp/Views/Game/CoverSearchView.swift": {
+    "dependencies": "/Users/mac/Documents/Lutris for mac/.build/arm64-apple-macosx/debug/LutrisForMacApp.build/CoverSearchView.d",
+    "object": "/Users/mac/Documents/Lutris for mac/.build/arm64-apple-macosx/debug/LutrisForMacApp.build/CoverSearchView.swift.o",
+    "swiftmodule": "/Users/mac/Documents/Lutris for mac/.build/arm64-apple-macosx/debug/LutrisForMacApp.build/CoverSearchView~partial.swiftmodule",
+    "swift-dependencies": "/Users/mac/Documents/Lutris for mac/.build/arm64-apple-macosx/debug/LutrisForMacApp.build/CoverSearchView.swiftdeps",
+    "diagnostics": "/Users/mac/Documents/Lutris for mac/.build/arm64-apple-macosx/debug/LutrisForMacApp.build/CoverSearchView.dia"
+  },
+  "/Users/mac/Documents/Lutris for mac/Sources/LutrisForMacApp/Views/Game/GameDetailView.swift": {
+    "dependencies": "/Users/mac/Documents/Lutris for mac/.build/arm64-apple-macosx/debug/LutrisForMacApp.build/GameDetailView.d",
+    "object": "/Users/mac/Documents/Lutris for mac/.build/arm64-apple-macosx/debug/LutrisForMacApp.build/GameDetailView.swift.o",
+    "swiftmodule": "/Users/mac/Documents/Lutris for mac/.build/arm64-apple-macosx/debug/LutrisForMacApp.build/GameDetailView~partial.swiftmodule",
+    "swift-dependencies": "/Users/mac/Documents/Lutris for mac/.build/arm64-apple-macosx/debug/LutrisForMacApp.build/GameDetailView.swiftdeps",
+    "diagnostics": "/Users/mac/Documents/Lutris for mac/.build/arm64-apple-macosx/debug/LutrisForMacApp.build/GameDetailView.dia"
+  },
+  "/Users/mac/Documents/Lutris for mac/Sources/LutrisForMacApp/Views/Game/GameEditorView.swift": {
+    "dependencies": "/Users/mac/Documents/Lutris for mac/.build/arm64-apple-macosx/debug/LutrisForMacApp.build/GameEditorView.d",
+    "object": "/Users/mac/Documents/Lutris for mac/.build/arm64-apple-macosx/debug/LutrisForMacApp.build/GameEditorView.swift.o",
+    "swiftmodule": "/Users/mac/Documents/Lutris for mac/.build/arm64-apple-macosx/debug/LutrisForMacApp.build/GameEditorView~partial.swiftmodule",
+    "swift-dependencies": "/Users/mac/Documents/Lutris for mac/.build/arm64-apple-macosx/debug/LutrisForMacApp.build/GameEditorView.swiftdeps",
+    "diagnostics": "/Users/mac/Documents/Lutris for mac/.build/arm64-apple-macosx/debug/LutrisForMacApp.build/GameEditorView.dia"
+  },
+  "/Users/mac/Documents/Lutris for mac/Sources/LutrisForMacApp/Views/Installer/AddGameSelectionView.swift": {
+    "dependencies": "/Users/mac/Documents/Lutris for mac/.build/arm64-apple-macosx/debug/LutrisForMacApp.build/AddGameSelectionView.d",
+    "object": "/Users/mac/Documents/Lutris for mac/.build/arm64-apple-macosx/debug/LutrisForMacApp.build/AddGameSelectionView.swift.o",
+    "swiftmodule": "/Users/mac/Documents/Lutris for mac/.build/arm64-apple-macosx/debug/LutrisForMacApp.build/AddGameSelectionView~partial.swiftmodule",
+    "swift-dependencies": "/Users/mac/Documents/Lutris for mac/.build/arm64-apple-macosx/debug/LutrisForMacApp.build/AddGameSelectionView.swiftdeps",
+    "diagnostics": "/Users/mac/Documents/Lutris for mac/.build/arm64-apple-macosx/debug/LutrisForMacApp.build/AddGameSelectionView.dia"
+  },
+  "/Users/mac/Documents/Lutris for mac/Sources/LutrisForMacApp/Views/Installer/CommunityInstallerView.swift": {
+    "dependencies": "/Users/mac/Documents/Lutris for mac/.build/arm64-apple-macosx/debug/LutrisForMacApp.build/CommunityInstallerView.d",
+    "object": "/Users/mac/Documents/Lutris for mac/.build/arm64-apple-macosx/debug/LutrisForMacApp.build/CommunityInstallerView.swift.o",
+    "swiftmodule": "/Users/mac/Documents/Lutris for mac/.build/arm64-apple-macosx/debug/LutrisForMacApp.build/CommunityInstallerView~partial.swiftmodule",
+    "swift-dependencies": "/Users/mac/Documents/Lutris for mac/.build/arm64-apple-macosx/debug/LutrisForMacApp.build/CommunityInstallerView.swiftdeps",
+    "diagnostics": "/Users/mac/Documents/Lutris for mac/.build/arm64-apple-macosx/debug/LutrisForMacApp.build/CommunityInstallerView.dia"
+  },
+  "/Users/mac/Documents/Lutris for mac/Sources/LutrisForMacApp/Views/Installer/InstallerView.swift": {
+    "dependencies": "/Users/mac/Documents/Lutris for mac/.build/arm64-apple-macosx/debug/LutrisForMacApp.build/InstallerView.d",
+    "object": "/Users/mac/Documents/Lutris for mac/.build/arm64-apple-macosx/debug/LutrisForMacApp.build/InstallerView.swift.o",
+    "swiftmodule": "/Users/mac/Documents/Lutris for mac/.build/arm64-apple-macosx/debug/LutrisForMacApp.build/InstallerView~partial.swiftmodule",
+    "swift-dependencies": "/Users/mac/Documents/Lutris for mac/.build/arm64-apple-macosx/debug/LutrisForMacApp.build/InstallerView.swiftdeps",
+    "diagnostics": "/Users/mac/Documents/Lutris for mac/.build/arm64-apple-macosx/debug/LutrisForMacApp.build/InstallerView.dia"
+  },
+  "/Users/mac/Documents/Lutris for mac/Sources/LutrisForMacApp/Views/Installer/InstallerWindowView.swift": {
+    "dependencies": "/Users/mac/Documents/Lutris for mac/.build/arm64-apple-macosx/debug/LutrisForMacApp.build/InstallerWindowView.d",
+    "object": "/Users/mac/Documents/Lutris for mac/.build/arm64-apple-macosx/debug/LutrisForMacApp.build/InstallerWindowView.swift.o",
+    "swiftmodule": "/Users/mac/Documents/Lutris for mac/.build/arm64-apple-macosx/debug/LutrisForMacApp.build/InstallerWindowView~partial.swiftmodule",
+    "swift-dependencies": "/Users/mac/Documents/Lutris for mac/.build/arm64-apple-macosx/debug/LutrisForMacApp.build/InstallerWindowView.swiftdeps",
+    "diagnostics": "/Users/mac/Documents/Lutris for mac/.build/arm64-apple-macosx/debug/LutrisForMacApp.build/InstallerWindowView.dia"
+  },
+  "/Users/mac/Documents/Lutris for mac/Sources/LutrisForMacApp/Views/Library/GameRowView.swift": {
+    "dependencies": "/Users/mac/Documents/Lutris for mac/.build/arm64-apple-macosx/debug/LutrisForMacApp.build/GameRowView.d",
+    "object": "/Users/mac/Documents/Lutris for mac/.build/arm64-apple-macosx/debug/LutrisForMacApp.build/GameRowView.swift.o",
+    "swiftmodule": "/Users/mac/Documents/Lutris for mac/.build/arm64-apple-macosx/debug/LutrisForMacApp.build/GameRowView~partial.swiftmodule",
+    "swift-dependencies": "/Users/mac/Documents/Lutris for mac/.build/arm64-apple-macosx/debug/LutrisForMacApp.build/GameRowView.swiftdeps",
+    "diagnostics": "/Users/mac/Documents/Lutris for mac/.build/arm64-apple-macosx/debug/LutrisForMacApp.build/GameRowView.dia"
+  },
+  "/Users/mac/Documents/Lutris for mac/Sources/LutrisForMacApp/Views/Library/GameTileView.swift": {
+    "dependencies": "/Users/mac/Documents/Lutris for mac/.build/arm64-apple-macosx/debug/LutrisForMacApp.build/GameTileView.d",
+    "object": "/Users/mac/Documents/Lutris for mac/.build/arm64-apple-macosx/debug/LutrisForMacApp.build/GameTileView.swift.o",
+    "swiftmodule": "/Users/mac/Documents/Lutris for mac/.build/arm64-apple-macosx/debug/LutrisForMacApp.build/GameTileView~partial.swiftmodule",
+    "swift-dependencies": "/Users/mac/Documents/Lutris for mac/.build/arm64-apple-macosx/debug/LutrisForMacApp.build/GameTileView.swiftdeps",
+    "diagnostics": "/Users/mac/Documents/Lutris for mac/.build/arm64-apple-macosx/debug/LutrisForMacApp.build/GameTileView.dia"
+  },
+  "/Users/mac/Documents/Lutris for mac/Sources/LutrisForMacApp/Views/Library/LibraryView.swift": {
+    "dependencies": "/Users/mac/Documents/Lutris for mac/.build/arm64-apple-macosx/debug/LutrisForMacApp.build/LibraryView.d",
+    "object": "/Users/mac/Documents/Lutris for mac/.build/arm64-apple-macosx/debug/LutrisForMacApp.build/LibraryView.swift.o",
+    "swiftmodule": "/Users/mac/Documents/Lutris for mac/.build/arm64-apple-macosx/debug/LutrisForMacApp.build/LibraryView~partial.swiftmodule",
+    "swift-dependencies": "/Users/mac/Documents/Lutris for mac/.build/arm64-apple-macosx/debug/LutrisForMacApp.build/LibraryView.swiftdeps",
+    "diagnostics": "/Users/mac/Documents/Lutris for mac/.build/arm64-apple-macosx/debug/LutrisForMacApp.build/LibraryView.dia"
+  },
+  "/Users/mac/Documents/Lutris for mac/Sources/LutrisForMacApp/Views/LocalizedTextView.swift": {
+    "dependencies": "/Users/mac/Documents/Lutris for mac/.build/arm64-apple-macosx/debug/LutrisForMacApp.build/LocalizedTextView.d",
+    "object": "/Users/mac/Documents/Lutris for mac/.build/arm64-apple-macosx/debug/LutrisForMacApp.build/LocalizedTextView.swift.o",
+    "swiftmodule": "/Users/mac/Documents/Lutris for mac/.build/arm64-apple-macosx/debug/LutrisForMacApp.build/LocalizedTextView~partial.swiftmodule",
+    "swift-dependencies": "/Users/mac/Documents/Lutris for mac/.build/arm64-apple-macosx/debug/LutrisForMacApp.build/LocalizedTextView.swiftdeps",
+    "diagnostics": "/Users/mac/Documents/Lutris for mac/.build/arm64-apple-macosx/debug/LutrisForMacApp.build/LocalizedTextView.dia"
+  },
+  "/Users/mac/Documents/Lutris for mac/Sources/LutrisForMacApp/Views/Settings/AddRunnerSheet.swift": {
+    "dependencies": "/Users/mac/Documents/Lutris for mac/.build/arm64-apple-macosx/debug/LutrisForMacApp.build/AddRunnerSheet.d",
+    "object": "/Users/mac/Documents/Lutris for mac/.build/arm64-apple-macosx/debug/LutrisForMacApp.build/AddRunnerSheet.swift.o",
+    "swiftmodule": "/Users/mac/Documents/Lutris for mac/.build/arm64-apple-macosx/debug/LutrisForMacApp.build/AddRunnerSheet~partial.swiftmodule",
+    "swift-dependencies": "/Users/mac/Documents/Lutris for mac/.build/arm64-apple-macosx/debug/LutrisForMacApp.build/AddRunnerSheet.swiftdeps",
+    "diagnostics": "/Users/mac/Documents/Lutris for mac/.build/arm64-apple-macosx/debug/LutrisForMacApp.build/AddRunnerSheet.dia"
+  },
+  "/Users/mac/Documents/Lutris for mac/Sources/LutrisForMacApp/Views/Settings/ControllerSettingsView.swift": {
+    "dependencies": "/Users/mac/Documents/Lutris for mac/.build/arm64-apple-macosx/debug/LutrisForMacApp.build/ControllerSettingsView.d",
+    "object": "/Users/mac/Documents/Lutris for mac/.build/arm64-apple-macosx/debug/LutrisForMacApp.build/ControllerSettingsView.swift.o",
+    "swiftmodule": "/Users/mac/Documents/Lutris for mac/.build/arm64-apple-macosx/debug/LutrisForMacApp.build/ControllerSettingsView~partial.swiftmodule",
+    "swift-dependencies": "/Users/mac/Documents/Lutris for mac/.build/arm64-apple-macosx/debug/LutrisForMacApp.build/ControllerSettingsView.swiftdeps",
+    "diagnostics": "/Users/mac/Documents/Lutris for mac/.build/arm64-apple-macosx/debug/LutrisForMacApp.build/ControllerSettingsView.dia"
+  },
+  "/Users/mac/Documents/Lutris for mac/Sources/LutrisForMacApp/Views/Settings/DesktopIntegrationView.swift": {
+    "dependencies": "/Users/mac/Documents/Lutris for mac/.build/arm64-apple-macosx/debug/LutrisForMacApp.build/DesktopIntegrationView.d",
+    "object": "/Users/mac/Documents/Lutris for mac/.build/arm64-apple-macosx/debug/LutrisForMacApp.build/DesktopIntegrationView.swift.o",
+    "swiftmodule": "/Users/mac/Documents/Lutris for mac/.build/arm64-apple-macosx/debug/LutrisForMacApp.build/DesktopIntegrationView~partial.swiftmodule",
+    "swift-dependencies": "/Users/mac/Documents/Lutris for mac/.build/arm64-apple-macosx/debug/LutrisForMacApp.build/DesktopIntegrationView.swiftdeps",
+    "diagnostics": "/Users/mac/Documents/Lutris for mac/.build/arm64-apple-macosx/debug/LutrisForMacApp.build/DesktopIntegrationView.dia"
+  },
+  "/Users/mac/Documents/Lutris for mac/Sources/LutrisForMacApp/Views/Settings/EmulatorSetupView.swift": {
+    "dependencies": "/Users/mac/Documents/Lutris for mac/.build/arm64-apple-macosx/debug/LutrisForMacApp.build/EmulatorSetupView.d",
+    "object": "/Users/mac/Documents/Lutris for mac/.build/arm64-apple-macosx/debug/LutrisForMacApp.build/EmulatorSetupView.swift.o",
+    "swiftmodule": "/Users/mac/Documents/Lutris for mac/.build/arm64-apple-macosx/debug/LutrisForMacApp.build/EmulatorSetupView~partial.swiftmodule",
+    "swift-dependencies": "/Users/mac/Documents/Lutris for mac/.build/arm64-apple-macosx/debug/LutrisForMacApp.build/EmulatorSetupView.swiftdeps",
+    "diagnostics": "/Users/mac/Documents/Lutris for mac/.build/arm64-apple-macosx/debug/LutrisForMacApp.build/EmulatorSetupView.dia"
+  },
+  "/Users/mac/Documents/Lutris for mac/Sources/LutrisForMacApp/Views/Settings/RunnerManagementView.swift": {
+    "dependencies": "/Users/mac/Documents/Lutris for mac/.build/arm64-apple-macosx/debug/LutrisForMacApp.build/RunnerManagementView.d",
+    "object": "/Users/mac/Documents/Lutris for mac/.build/arm64-apple-macosx/debug/LutrisForMacApp.build/RunnerManagementView.swift.o",
+    "swiftmodule": "/Users/mac/Documents/Lutris for mac/.build/arm64-apple-macosx/debug/LutrisForMacApp.build/RunnerManagementView~partial.swiftmodule",
+    "swift-dependencies": "/Users/mac/Documents/Lutris for mac/.build/arm64-apple-macosx/debug/LutrisForMacApp.build/RunnerManagementView.swiftdeps",
+    "diagnostics": "/Users/mac/Documents/Lutris for mac/.build/arm64-apple-macosx/debug/LutrisForMacApp.build/RunnerManagementView.dia"
+  },
+  "/Users/mac/Documents/Lutris for mac/Sources/LutrisForMacApp/Views/Settings/ServiceSettingsView.swift": {
+    "dependencies": "/Users/mac/Documents/Lutris for mac/.build/arm64-apple-macosx/debug/LutrisForMacApp.build/ServiceSettingsView.d",
+    "object": "/Users/mac/Documents/Lutris for mac/.build/arm64-apple-macosx/debug/LutrisForMacApp.build/ServiceSettingsView.swift.o",
+    "swiftmodule": "/Users/mac/Documents/Lutris for mac/.build/arm64-apple-macosx/debug/LutrisForMacApp.build/ServiceSettingsView~partial.swiftmodule",
+    "swift-dependencies": "/Users/mac/Documents/Lutris for mac/.build/arm64-apple-macosx/debug/LutrisForMacApp.build/ServiceSettingsView.swiftdeps",
+    "diagnostics": "/Users/mac/Documents/Lutris for mac/.build/arm64-apple-macosx/debug/LutrisForMacApp.build/ServiceSettingsView.dia"
+  },
+  "/Users/mac/Documents/Lutris for mac/Sources/LutrisForMacApp/Views/Settings/SettingsView.swift": {
+    "dependencies": "/Users/mac/Documents/Lutris for mac/.build/arm64-apple-macosx/debug/LutrisForMacApp.build/SettingsView.d",
+    "object": "/Users/mac/Documents/Lutris for mac/.build/arm64-apple-macosx/debug/LutrisForMacApp.build/SettingsView.swift.o",
+    "swiftmodule": "/Users/mac/Documents/Lutris for mac/.build/arm64-apple-macosx/debug/LutrisForMacApp.build/SettingsView~partial.swiftmodule",
+    "swift-dependencies": "/Users/mac/Documents/Lutris for mac/.build/arm64-apple-macosx/debug/LutrisForMacApp.build/SettingsView.swiftdeps",
+    "diagnostics": "/Users/mac/Documents/Lutris for mac/.build/arm64-apple-macosx/debug/LutrisForMacApp.build/SettingsView.dia"
+  },
+  "/Users/mac/Documents/Lutris for mac/Sources/LutrisForMacApp/Views/Settings/SteamLibrarySyncView.swift": {
+    "dependencies": "/Users/mac/Documents/Lutris for mac/.build/arm64-apple-macosx/debug/LutrisForMacApp.build/SteamLibrarySyncView.d",
+    "object": "/Users/mac/Documents/Lutris for mac/.build/arm64-apple-macosx/debug/LutrisForMacApp.build/SteamLibrarySyncView.swift.o",
+    "swiftmodule": "/Users/mac/Documents/Lutris for mac/.build/arm64-apple-macosx/debug/LutrisForMacApp.build/SteamLibrarySyncView~partial.swiftmodule",
+    "swift-dependencies": "/Users/mac/Documents/Lutris for mac/.build/arm64-apple-macosx/debug/LutrisForMacApp.build/SteamLibrarySyncView.swiftdeps",
+    "diagnostics": "/Users/mac/Documents/Lutris for mac/.build/arm64-apple-macosx/debug/LutrisForMacApp.build/SteamLibrarySyncView.dia"
+  },
+  "/Users/mac/Documents/Lutris for mac/Sources/LutrisForMacApp/Views/SidebarView.swift": {
+    "dependencies": "/Users/mac/Documents/Lutris for mac/.build/arm64-apple-macosx/debug/LutrisForMacApp.build/SidebarView.d",
+    "object": "/Users/mac/Documents/Lutris for mac/.build/arm64-apple-macosx/debug/LutrisForMacApp.build/SidebarView.swift.o",
+    "swiftmodule": "/Users/mac/Documents/Lutris for mac/.build/arm64-apple-macosx/debug/LutrisForMacApp.build/SidebarView~partial.swiftmodule",
+    "swift-dependencies": "/Users/mac/Documents/Lutris for mac/.build/arm64-apple-macosx/debug/LutrisForMacApp.build/SidebarView.swiftdeps",
+    "diagnostics": "/Users/mac/Documents/Lutris for mac/.build/arm64-apple-macosx/debug/LutrisForMacApp.build/SidebarView.dia"
+  },
+  "/Users/mac/Documents/Lutris for mac/Sources/LutrisForMacApp/Views/StatisticsView.swift": {
+    "dependencies": "/Users/mac/Documents/Lutris for mac/.build/arm64-apple-macosx/debug/LutrisForMacApp.build/StatisticsView.d",
+    "object": "/Users/mac/Documents/Lutris for mac/.build/arm64-apple-macosx/debug/LutrisForMacApp.build/StatisticsView.swift.o",
+    "swiftmodule": "/Users/mac/Documents/Lutris for mac/.build/arm64-apple-macosx/debug/LutrisForMacApp.build/StatisticsView~partial.swiftmodule",
+    "swift-dependencies": "/Users/mac/Documents/Lutris for mac/.build/arm64-apple-macosx/debug/LutrisForMacApp.build/StatisticsView.swiftdeps",
+    "diagnostics": "/Users/mac/Documents/Lutris for mac/.build/arm64-apple-macosx/debug/LutrisForMacApp.build/StatisticsView.dia"
+  },
+  "/Users/mac/Documents/Lutris for mac/Sources/LutrisForMacApp/Views/SteamLoginView.swift": {
+    "dependencies": "/Users/mac/Documents/Lutris for mac/.build/arm64-apple-macosx/debug/LutrisForMacApp.build/SteamLoginView.d",
+    "object": "/Users/mac/Documents/Lutris for mac/.build/arm64-apple-macosx/debug/LutrisForMacApp.build/SteamLoginView.swift.o",
+    "swiftmodule": "/Users/mac/Documents/Lutris for mac/.build/arm64-apple-macosx/debug/LutrisForMacApp.build/SteamLoginView~partial.swiftmodule",
+    "swift-dependencies": "/Users/mac/Documents/Lutris for mac/.build/arm64-apple-macosx/debug/LutrisForMacApp.build/SteamLoginView.swiftdeps",
+    "diagnostics": "/Users/mac/Documents/Lutris for mac/.build/arm64-apple-macosx/debug/LutrisForMacApp.build/SteamLoginView.dia"
+  },
+  "/Users/mac/Documents/Lutris for mac/Sources/LutrisForMacApp/Views/Wine/CrossOverTricksView.swift": {
+    "dependencies": "/Users/mac/Documents/Lutris for mac/.build/arm64-apple-macosx/debug/LutrisForMacApp.build/CrossOverTricksView.d",
+    "object": "/Users/mac/Documents/Lutris for mac/.build/arm64-apple-macosx/debug/LutrisForMacApp.build/CrossOverTricksView.swift.o",
+    "swiftmodule": "/Users/mac/Documents/Lutris for mac/.build/arm64-apple-macosx/debug/LutrisForMacApp.build/CrossOverTricksView~partial.swiftmodule",
+    "swift-dependencies": "/Users/mac/Documents/Lutris for mac/.build/arm64-apple-macosx/debug/LutrisForMacApp.build/CrossOverTricksView.swiftdeps",
+    "diagnostics": "/Users/mac/Documents/Lutris for mac/.build/arm64-apple-macosx/debug/LutrisForMacApp.build/CrossOverTricksView.dia"
+  },
+  "/Users/mac/Documents/Lutris for mac/Sources/LutrisForMacApp/Views/Wine/NewPrefixSheet.swift": {
+    "dependencies": "/Users/mac/Documents/Lutris for mac/.build/arm64-apple-macosx/debug/LutrisForMacApp.build/NewPrefixSheet.d",
+    "object": "/Users/mac/Documents/Lutris for mac/.build/arm64-apple-macosx/debug/LutrisForMacApp.build/NewPrefixSheet.swift.o",
+    "swiftmodule": "/Users/mac/Documents/Lutris for mac/.build/arm64-apple-macosx/debug/LutrisForMacApp.build/NewPrefixSheet~partial.swiftmodule",
+    "swift-dependencies": "/Users/mac/Documents/Lutris for mac/.build/arm64-apple-macosx/debug/LutrisForMacApp.build/NewPrefixSheet.swiftdeps",
+    "diagnostics": "/Users/mac/Documents/Lutris for mac/.build/arm64-apple-macosx/debug/LutrisForMacApp.build/NewPrefixSheet.dia"
+  },
+  "/Users/mac/Documents/Lutris for mac/Sources/LutrisForMacApp/Views/Wine/WineConfigView.swift": {
+    "dependencies": "/Users/mac/Documents/Lutris for mac/.build/arm64-apple-macosx/debug/LutrisForMacApp.build/WineConfigView.d",
+    "object": "/Users/mac/Documents/Lutris for mac/.build/arm64-apple-macosx/debug/LutrisForMacApp.build/WineConfigView.swift.o",
+    "swiftmodule": "/Users/mac/Documents/Lutris for mac/.build/arm64-apple-macosx/debug/LutrisForMacApp.build/WineConfigView~partial.swiftmodule",
+    "swift-dependencies": "/Users/mac/Documents/Lutris for mac/.build/arm64-apple-macosx/debug/LutrisForMacApp.build/WineConfigView.swiftdeps",
+    "diagnostics": "/Users/mac/Documents/Lutris for mac/.build/arm64-apple-macosx/debug/LutrisForMacApp.build/WineConfigView.dia"
+  },
+  "/Users/mac/Documents/Lutris for mac/Sources/LutrisForMacApp/Views/Wine/WineSettingsView.swift": {
+    "dependencies": "/Users/mac/Documents/Lutris for mac/.build/arm64-apple-macosx/debug/LutrisForMacApp.build/WineSettingsView.d",
+    "object": "/Users/mac/Documents/Lutris for mac/.build/arm64-apple-macosx/debug/LutrisForMacApp.build/WineSettingsView.swift.o",
+    "swiftmodule": "/Users/mac/Documents/Lutris for mac/.build/arm64-apple-macosx/debug/LutrisForMacApp.build/WineSettingsView~partial.swiftmodule",
+    "swift-dependencies": "/Users/mac/Documents/Lutris for mac/.build/arm64-apple-macosx/debug/LutrisForMacApp.build/WineSettingsView.swiftdeps",
+    "diagnostics": "/Users/mac/Documents/Lutris for mac/.build/arm64-apple-macosx/debug/LutrisForMacApp.build/WineSettingsView.dia"
+  },
+  "/Users/mac/Documents/Lutris for mac/Sources/LutrisForMacApp/Views/Wine/WinetricksView.swift": {
+    "dependencies": "/Users/mac/Documents/Lutris for mac/.build/arm64-apple-macosx/debug/LutrisForMacApp.build/WinetricksView.d",
+    "object": "/Users/mac/Documents/Lutris for mac/.build/arm64-apple-macosx/debug/LutrisForMacApp.build/WinetricksView.swift.o",
+    "swiftmodule": "/Users/mac/Documents/Lutris for mac/.build/arm64-apple-macosx/debug/LutrisForMacApp.build/WinetricksView~partial.swiftmodule",
+    "swift-dependencies": "/Users/mac/Documents/Lutris for mac/.build/arm64-apple-macosx/debug/LutrisForMacApp.build/WinetricksView.swiftdeps",
+    "diagnostics": "/Users/mac/Documents/Lutris for mac/.build/arm64-apple-macosx/debug/LutrisForMacApp.build/WinetricksView.dia"
+  },
+  "/Users/mac/Documents/Lutris for mac/.build/arm64-apple-macosx/debug/LutrisForMacApp.build/DerivedSources/resource_bundle_accessor.swift": {
+    "dependencies": "/Users/mac/Documents/Lutris for mac/.build/arm64-apple-macosx/debug/LutrisForMacApp.build/resource_bundle_accessor.d",
+    "object": "/Users/mac/Documents/Lutris for mac/.build/arm64-apple-macosx/debug/LutrisForMacApp.build/resource_bundle_accessor.swift.o",
+    "swiftmodule": "/Users/mac/Documents/Lutris for mac/.build/arm64-apple-macosx/debug/LutrisForMacApp.build/resource_bundle_accessor~partial.swiftmodule",
+    "swift-dependencies": "/Users/mac/Documents/Lutris for mac/.build/arm64-apple-macosx/debug/LutrisForMacApp.build/resource_bundle_accessor.swiftdeps",
+    "diagnostics": "/Users/mac/Documents/Lutris for mac/.build/arm64-apple-macosx/debug/LutrisForMacApp.build/resource_bundle_accessor.dia"
+  }
+}
