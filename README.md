@@ -10,7 +10,7 @@ Created with AI, a Project of that scope is way to much for me Alone. Thanks for
 
 ```bash
 git clone https://github.com/Snix1990/Lutris-For-Mac
-cd Lutris-For-Mac
+cd "Lutris For Mac"
 swift build
 swift run LutrisForMac
 ```
