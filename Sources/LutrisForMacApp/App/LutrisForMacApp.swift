@@ -85,4 +85,5 @@ final class AppDelegate: NSObject, NSApplicationDelegate {
 
 extension Notification.Name {
     static let launchGame = Notification.Name("launchGame")
+    static let importGameConfig = Notification.Name("importGameConfig")
 }

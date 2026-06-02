@@ -2,8 +2,14 @@ import SwiftUI
 
 struct GameTileView: View {
     let game: Game
+    let onLaunch: (() -> Void)?
     private let mediaStore = MediaStore.shared
     @State private var coverImage: NSImage?
+
+    init(game: Game, onLaunch: (() -> Void)? = nil) {
+        self.game = game
+        self.onLaunch = onLaunch
+    }
 
     var body: some View {
         VStack(spacing: 6) {
@@ -49,6 +55,14 @@ struct GameTileView: View {
         }
         .padding(0)
         .clipShape(RoundedRectangle(cornerRadius: 10))
+        .contentShape(RoundedRectangle(cornerRadius: 10))
+        .background(
+            Color.clear
+                .contentShape(RoundedRectangle(cornerRadius: 10))
+                .onTapGesture(count: 2) {
+                    onLaunch?()
+                }
+        )
         .onAppear {
             coverImage = mediaStore.cachedImage(for: game.id.uuidString, type: .cover)
             if coverImage == nil && !game.coverURL.isEmpty {

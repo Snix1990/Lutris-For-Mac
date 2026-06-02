@@ -57,37 +57,19 @@ struct ContentView: View {
                 LibraryView(
                     viewModel: viewModel,
                     selectedGameID: $selectedGameID,
-                    viewMode: $viewMode
+                    viewMode: $viewMode,
+                    onLaunch: { game in
+                        selectedGameID = game.id
+                        launch(game: game)
+                    }
                 )
                 .frame(maxWidth: .infinity, maxHeight: .infinity)
 
                 GameDetailView(
                     game: selectedGameBinding,
-                    onDelete: {
-                        if let id = selectedGameID, let idx = viewModel.games.firstIndex(where: { $0.id == id }) {
-                            let game = viewModel.games[idx]
-                            viewModel.deleteGame(game)
-                            selectedGameID = nil
-                        }
-                    },
-                    onLaunch: {
-                        if let id = selectedGameID, let idx = viewModel.games.firstIndex(where: { $0.id == id }) {
-                            launch(game: viewModel.games[idx])
-                        }
-                    },
-                    onCommitPending: { id, pending in
-                        if let idx = viewModel.games.firstIndex(where: { $0.id == id }) {
-                            if viewModel.games[idx].name != pending.name { viewModel.games[idx].name = pending.name }
-                            if viewModel.games[idx].installPath != pending.installPath { viewModel.games[idx].installPath = pending.installPath }
-                            if viewModel.games[idx].launcherCommand != pending.launcherCommand { viewModel.games[idx].launcherCommand = pending.launcherCommand }
-                            if viewModel.games[idx].steamAppID != pending.steamAppID { viewModel.games[idx].steamAppID = pending.steamAppID }
-                            if viewModel.games[idx].coverURL != pending.coverURL { viewModel.games[idx].coverURL = pending.coverURL }
-                            if viewModel.games[idx].bannerURL != pending.bannerURL { viewModel.games[idx].bannerURL = pending.bannerURL }
-                            if viewModel.games[idx].iconURL != pending.iconURL { viewModel.games[idx].iconURL = pending.iconURL }
-                            if viewModel.games[idx].category != pending.category { viewModel.games[idx].category = pending.category }
-                            viewModel.saveLibrary()
-                        }
-                    }
+                    onDelete: deleteGame,
+                    onLaunch: launchSelectedGame,
+                    onCommitPending: commitPendingChanges
                 )
                 .frame(width: 570)
                 .background(.background)
@@ -104,6 +86,17 @@ struct ContentView: View {
             .onReceive(NotificationCenter.default.publisher(for: .launchGame)) { notification in
                 if let gameID = notification.object as? UUID {
                     launchGameByID(gameID)
+                }
+            }
+            .onReceive(NotificationCenter.default.publisher(for: .importGameConfig)) { notification in
+                if let game = notification.object as? Game {
+                    var imported = game
+                    imported.id = UUID()
+                    imported.playTime = 0
+                    imported.lastPlayed = nil
+                    viewModel.games.append(imported)
+                    viewModel.saveLibrary()
+                    selectedGameID = imported.id
                 }
             }
             .animation(.easeInOut(duration: 0.25), value: selectedGameID)
@@ -134,6 +127,40 @@ struct ContentView: View {
                     } label: {
                         Label { LText("Spiel hinzufügen") } icon: { Image(systemName: "plus") }
                     }
+                }
+                ToolbarItem(placement: .automatic) {
+                    Menu {
+                        Button {
+                            if let id = selectedGameID, let game = viewModel.games.first(where: { $0.id == id }) {
+                                _ = viewModel.exportGameConfig(game)
+                            }
+                        } label: {
+                            Label { LText("Spielkonfiguration exportieren") } icon: { Image(systemName: "square.and.arrow.up") }
+                        }
+                        Button {
+                            if let _ = viewModel.importGameConfig() {
+                                viewModel.saveLibrary()
+                            }
+                        } label: {
+                            Label { LText("Spielkonfiguration importieren") } icon: { Image(systemName: "square.and.arrow.down") }
+                        }
+                        Divider()
+                        Button {
+                            _ = viewModel.exportLibraryBackup()
+                        } label: {
+                            Label { LText("Bibliothek sichern...") } icon: { Image(systemName: "externaldrive.badge.checkmark") }
+                        }
+                        Button {
+                            if viewModel.importLibraryBackup() {
+                                viewModel.refreshLibrary()
+                            }
+                        } label: {
+                            Label { LText("Bibliothek wiederherstellen...") } icon: { Image(systemName: "externaldrive.badge.arrow.clockwise") }
+                        }
+                    } label: {
+                        Label { LText("Extras") } icon: { Image(systemName: "ellipsis.circle") }
+                    }
+                    .helpLText("Bibliothek sichern/wiederherstellen")
                 }
                 ToolbarItem(placement: .automatic) {
                     Button {
@@ -175,6 +202,36 @@ struct ContentView: View {
             while let idx = toolbar.items.firstIndex(where: { $0.itemIdentifier.rawValue == id }) {
                 toolbar.removeItem(at: idx)
             }
+        }
+    }
+
+    // MARK: - Helpers
+
+    private func deleteGame() {
+        if let id = selectedGameID, let idx = viewModel.games.firstIndex(where: { $0.id == id }) {
+            let game = viewModel.games[idx]
+            viewModel.deleteGame(game)
+            selectedGameID = nil
+        }
+    }
+
+    private func commitPendingChanges(id: UUID, pending: PendingGameChanges) {
+        if let idx = viewModel.games.firstIndex(where: { $0.id == id }) {
+            if viewModel.games[idx].name != pending.name { viewModel.games[idx].name = pending.name }
+            if viewModel.games[idx].installPath != pending.installPath { viewModel.games[idx].installPath = pending.installPath }
+            if viewModel.games[idx].launcherCommand != pending.launcherCommand { viewModel.games[idx].launcherCommand = pending.launcherCommand }
+            if viewModel.games[idx].steamAppID != pending.steamAppID { viewModel.games[idx].steamAppID = pending.steamAppID }
+            if viewModel.games[idx].coverURL != pending.coverURL { viewModel.games[idx].coverURL = pending.coverURL }
+            if viewModel.games[idx].bannerURL != pending.bannerURL { viewModel.games[idx].bannerURL = pending.bannerURL }
+            if viewModel.games[idx].iconURL != pending.iconURL { viewModel.games[idx].iconURL = pending.iconURL }
+            if viewModel.games[idx].category != pending.category { viewModel.games[idx].category = pending.category }
+            viewModel.saveLibrary()
+        }
+    }
+
+    private func launchSelectedGame() {
+        if let id = selectedGameID, let idx = viewModel.games.firstIndex(where: { $0.id == id }) {
+            launch(game: viewModel.games[idx])
         }
     }
 

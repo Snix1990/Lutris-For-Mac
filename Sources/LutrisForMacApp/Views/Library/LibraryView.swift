@@ -4,7 +4,16 @@ struct LibraryView: View {
     @ObservedObject var viewModel: GameLibraryViewModel
     @Binding var selectedGameID: UUID?
     @Binding var viewMode: ViewMode
+    let onLaunch: ((Game) -> Void)?
     @State private var showSortMenu = false
+    @State private var dropTarget = false
+
+    init(viewModel: GameLibraryViewModel, selectedGameID: Binding<UUID?>, viewMode: Binding<ViewMode>, onLaunch: ((Game) -> Void)? = nil) {
+        self.viewModel = viewModel
+        self._selectedGameID = selectedGameID
+        self._viewMode = viewMode
+        self.onLaunch = onLaunch
+    }
 
     enum ViewMode: String, CaseIterable {
         case list
@@ -59,6 +68,15 @@ struct LibraryView: View {
                 }
             }
             .frame(maxHeight: .infinity)
+            .onDrop(of: [.fileURL], delegate: dropDelegate)
+            .overlay(
+                dropTarget ?
+                    RoundedRectangle(cornerRadius: 12)
+                        .stroke(Color.accentColor, lineWidth: 3)
+                        .padding(8)
+                        .animation(.easeInOut(duration: 0.2), value: dropTarget)
+                    : nil
+            )
         }
         .navigationTitle(Text(verbatim: tr("Meine Bibliothek")))
         .navigationSplitViewColumnWidth(min: 400, ideal: 700, max: .infinity)
@@ -111,7 +129,7 @@ struct LibraryView: View {
         ScrollView {
             LazyVStack(spacing: 0) {
                 ForEach(viewModel.filteredGames) { game in
-                    GameRowView(game: game)
+                    GameRowView(game: game, onLaunch: onLaunch.map { launch in { launch(game) } })
                         .highPriorityGesture(
                             TapGesture().onEnded { selectedGameID = game.id }
                         )
@@ -125,7 +143,7 @@ struct LibraryView: View {
         ScrollView {
             LazyVGrid(columns: [GridItem(.adaptive(minimum: 160), spacing: 16)], spacing: 16) {
                 ForEach(viewModel.filteredGames) { game in
-                    GameTileView(game: game)
+                    GameTileView(game: game, onLaunch: onLaunch.map { launch in { launch(game) } })
                         .highPriorityGesture(
                             TapGesture().onEnded { selectedGameID = game.id }
                         )
@@ -134,5 +152,41 @@ struct LibraryView: View {
             .padding()
         }
         .onTapGesture { selectedGameID = nil }
+    }
+
+    // MARK: - Drag & Drop
+
+    private var dropDelegate: some DropDelegate {
+        GameDropDelegate(viewModel: viewModel, isTarget: $dropTarget)
+    }
+
+    private struct GameDropDelegate: DropDelegate {
+        let viewModel: GameLibraryViewModel
+        @Binding var isTarget: Bool
+
+        func validateDrop(info: DropInfo) -> Bool {
+            info.hasItemsConforming(to: [.fileURL])
+        }
+
+        func dropEntered(info: DropInfo) {
+            isTarget = true
+        }
+
+        func dropExited(info: DropInfo) {
+            isTarget = false
+        }
+
+        func performDrop(info: DropInfo) -> Bool {
+            isTarget = false
+            guard let item = info.itemProviders(for: [.fileURL]).first else { return false }
+            item.loadItem(forTypeIdentifier: "public.file-url", options: nil) { data, _ in
+                guard let data = data as? Data,
+                      let url = URL(dataRepresentation: data, relativeTo: nil) else { return }
+                Task { @MainActor in
+                    self.viewModel.addGame(from: url)
+                }
+            }
+            return true
+        }
     }
 }

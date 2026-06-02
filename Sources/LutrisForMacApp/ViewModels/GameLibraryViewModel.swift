@@ -1,4 +1,6 @@
 import Foundation
+import AppKit
+import UniformTypeIdentifiers
 
 // MARK: - SortOption
 
@@ -247,6 +249,190 @@ final class GameLibraryViewModel: ObservableObject {
         guard let index = games.firstIndex(where: { $0.id == gameID }) else { return }
         games[index].category = category
         saveLibrary()
+    }
+
+    // MARK: - Drag & Drop
+
+    func addGame(from url: URL) {
+        let path = url.path
+        let ext = url.pathExtension.lowercased()
+
+        switch ext {
+        case "app":
+            let name = url.deletingPathExtension().lastPathComponent
+            let game = Game(name: name, platform: "macOS", installPath: path, runner: "Native")
+            games.append(game)
+            saveLibrary()
+
+        case "exe":
+            let name = url.deletingPathExtension().lastPathComponent
+            let game = Game(name: name, platform: "Windows", installPath: path, runner: "Wine",
+                            wineRenderMode: .auto, wineESync: true, wineShaderCache: true)
+            games.append(game)
+            saveLibrary()
+
+        case "iso", "img", "gcm", "wbfs", "nkit", "chd", "rvz", "nsp", "xci", "nds", "3ds",
+             "nes", "snes", "smc", "sfc", "n64", "z64", "v64", "gba", "gbc", "gb",
+             "psx", "pbp", "cue", "bin", "mds":
+            let name = url.deletingPathExtension().lastPathComponent
+            let game = Game(name: name, platform: "Console", installPath: path, runner: "RetroArch")
+            games.append(game)
+            saveLibrary()
+
+        default:
+            break
+        }
+    }
+
+    // MARK: - Per-Game Config Export / Import
+
+    func exportGameConfig(_ game: Game) -> URL? {
+        let panel = NSSavePanel()
+        panel.title = tr("Spielkonfiguration exportieren")
+        panel.nameFieldStringValue = "\(game.name).lutrisgame.json"
+        panel.allowedContentTypes = [.json]
+        guard panel.runModal() == .OK, let url = panel.url else { return nil }
+        do {
+            let data = try JSONEncoder().encode(game)
+            try data.write(to: url, options: .atomic)
+            return url
+        } catch {
+            return nil
+        }
+    }
+
+    func importGameConfig() -> Game? {
+        let panel = NSOpenPanel()
+        panel.title = tr("Spielkonfiguration importieren")
+        panel.allowedContentTypes = [.json]
+        panel.allowsMultipleSelection = false
+        guard panel.runModal() == .OK, let url = panel.url else { return nil }
+        do {
+            let data = try Data(contentsOf: url)
+            let game = try JSONDecoder().decode(Game.self, from: data)
+            var imported = game
+            imported.id = UUID()
+            imported.playTime = 0
+            imported.lastPlayed = nil
+            games.append(imported)
+            saveLibrary()
+            return imported
+        } catch {
+            return nil
+        }
+    }
+
+    // MARK: - Library Backup & Restore
+
+    private var supportDir: URL {
+        let folder = FileManager.default.urls(for: .applicationSupportDirectory, in: .userDomainMask).first!
+        return folder.appendingPathComponent("LutrisForMac", isDirectory: true)
+    }
+
+    func exportLibraryBackup() -> Bool {
+        let panel = NSSavePanel()
+        panel.title = tr("Bibliothek sichern")
+        panel.nameFieldStringValue = "LutrisForMac-Backup.zip"
+        panel.allowedContentTypes = [.archive]
+        guard panel.runModal() == .OK, let url = panel.url else { return false }
+
+        let fm = FileManager.default
+        let tmpDir = URL(fileURLWithPath: NSTemporaryDirectory()).appendingPathComponent("lutrisbackup_\(UUID().uuidString)")
+        try? fm.createDirectory(at: tmpDir, withIntermediateDirectories: true)
+
+        do {
+            // games.json
+            let gamesData = try JSONEncoder().encode(games)
+            try gamesData.write(to: tmpDir.appendingPathComponent("games.json"))
+
+            // media (covers, banners, icons)
+            let mediaSrc = supportDir.appendingPathComponent("media")
+            let mediaDst = tmpDir.appendingPathComponent("media")
+            if fm.fileExists(atPath: mediaSrc.path) {
+                try fm.copyItem(at: mediaSrc, to: mediaDst)
+            }
+
+            // wine configs
+            for cfg in ["wine_versions.json", "wine_prefixes.json", "crossover_installations.json", "runners.json"] {
+                let src = supportDir.appendingPathComponent(cfg)
+                if fm.fileExists(atPath: src.path) {
+                    try fm.copyItem(at: src, to: tmpDir.appendingPathComponent(cfg))
+                }
+            }
+
+            // Pack as zip
+            let zipTask = Process()
+            zipTask.executableURL = URL(fileURLWithPath: "/usr/bin/ditto")
+            zipTask.arguments = ["-c", "-k", "--sequesterRsrc", "--keepParent", tmpDir.path, url.path]
+            try zipTask.run()
+            zipTask.waitUntilExit()
+
+            try? fm.removeItem(at: tmpDir)
+            return zipTask.terminationStatus == 0
+        } catch {
+            try? fm.removeItem(at: tmpDir)
+            return false
+        }
+    }
+
+    func importLibraryBackup() -> Bool {
+        let panel = NSOpenPanel()
+        panel.title = tr("Bibliothek wiederherstellen")
+        panel.allowedContentTypes = [.archive, .zip, .application]
+        panel.allowsMultipleSelection = false
+        guard panel.runModal() == .OK, let url = panel.url else { return false }
+
+        let fm = FileManager.default
+        let tmpDir = URL(fileURLWithPath: NSTemporaryDirectory()).appendingPathComponent("lutrisrestore_\(UUID().uuidString)")
+        try? fm.createDirectory(at: tmpDir, withIntermediateDirectories: true)
+
+        defer { try? fm.removeItem(at: tmpDir) }
+
+        do {
+            // Extract zip
+            let unzipTask = Process()
+            unzipTask.executableURL = URL(fileURLWithPath: "/usr/bin/ditto")
+            unzipTask.arguments = ["-x", "-k", url.path, tmpDir.path]
+            try unzipTask.run()
+            unzipTask.waitUntilExit()
+            guard unzipTask.terminationStatus == 0 else { return false }
+
+            // Find the inner folder (ditto wraps in a folder)
+            let contents = try fm.contentsOfDirectory(at: tmpDir, includingPropertiesForKeys: nil)
+            let sourceDir = contents.first { $0.lastPathComponent.hasPrefix("lutrisbackup_") || $0.lastPathComponent == "LutrisForMac-Backup" }
+                ?? contents.first { (try? fm.contentsOfDirectory(at: $0, includingPropertiesForKeys: nil).contains { $0.lastPathComponent == "games.json" }) == true }
+                ?? tmpDir
+
+            // Restore games.json
+            let gamesFile = sourceDir.appendingPathComponent("games.json")
+            guard fm.fileExists(atPath: gamesFile.path) else { return false }
+            let data = try Data(contentsOf: gamesFile)
+            let imported = try JSONDecoder().decode([Game].self, from: data)
+            games = imported
+            saveLibrary()
+
+            // Restore media
+            let mediaSrc = sourceDir.appendingPathComponent("media")
+            let mediaDst = supportDir.appendingPathComponent("media")
+            if fm.fileExists(atPath: mediaSrc.path) {
+                try? fm.removeItem(at: mediaDst)
+                try fm.copyItem(at: mediaSrc, to: mediaDst)
+            }
+
+            // Restore configs
+            for cfg in ["wine_versions.json", "wine_prefixes.json", "crossover_installations.json", "runners.json"] {
+                let src = sourceDir.appendingPathComponent(cfg)
+                let dst = supportDir.appendingPathComponent(cfg)
+                if fm.fileExists(atPath: src.path) {
+                    try? fm.removeItem(at: dst)
+                    try fm.copyItem(at: src, to: dst)
+                }
+            }
+
+            return true
+        } catch {
+            return false
+        }
     }
 
     // MARK: - Steam Sync

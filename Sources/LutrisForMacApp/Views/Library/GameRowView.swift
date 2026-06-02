@@ -2,8 +2,14 @@ import SwiftUI
 
 struct GameRowView: View {
     let game: Game
+    let onLaunch: (() -> Void)?
     private let mediaStore = MediaStore.shared
     @State private var coverImage: NSImage?
+
+    init(game: Game, onLaunch: (() -> Void)? = nil) {
+        self.game = game
+        self.onLaunch = onLaunch
+    }
 
     var body: some View {
         HStack(spacing: 10) {
@@ -58,6 +64,14 @@ struct GameRowView: View {
             }
         }
         .padding(.vertical, 4)
+        .contentShape(Rectangle())
+        .background(
+            Color.clear
+                .contentShape(Rectangle())
+                .onTapGesture(count: 2) {
+                    onLaunch?()
+                }
+        )
         .onAppear {
             coverImage = mediaStore.cachedImage(for: game.id.uuidString, type: .cover)
             if coverImage == nil && !game.coverURL.isEmpty {

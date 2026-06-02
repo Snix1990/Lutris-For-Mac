@@ -1,7 +1,7 @@
 import Foundation
 
 struct Game: Identifiable, Hashable, Codable {
-    let id: UUID
+    var id: UUID
     var name: String
     var platform: String
     var installPath: String

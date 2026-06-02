@@ -181,6 +181,38 @@ struct GameDetailView: View {
                 }
                 .helpLText(integration.shortcutExists(game: game) ? "Shortcut entfernen" : "Shortcut erstellen")
 
+                Button {
+                    let panel = NSSavePanel()
+                    panel.title = tr("Spielkonfiguration exportieren")
+                    panel.nameFieldStringValue = "\(game.name).lutrisgame.json"
+                    panel.allowedContentTypes = [.json]
+                    guard panel.runModal() == .OK, let url = panel.url else { return }
+                    if let data = try? JSONEncoder().encode(game) {
+                        try? data.write(to: url, options: .atomic)
+                    }
+                } label: {
+                    Label("", systemImage: "square.and.arrow.up")
+                }
+                .helpLText("Spielkonfiguration exportieren")
+
+                Button {
+                    let panel = NSOpenPanel()
+                    panel.title = tr("Spielkonfiguration importieren")
+                    panel.allowedContentTypes = [.json]
+                    panel.allowsMultipleSelection = false
+                    guard panel.runModal() == .OK, let url = panel.url,
+                          let data = try? Data(contentsOf: url),
+                          let imported = try? JSONDecoder().decode(Game.self, from: data)
+                    else { return }
+                    NotificationCenter.default.post(
+                        name: .importGameConfig,
+                        object: imported
+                    )
+                } label: {
+                    Label("", systemImage: "square.and.arrow.down")
+                }
+                .helpLText("Spielkonfiguration importieren")
+
                 Spacer()
 
                 Button(action: onLaunch) {
