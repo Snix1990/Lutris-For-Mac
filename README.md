@@ -1,3 +1,4 @@
+<img width="1599" height="918" alt="Bildschirmfoto 2026-06-02 um 11 20 56" src="https://github.com/user-attachments/assets/c64f2db1-2ed3-4065-8f20-253f8f3eca9c" />
 Created with AI, a Project of that scope is way to much for me Alone. Thanks for the understanding.
 
 
