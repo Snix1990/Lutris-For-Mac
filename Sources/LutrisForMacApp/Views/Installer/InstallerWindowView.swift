@@ -19,6 +19,7 @@ struct InstallerWindowView: View {
     @State private var prefixName = ""
     @State private var prefixArch = "win64"
     @State private var envVars: [String: String] = [:]
+    @State private var winetricksArgs: String = ""
     @State private var useExistingPrefix = false
     @State private var selectedExistingPrefix: WinePrefix? = nil
     @State private var showCommunity = false
@@ -456,6 +457,21 @@ struct InstallerWindowView: View {
                 }
                 .padding(4)
             }
+            // Winetricks input
+            if selectedRunner == "Wine" {
+                GroupBox {
+                    VStack(alignment: .leading, spacing: 8) {
+                        LText("Winetricks (optional)")
+                            .font(.headline)
+                        Text("Gib Winetricks-Verben ein, z.B. vcrun2019 vcrun2015")
+                            .font(.caption)
+                            .foregroundColor(.secondary)
+                        TextField("vcrun2019 vcrun2015", text: $winetricksArgs)
+                            .textFieldStyle(.roundedBorder)
+                    }
+                    .padding(4)
+                }
+            }
         }
     }
 
@@ -484,6 +500,9 @@ struct InstallerWindowView: View {
                     summaryRow("Quelle", sourceType == .url ? sourceURL : (sourceType == .file ? sourceFile?.path ?? "" : sourceType.rawValue))
                     if !envVars.isEmpty {
                         summaryRow("Umgebungsvariablen", envVars.map { "\($0.key)=\($0.value)" }.joined(separator: ", "))
+                    }
+                    if !winetricksArgs.trimmingCharacters(in: .whitespacesAndNewlines).isEmpty {
+                        summaryRow("Winetricks", winetricksArgs)
                     }
                 }
                 .padding(4)
@@ -556,6 +575,12 @@ struct InstallerWindowView: View {
             }
             let winePrefixForTasks = useExistingPrefix ? (selectedExistingPrefix?.path ?? prefixNameResolved) : "{gamePath}/prefix"
 
+            // Winetricks: optional verbs provided by the user
+            if !winetricksArgs.trimmingCharacters(in: .whitespacesAndNewlines).isEmpty {
+                let verbs = winetricksArgs.split(separator: " ").map { String($0) }
+                t.append(.wineTricks(verbs: verbs, prefixPath: winePrefixForTasks, winePath: winePathForTasks, description: "Installiere Winetricks-Pakete: \(winetricksArgs)"))
+            }
+
             t.append(contentsOf: [
                 .download(url: sourceURL, dest: "{tmp}/setup.exe", description: "Lade Installer herunter"),
                 .wineExecute(executable: "{tmp}/setup.exe", args: nil, winePrefix: winePrefixForTasks, winePath: winePathForTasks, description: "Führe Installer aus"),
@@ -582,6 +607,12 @@ struct InstallerWindowView: View {
                 t.append(.createPrefix(name: prefixNameResolved, arch: prefixArchResolved, prefixPath: "{gamePath}/prefix", winePath: winePathForTasks, description: "Erstelle Wine-Prefix"))
             }
             let winePrefixForTasks = useExistingPrefix ? (selectedExistingPrefix?.path ?? prefixNameResolved) : "{gamePath}/prefix"
+
+            // Winetricks: optional verbs provided by the user
+            if !winetricksArgs.trimmingCharacters(in: .whitespacesAndNewlines).isEmpty {
+                let verbs = winetricksArgs.split(separator: " ").map { String($0) }
+                t.append(.wineTricks(verbs: verbs, prefixPath: winePrefixForTasks, winePath: winePathForTasks, description: "Installiere Winetricks-Pakete: \(winetricksArgs)"))
+            }
 
             t.append(contentsOf: [
                 .wineExecute(executable: src, args: nil, winePrefix: winePrefixForTasks, winePath: winePathForTasks, description: "Führe Installer aus"),
