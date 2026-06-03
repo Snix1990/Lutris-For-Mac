@@ -96,8 +96,9 @@ final class SteamAPI {
             throw SteamError.requestFailed("No response")
         }
 
-        guard httpResponse.statusCode == 200 else {
-            throw SteamError.requestFailed("HTTP \(httpResponse.statusCode)")
+        if httpResponse.statusCode != 200 {
+            let body = String(data: data, encoding: .utf8) ?? "<no body>"
+            throw SteamError.requestFailed("HTTP \(httpResponse.statusCode): \(body)")
         }
 
         let decoded = try JSONDecoder().decode(SteamGetOwnedGamesResponse.self, from: data)
@@ -116,7 +117,17 @@ final class SteamAPI {
         var request = URLRequest(url: url)
         request.timeoutInterval = 15
 
-        let (data, _) = try await URLSession.shared.data(for: request)
+        let (data, response) = try await URLSession.shared.data(for: request)
+
+        guard let httpResponse = response as? HTTPURLResponse else {
+            throw SteamError.requestFailed("No response")
+        }
+
+        if httpResponse.statusCode != 200 {
+            let body = String(data: data, encoding: .utf8) ?? "<no body>"
+            throw SteamError.requestFailed("HTTP \(httpResponse.statusCode): \(body)")
+        }
+
         let decoded = try JSONDecoder().decode(SteamPlayerSummariesResponse.self, from: data)
         return decoded.response?.players?.first
     }

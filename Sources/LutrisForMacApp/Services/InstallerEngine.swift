@@ -108,7 +108,19 @@ final class InstallerEngine: ObservableObject {
             let destURL = URL(fileURLWithPath: resolvedDest)
             try FileManager.default.createDirectory(at: destURL.deletingLastPathComponent(), withIntermediateDirectories: true)
 
-            let (data, _) = try await URLSession.shared.data(from: URL(string: resolvedURL)!)
+            guard let urlObj = URL(string: resolvedURL) else {
+                throw InstallerError.networkError("Ungültige URL: \(resolvedURL)")
+            }
+
+            var request = URLRequest(url: urlObj)
+            request.timeoutInterval = 60
+
+            let (data, response) = try await URLSession.shared.data(for: request)
+            if let http = response as? HTTPURLResponse, !(200...299).contains(http.statusCode) {
+                let body = String(data: data, encoding: .utf8) ?? "<no body>"
+                throw InstallerError.networkError("HTTP \(http.statusCode): \(body)")
+            }
+
             try data.write(to: destURL, options: .atomic)
             log.append("✅ Download abgeschlossen: \(resolvedDest)")
 
@@ -127,32 +139,81 @@ final class InstallerEngine: ObservableObject {
             let resolved = resolveVariables(command, vars: vars)
             log.append("🖥️ \(desc ?? "Führe aus"): \(resolved)")
             currentTaskDescription = desc ?? "Führe Befehl aus..."
-            let output = try await ProcessRunner.run(command: resolved, currentDirectory: nil, environment: [:])
+            let output = try await runCommandDirectly(resolved)
             log.append(output)
 
-        case .wineExecute(let executable, let args, let winePrefix, let desc):
+        case .wineExecute(let executable, let args, let winePrefix, let winePath, let desc):
             let resolvedExe = resolveVariables(executable, vars: vars)
             let resolvedArgs = args.map { resolveVariables($0, vars: vars) } ?? ""
-            let prefixName = winePrefix.map { resolveVariables($0, vars: vars) }
+            let prefixRaw = winePrefix.map { resolveVariables($0, vars: vars) }
+            let resolvedWinePath = winePath.flatMap({ resolveVariables($0, vars: vars) })
             log.append("🍷 \(desc ?? "Wine: \(resolvedExe)")")
             currentTaskDescription = desc ?? "Führe Wine-Installer aus..."
 
-            let wine: WineVersion? = {
-                if let versionName = vars["useWineVersion"], !versionName.isEmpty {
-                    return wineManager.installedVersions.first(where: { $0.name == versionName })
-                }
-                return wineManager.installedVersions.first
-            }()
-            guard let wine else { throw InstallerError.noWineVersion }
+            // select wine binary path (prefer explicit winePath even if not registered in installedVersions)
+            let wineBin: String
+            if let wp = resolvedWinePath, !wp.isEmpty {
+                wineBin = wp
+            } else if let versionName = vars["useWineVersion"], !versionName.isEmpty, let found = wineManager.installedVersions.first(where: { $0.name == versionName }) {
+                wineBin = found.wineBinaryPath
+            } else if let found = wineManager.installedVersions.first {
+                wineBin = found.wineBinaryPath
+            } else {
+                throw InstallerError.noWineVersion
+            }
 
             var env = ProcessInfo.processInfo.environment
-            env["WINEPREFIX"] = "\(vars["supportDir"] ?? "")/prefixes/\(prefixName ?? "default")"
+            // respect absolute prefix paths
+            if let p = prefixRaw, p.hasPrefix("/") {
+                env["WINEPREFIX"] = p
+            } else {
+                env["WINEPREFIX"] = "\(vars["supportDir"] ?? "")/prefixes/\(prefixRaw ?? "default")"
+            }
+
+            // Ensure the prefix directory exists before running wine
+            if let wpPath = env["WINEPREFIX"] {
+                do {
+                    try FileManager.default.createDirectory(atPath: wpPath, withIntermediateDirectories: true)
+                } catch {
+                    throw InstallerError.prefixCreationFailed(wpPath)
+                }
+            }
             env["WINEARCH"] = "win64"
             env["WINEDLLOVERRIDES"] = "winemenubuilder.exe=d"
 
-            let cmd = "\(wine.wineBinaryPath) \(resolvedArgs) \"\(resolvedExe)\""
-            let output = try await ProcessRunner.run(command: cmd, currentDirectory: nil, environment: env)
+            // Ensure we run in the directory where the installer resides so Wine doesn't copy/move it
+            let exeURL = URL(fileURLWithPath: resolvedExe)
+            let execDir = exeURL.deletingLastPathComponent()
+
+            // Direct Process call (no bash -lc) to avoid blocking the Wine GUI
+            let output = try await runWineDirectly(
+                wineBinary: wineBin,
+                exe: resolvedExe,
+                args: resolvedArgs,
+                workingDir: execDir,
+                environment: env
+            )
             log.append(output)
+
+
+        case .wineTricks(let verbs, let prefixPath, let winePath, let desc):
+            currentTaskDescription = desc ?? "Winetricks..."
+            log.append("🧩 \(desc ?? "Winetricks: \(verbs.joined(separator: ", "))")")
+            // ensure winetricks binary available
+            let manager = WinetricksManager.shared
+            do {
+                try await manager.downloadIfNeeded()
+            } catch {
+                throw error
+            }
+
+            let resolvedPrefix = prefixPath.map { resolveVariables($0, vars: vars) } ?? vars["supportDir"].map { "\($0)/prefixes/default" } ?? vars["supportDir"] ?? ""
+            let resolvedWinePath = winePath.map { resolveVariables($0, vars: vars) }
+            // run winetricks and forward output
+            let stream = manager.run(verbs: verbs, prefix: resolvedPrefix, architecture: "win64", winePath: resolvedWinePath)
+            for await line in stream {
+                log.append(line)
+            }
 
         case .wineCfg(let desc):
             log.append("⚙️ \(desc ?? "Wine-Konfiguration")")
@@ -161,14 +222,95 @@ final class InstallerEngine: ObservableObject {
                 throw InstallerError.noWinePrefix
             }
             wineManager.runWinecfg(for: prefix)
-
-        case .createPrefix(let name, let arch, let desc):
-            let resolvedName = resolveVariables(name, vars: vars)
-            log.append("🔧 \(desc ?? "Erstelle Wineprefix"): \(resolvedName)")
+        case .createPrefix(let name, let arch, let prefixPath, let winePath, let desc):
+            let resolvedName = name.map { resolveVariables($0, vars: vars) }
+            let resolvedPrefixPath = prefixPath.map { resolveVariables($0, vars: vars) }
+            let resolvedWinePath = winePath.map { resolveVariables($0, vars: vars) }
             currentTaskDescription = desc ?? "Erstelle Wineprefix..."
-            let wineArch = arch == "win32" ? WinePrefix.WineArch.win32 : WinePrefix.WineArch.win64
-            try await wineManager.createPrefix(name: resolvedName, architecture: wineArch)
-            log.append("✅ Wineprefix erstellt: \(resolvedName)")
+
+            if let explicitPath = resolvedPrefixPath {
+                log.append("🔧 \(desc ?? "Erstelle Wineprefix"): \(explicitPath)")
+                try? FileManager.default.removeItem(atPath: explicitPath)
+                try FileManager.default.createDirectory(atPath: explicitPath, withIntermediateDirectories: true)
+
+                // choose wine binary
+                let wineBin: String = resolvedWinePath ?? (wineManager.installedVersions.first?.wineBinaryPath ?? "")
+                guard !wineBin.isEmpty, FileManager.default.isExecutableFile(atPath: wineBin) else {
+                    throw InstallerError.noWineVersion
+                }
+
+                var env = ProcessInfo.processInfo.environment
+                env["WINEPREFIX"] = explicitPath
+                env["WINEARCH"] = arch
+                env["WINEDLLOVERRIDES"] = "winemenubuilder.exe=d"
+                let wineBinDir = URL(fileURLWithPath: wineBin).deletingLastPathComponent().path
+                let existingPath = env["PATH"] ?? "/usr/bin:/bin:/usr/sbin:/sbin"
+                env["PATH"] = [wineBinDir, existingPath].joined(separator: ":")
+
+                // run wineboot silently and capture output (don't log partial output)
+                log.append("🔄 Initialisiere Prefix...")
+                let task = Process()
+                task.launchPath = wineBin
+                task.arguments = ["wineboot", "-i"]
+                task.environment = env
+                let pipe = Pipe()
+                task.standardOutput = pipe
+                task.standardError = pipe
+                try task.run()
+
+                // wait with timeout silently
+                let timeout: TimeInterval = 60
+                let start = Date()
+                while Date().timeIntervalSince(start) < timeout {
+                    if task.isRunning {
+                        // silently wait, don't read/log partial output
+                        try await Task.sleep(nanoseconds: 200_000_000)
+                        continue
+                    } else {
+                        break
+                    }
+                }
+
+                task.waitUntilExit()
+                // drain output but don't log it
+                let _ = pipe.fileHandleForReading.readDataToEndOfFile()
+
+                // verification: check for drive_c and registry files
+                let driveC = explicitPath + "/drive_c"
+                let systemReg = explicitPath + "/system.reg"
+                let maxWait: TimeInterval = 30
+                let verifyStart = Date()
+                while Date().timeIntervalSince(verifyStart) < maxWait {
+                    if FileManager.default.fileExists(atPath: driveC) && FileManager.default.fileExists(atPath: systemReg) {
+                        // ensure sizes stable
+                        let attrs1 = try? FileManager.default.attributesOfItem(atPath: systemReg)
+                        let size1 = attrs1?[.size] as? UInt64 ?? 0
+                        try await Task.sleep(nanoseconds: 300_000_000)
+                        let attrs2 = try? FileManager.default.attributesOfItem(atPath: systemReg)
+                        let size2 = attrs2?[.size] as? UInt64 ?? 0
+                        if size1 == size2 { break }
+                    }
+                    try await Task.sleep(nanoseconds: 300_000_000)
+                }
+
+                // add to wineManager prefixes
+                let prefix = WinePrefix(name: resolvedName ?? URL(fileURLWithPath: explicitPath).lastPathComponent, path: explicitPath, architecture: arch == "win32" ? .win32 : .win64, windowsVersion: "win10", created: Date())
+                wineManager.prefixes.append(prefix)
+                wineManager.savePrefixes()
+                log.append("✅ Wineprefix erstellt: \(explicitPath)")
+            } else {
+                let resolvedNameNonNull = resolveVariables(resolvedName ?? "", vars: vars)
+                log.append("🔧 \(desc ?? "Erstelle Wineprefix"): \(resolvedNameNonNull)")
+                currentTaskDescription = desc ?? "Erstelle Wineprefix..."
+                let wineArch = arch == "win32" ? WinePrefix.WineArch.win32 : WinePrefix.WineArch.win64
+                // Ensure support/prefixes dir exists before creating prefix
+                if let support = vars["supportDir"] {
+                    let prefixesPath = "\(support)/prefixes"
+                    try? FileManager.default.createDirectory(atPath: prefixesPath, withIntermediateDirectories: true)
+                }
+                try await wineManager.createPrefix(name: resolvedNameNonNull, architecture: wineArch)
+                log.append("✅ Wineprefix erstellt: \(resolvedNameNonNull)")
+            }
 
         case .setEnvironment(let key, let value, let desc):
             let resolvedValue = resolveVariables(value, vars: vars)
@@ -310,6 +452,108 @@ final class InstallerEngine: ObservableObject {
         }
     }
 
+    private func shellQuote(_ value: String) -> String {
+        let escaped = value
+            .replacingOccurrences(of: "\\", with: "\\\\")
+            .replacingOccurrences(of: "\"", with: "\\\"")
+        return "\"\(escaped)\""
+    }
+
+    private func runWineDirectly(
+        wineBinary: String,
+        exe: String,
+        args: String,
+        workingDir: URL,
+        environment: [String: String]
+    ) async throws -> String {
+        return try await withCheckedThrowingContinuation { continuation in
+            let launchTask = Process()
+            launchTask.executableURL = URL(fileURLWithPath: wineBinary)
+            let wineArgs = args.isEmpty ? [] : args.components(separatedBy: .whitespaces)
+            launchTask.arguments = wineArgs + [exe]
+            launchTask.currentDirectoryURL = workingDir
+            launchTask.environment = environment
+            launchTask.standardOutput = FileHandle.nullDevice
+            launchTask.standardError = FileHandle.nullDevice
+            
+            DispatchQueue.global().async {
+                do {
+                    try launchTask.run()
+                    launchTask.waitUntilExit()
+                    continuation.resume(returning: "")
+                } catch {
+                    continuation.resume(throwing: error)
+                }
+            }
+        }
+    }
+
+    private func runCommandDirectly(_ command: String) async throws -> String {
+        return try await withCheckedThrowingContinuation { continuation in
+            let parts = parseCommand(command)
+            guard !parts.isEmpty else {
+                continuation.resume(returning: "")
+                return
+            }
+            
+            let executable = parts[0]
+            let args = parts.count > 1 ? Array(parts[1...]) : []
+            
+            let process = Process()
+            process.executableURL = URL(fileURLWithPath: executable)
+            process.arguments = args
+            
+            let pipe = Pipe()
+            process.standardOutput = pipe
+            process.standardError = pipe
+            
+            DispatchQueue.global().async {
+                do {
+                    try process.run()
+                    process.waitUntilExit()
+                    
+                    let data = pipe.fileHandleForReading.readDataToEndOfFile()
+                    let output = String(data: data, encoding: .utf8) ?? ""
+                    continuation.resume(returning: output)
+                } catch {
+                    continuation.resume(throwing: error)
+                }
+            }
+        }
+    }
+
+    private func parseCommand(_ command: String) -> [String] {
+        var parts: [String] = []
+        var current = ""
+        var inQuotes = false
+        var i = command.startIndex
+        
+        while i < command.endIndex {
+            let char = command[i]
+            
+            if char == "\"" {
+                inQuotes.toggle()
+                i = command.index(after: i)
+            } else if char == " " && !inQuotes {
+                if !current.isEmpty {
+                    parts.append(current)
+                    current = ""
+                }
+                i = command.index(after: i)
+            } else {
+                current.append(char)
+                i = command.index(after: i)
+            }
+        }
+        
+        if !current.isEmpty {
+            parts.append(current)
+        }
+        
+        return parts
+    }
+
+
     private func resolveVariables(_ text: String, vars: [String: String]) -> String {
         var result = text
         for (key, value) in vars {
@@ -331,6 +575,8 @@ enum InstallerError: LocalizedError {
     case noWineVersion
     case noWinePrefix
     case extractionFailed
+    case prefixCreationFailed(String)
+    case networkError(String)
     case toolNotFound(String)
 
     var errorDescription: String? {
@@ -338,6 +584,8 @@ enum InstallerError: LocalizedError {
         case .noWineVersion: return "Keine Wine-Version gefunden"
         case .noWinePrefix: return "Kein Wine-Prefix vorhanden"
         case .extractionFailed: return "Extraktion fehlgeschlagen"
+        case .prefixCreationFailed(let path): return "Prefix-Verzeichnis konnte nicht erstellt werden: \(path)"
+        case .networkError(let msg): return "Netzwerkfehler: \(msg)"
         case .toolNotFound(let tool): return "Werkzeug nicht gefunden: \(tool). Installiere es via Homebrew."
         }
     }

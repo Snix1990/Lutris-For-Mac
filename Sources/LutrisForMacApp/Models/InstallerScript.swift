@@ -17,9 +17,10 @@ struct InstallerScript: Codable, Identifiable {
         case download(url: String, dest: String, description: String?)
         case extract(archive: String, dest: String, type: ExtractType?, description: String?)
         case execute(command: String, description: String?)
-        case wineExecute(executable: String, args: String?, winePrefix: String?, description: String?)
+        case wineExecute(executable: String, args: String?, winePrefix: String?, winePath: String?, description: String?)
+        case wineTricks(verbs: [String], prefixPath: String?, winePath: String?, description: String?)
         case wineCfg(description: String?)
-        case createPrefix(name: String, arch: String, description: String?)
+        case createPrefix(name: String?, arch: String, prefixPath: String?, winePath: String?, description: String?)
         case setEnvironment(key: String, value: String, description: String?)
         case message(text: String, description: String?)
         case input(prompt: String, variable: String, default: String?, description: String?)
@@ -28,6 +29,7 @@ struct InstallerScript: Codable, Identifiable {
             case type, path, dest, archive, url, executable, args, key, value
             case name, arch, command, text, prompt, variable, `default`
             case description, winePrefix, type_raw
+            case prefixPath, winePath, verbs
         }
 
         enum ExtractType: String, Codable {
@@ -35,7 +37,7 @@ struct InstallerScript: Codable, Identifiable {
         }
 
         enum TaskType: String, Codable {
-            case mkdir, download, extract, execute, wineExecute, wineCfg, createPrefix, setEnvironment, message, input
+            case mkdir, download, extract, execute, wineExecute, wineTricks, wineCfg, createPrefix, setEnvironment, message, input
         }
 
         init(from decoder: Decoder) throws {
@@ -63,13 +65,30 @@ struct InstallerScript: Codable, Identifiable {
                 let executable = try container.decode(String.self, forKey: .executable)
                 let args = try container.decodeIfPresent(String.self, forKey: .args)
                 let prefix = try container.decodeIfPresent(String.self, forKey: .winePrefix)
-                self = .wineExecute(executable: executable, args: args, winePrefix: prefix, description: desc)
+                let winePath = try container.decodeIfPresent(String.self, forKey: .winePath)
+                self = .wineExecute(executable: executable, args: args, winePrefix: prefix, winePath: winePath, description: desc)
+            case .wineTricks:
+                // verbs can be provided as single string (space separated) or as array
+                var verbsArr: [String] = []
+                if let v = try? container.decode([String].self, forKey: .verbs) {
+                    verbsArr = v
+                } else if let v = try? container.decodeIfPresent(String.self, forKey: .command) {
+                    verbsArr = v.split(separator: " ").map { String($0) }
+                } else if let _ = try? container.decodeIfPresent(String.self, forKey: .description) {
+                    // fallback: no verbs
+                    verbsArr = []
+                }
+                let prefixPath = try container.decodeIfPresent(String.self, forKey: .prefixPath)
+                let winePath = try container.decodeIfPresent(String.self, forKey: .winePath)
+                self = .wineTricks(verbs: verbsArr, prefixPath: prefixPath, winePath: winePath, description: desc)
             case .wineCfg:
                 self = .wineCfg(description: desc)
             case .createPrefix:
-                let name = try container.decode(String.self, forKey: .name)
+                let name = try container.decodeIfPresent(String.self, forKey: .name)
                 let arch = try container.decode(String.self, forKey: .arch)
-                self = .createPrefix(name: name, arch: arch, description: desc)
+                let prefixPath = try container.decodeIfPresent(String.self, forKey: .prefixPath)
+                let winePath = try container.decodeIfPresent(String.self, forKey: .winePath)
+                self = .createPrefix(name: name, arch: arch, prefixPath: prefixPath, winePath: winePath, description: desc)
             case .setEnvironment:
                 let key = try container.decode(String.self, forKey: .key)
                 let value = try container.decode(String.self, forKey: .value)
@@ -108,19 +127,28 @@ struct InstallerScript: Codable, Identifiable {
                 try container.encode(TaskType.execute, forKey: .type)
                 try container.encode(command, forKey: .command)
                 try container.encodeIfPresent(desc, forKey: .description)
-            case .wineExecute(let executable, let args, let prefix, let desc):
+            case .wineExecute(let executable, let args, let prefix, let winePath, let desc):
                 try container.encode(TaskType.wineExecute, forKey: .type)
                 try container.encode(executable, forKey: .executable)
                 try container.encodeIfPresent(args, forKey: .args)
                 try container.encodeIfPresent(prefix, forKey: .winePrefix)
+                try container.encodeIfPresent(winePath, forKey: .winePath)
+                try container.encodeIfPresent(desc, forKey: .description)
+            case .wineTricks(let verbs, let prefixPath, let winePath, let desc):
+                try container.encode(TaskType.wineTricks, forKey: .type)
+                try container.encodeIfPresent(verbs, forKey: .verbs)
+                try container.encodeIfPresent(prefixPath, forKey: .prefixPath)
+                try container.encodeIfPresent(winePath, forKey: .winePath)
                 try container.encodeIfPresent(desc, forKey: .description)
             case .wineCfg(let desc):
                 try container.encode(TaskType.wineCfg, forKey: .type)
                 try container.encodeIfPresent(desc, forKey: .description)
-            case .createPrefix(let name, let arch, let desc):
+            case .createPrefix(let name, let arch, let prefixPath, let winePath, let desc):
                 try container.encode(TaskType.createPrefix, forKey: .type)
-                try container.encode(name, forKey: .name)
+                try container.encodeIfPresent(name, forKey: .name)
                 try container.encode(arch, forKey: .arch)
+                try container.encodeIfPresent(prefixPath, forKey: .prefixPath)
+                try container.encodeIfPresent(winePath, forKey: .winePath)
                 try container.encodeIfPresent(desc, forKey: .description)
             case .setEnvironment(let key, let value, let desc):
                 try container.encode(TaskType.setEnvironment, forKey: .type)
@@ -190,9 +218,9 @@ struct InstallerScript: Codable, Identifiable {
             description: "Erstellt Wineprefix, lädt Installer und führt ihn aus",
             tasks: [
                 .input(prompt: "Setup.exe URL", variable: "setupUrl", default: nil, description: nil),
-                .createPrefix(name: "{gameName}-prefix", arch: "win64", description: "Erstelle Wineprefix"),
+                .createPrefix(name: "{gameName}-prefix", arch: "win64", prefixPath: nil, winePath: nil, description: "Erstelle Wineprefix"),
                 .download(url: "{setupUrl}", dest: "{tmp}/setup.exe", description: "Lade Installer herunter"),
-                .wineExecute(executable: "{tmp}/setup.exe", args: "/SILENT", winePrefix: "{gameName}-prefix", description: "Führe Installer aus"),
+                .wineExecute(executable: "{tmp}/setup.exe", args: "/SILENT", winePrefix: "{gameName}-prefix", winePath: nil, description: "Führe Installer aus"),
                 .message(text: "Installation abgeschlossen! Spiel ist bereit.", description: nil)
             ],
             requires: ["Wine"]

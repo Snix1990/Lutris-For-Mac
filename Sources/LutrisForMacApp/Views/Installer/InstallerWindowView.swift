@@ -109,6 +109,19 @@ struct InstallerWindowView: View {
 
             Divider()
 
+            if let jsonError = jsonError {
+                Text(jsonError)
+                    .font(.caption)
+                    .foregroundColor(.red)
+                    .padding(.horizontal)
+            }
+            if let engineError = engine.error, !engineError.isEmpty {
+                Text(engineError)
+                    .font(.caption)
+                    .foregroundColor(.red)
+                    .padding(.horizontal)
+            }
+
             // Navigation buttons
             HStack {
                 if currentStep > 0 {
@@ -468,7 +481,7 @@ struct InstallerWindowView: View {
                             summaryRow("Architektur", prefixArch)
                         }
                     }
-                    summaryRow("Quelle", sourceType == .url ? sourceURL : (sourceType == .file ? sourceFile?.lastPathComponent ?? "" : sourceType.rawValue))
+                    summaryRow("Quelle", sourceType == .url ? sourceURL : (sourceType == .file ? sourceFile?.path ?? "" : sourceType.rawValue))
                     if !envVars.isEmpty {
                         summaryRow("Umgebungsvariablen", envVars.map { "\($0.key)=\($0.value)" }.joined(separator: ", "))
                     }
@@ -523,12 +536,29 @@ struct InstallerWindowView: View {
         switch (runner, sourceType) {
         case ("Wine", .url):
             var t: [InstallerScript.InstallTask] = []
-            if !useExistingPrefix {
-                t.append(.createPrefix(name: prefixNameResolved, arch: prefixArchResolved, description: "Erstelle Wine-Prefix"))
+            t.append(.mkdir(path: "{gamePath}", description: "Erstelle Spiel-Ordner"))
+            var winePathForTasks: String? = nil
+            // If a Wine version is selected and cached, extract it from cache into the game folder before creating the prefix
+            if let sel = selectedWineVersion {
+                if wineManager.isCached(sel.name) {
+                    let safeName = sel.name
+                    let dest = "{gamePath}/\(safeName)"
+                    t.append(.extract(archive: wineManager.archivePathInCache(sel.name).path, dest: dest, type: nil, description: "Entpacke Wine aus Cache: \(safeName)"))
+                    winePathForTasks = "\(dest)/bin/wine"
+                } else {
+                    // installed version will be picked by useWineVersion variable
+                    winePathForTasks = nil
+                }
             }
+            if !useExistingPrefix {
+                t.append(.mkdir(path: "{gamePath}/prefix", description: "Erstelle Prefix-Ordner"))
+                t.append(.createPrefix(name: prefixNameResolved, arch: prefixArchResolved, prefixPath: "{gamePath}/prefix", winePath: winePathForTasks, description: "Erstelle Wine-Prefix"))
+            }
+            let winePrefixForTasks = useExistingPrefix ? (selectedExistingPrefix?.path ?? prefixNameResolved) : "{gamePath}/prefix"
+
             t.append(contentsOf: [
                 .download(url: sourceURL, dest: "{tmp}/setup.exe", description: "Lade Installer herunter"),
-                .wineExecute(executable: "{tmp}/setup.exe", args: nil, winePrefix: prefixNameResolved, description: "Führe Installer aus"),
+                .wineExecute(executable: "{tmp}/setup.exe", args: nil, winePrefix: winePrefixForTasks, winePath: winePathForTasks, description: "Führe Installer aus"),
                 .message(text: "\(gameName) wurde installiert!", description: nil),
             ])
             for (key, val) in envVars where !key.isEmpty {
@@ -539,12 +569,22 @@ struct InstallerWindowView: View {
         case ("Wine", .file):
             let src = sourceFile?.path ?? ""
             var t: [InstallerScript.InstallTask] = []
-            if !useExistingPrefix {
-                t.append(.createPrefix(name: prefixNameResolved, arch: prefixArchResolved, description: "Erstelle Wine-Prefix"))
+            t.append(.mkdir(path: "{gamePath}", description: "Erstelle Spiel-Ordner"))
+            var winePathForTasks: String? = nil
+            if let sel = selectedWineVersion, wineManager.isCached(sel.name) {
+                let safeName = sel.name
+                let dest = "{gamePath}/\(safeName)"
+                t.append(.extract(archive: wineManager.archivePathInCache(sel.name).path, dest: dest, type: nil, description: "Entpacke Wine aus Cache: \(safeName)"))
+                winePathForTasks = "\(dest)/bin/wine"
             }
+            if !useExistingPrefix {
+                t.append(.mkdir(path: "{gamePath}/prefix", description: "Erstelle Prefix-Ordner"))
+                t.append(.createPrefix(name: prefixNameResolved, arch: prefixArchResolved, prefixPath: "{gamePath}/prefix", winePath: winePathForTasks, description: "Erstelle Wine-Prefix"))
+            }
+            let winePrefixForTasks = useExistingPrefix ? (selectedExistingPrefix?.path ?? prefixNameResolved) : "{gamePath}/prefix"
+
             t.append(contentsOf: [
-                .execute(command: "cp \"\(src)\" \"{tmp}/setup.exe\"", description: "Kopiere Installer"),
-                .wineExecute(executable: "{tmp}/setup.exe", args: nil, winePrefix: prefixNameResolved, description: "Führe Installer aus"),
+                .wineExecute(executable: src, args: nil, winePrefix: winePrefixForTasks, winePath: winePathForTasks, description: "Führe Installer aus"),
                 .message(text: "\(gameName) wurde installiert!", description: nil),
             ])
             for (key, val) in envVars where !key.isEmpty {
@@ -578,6 +618,7 @@ struct InstallerWindowView: View {
 
         case ("DOSBox", .url):
             tasks = [
+                .mkdir(path: "{gamePath}", description: "Erstelle Spiel-Ordner"),
                 .download(url: sourceURL, dest: "{tmp}/game.zip", description: "Lade Spiel herunter"),
                 .extract(archive: "{tmp}/game.zip", dest: "{gamePath}", type: .zip, description: "Extrahiere Spiel"),
                 .message(text: "Spiel bereit. Starte es mit DOSBox.", description: nil),
@@ -586,12 +627,14 @@ struct InstallerWindowView: View {
         case ("DOSBox", .file):
             let src = sourceFile?.path ?? ""
             tasks = [
+                .mkdir(path: "{gamePath}", description: "Erstelle Spiel-Ordner"),
                 .execute(command: "cp -R \"\(src)\" \"{gamePath}/\"", description: "Kopiere Spiel"),
                 .message(text: "Spiel bereit. Starte es mit DOSBox.", description: nil),
             ]
 
         case ("RetroArch", .url):
             tasks = [
+                .mkdir(path: "{gamePath}", description: "Erstelle Spiel-Ordner"),
                 .download(url: sourceURL, dest: "{gamePath}/rom", description: "Lade ROM herunter"),
                 .message(text: "ROM installiert. Starte es mit RetroArch.", description: nil),
             ]
@@ -621,30 +664,36 @@ struct InstallerWindowView: View {
     }
 
     private func installFromWizard() {
+        jsonError = nil
+        engine.error = nil
         generateScriptFromWizard()
-        guard let data = generatedJSON.data(using: .utf8),
-              let script = try? JSONDecoder().decode(InstallerScript.self, from: data) else {
-            jsonError = "Konnte Script nicht erzeugen"
+        guard let data = generatedJSON.data(using: .utf8) else {
+            jsonError = "Konnte Script nicht erzeugen: Ungültige JSON-Daten"
             return
         }
 
-        Task {
-            engine.variables["useWineVersion"] = selectedWineVersion?.name
-            let success = await engine.run(script: script, gamePath: installPath, gameName: gameName)
-            if success {
-                let game = Game(
-                    name: gameName,
-                    platform: script.platform,
-                    installPath: installPath,
-                    runner: script.runner,
-                    notes: "Installiert via Assistent"
-                )
-                await MainActor.run {
-                    viewModel.games.append(game)
-                    viewModel.saveLibrary()
-                    installSuccess = true
+        do {
+            let script = try JSONDecoder().decode(InstallerScript.self, from: data)
+            Task {
+                engine.variables["useWineVersion"] = selectedWineVersion?.name
+                let success = await engine.run(script: script, gamePath: installPath, gameName: gameName)
+                if success {
+                    let game = Game(
+                        name: gameName,
+                        platform: script.platform,
+                        installPath: installPath,
+                        runner: script.runner,
+                        notes: "Installiert via Assistent"
+                    )
+                    await MainActor.run {
+                        viewModel.games.append(game)
+                        viewModel.saveLibrary()
+                        installSuccess = true
+                    }
                 }
             }
+        } catch {
+            jsonError = "Konnte Script nicht erzeugen: \(error.localizedDescription)"
         }
     }
 
@@ -753,7 +802,7 @@ struct InstallerWindowView: View {
                 Text(engine.currentTaskDescription)
                     .font(.subheadline).foregroundColor(.secondary)
 
-                ScrollView {
+                ScrollView(.vertical, showsIndicators: true) {
                     VStack(alignment: .leading, spacing: 2) {
                         ForEach(Array(engine.log.enumerated()), id: \.offset) { _, line in
                             Text(line)
@@ -761,8 +810,9 @@ struct InstallerWindowView: View {
                                 .frame(maxWidth: .infinity, alignment: .leading)
                         }
                     }
+                    .padding(.vertical, 4)
                 }
-                .frame(maxHeight: 200)
+                .frame(maxHeight: 220)
                 .padding(8)
                 .background(Color(nsColor: .textBackgroundColor))
                 .clipShape(RoundedRectangle(cornerRadius: 6))
@@ -789,14 +839,16 @@ struct InstallerWindowView: View {
             LText("Das Spiel wurde zur Bibliothek hinzugefügt.")
                 .foregroundColor(.secondary)
 
-            ScrollView {
+            ScrollView(.vertical, showsIndicators: true) {
                 VStack(alignment: .leading, spacing: 2) {
                     ForEach(Array(engine.log.enumerated()), id: \.offset) { _, line in
                         Text(line).font(.caption).foregroundColor(.secondary)
                     }
+                    .frame(maxWidth: .infinity, alignment: .leading)
                 }
+                .padding(.vertical, 4)
             }
-            .frame(maxHeight: 150)
+            .frame(maxHeight: 170)
             .padding(8)
             .background(Color(nsColor: .textBackgroundColor))
             .clipShape(RoundedRectangle(cornerRadius: 6))
@@ -827,7 +879,7 @@ struct InstallerWindowView: View {
         panel.allowedContentTypes = [.exe, .application, .diskImage, .zip, .archive]
         panel.prompt = tr("Auswählen")
         if panel.runModal() == .OK, let url = panel.url {
-            sourceFile = url
+            sourceFile = url.standardizedFileURL
         }
     }
 }

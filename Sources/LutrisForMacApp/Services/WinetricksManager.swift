@@ -143,7 +143,7 @@ final class WinetricksManager: ObservableObject {
         verbs = parsed
     }
 
-    func run(verbs: [String], prefix: String, architecture: String) -> AsyncStream<String> {
+    func run(verbs: [String], prefix: String, architecture: String, winePath: String? = nil) -> AsyncStream<String> {
         AsyncStream { continuation in
             Task {
                 guard let binary = binaryPath else {
@@ -162,6 +162,16 @@ final class WinetricksManager: ObservableObject {
                 var env = ProcessInfo.processInfo.environment
                 env["WINEPREFIX"] = prefix
                 env["WINEARCH"] = architecture
+                if let winePath {
+                    env["WINE"] = winePath
+                    let wineDir = URL(fileURLWithPath: winePath).deletingLastPathComponent().path
+                    let existingPath = env["PATH"] ?? "/usr/bin:/bin:/usr/sbin:/sbin"
+                    env["PATH"] = [wineDir, "/opt/homebrew/bin", "/usr/local/bin", "\(NSHomeDirectory())/.homebrew/bin", existingPath].joined(separator: ":")
+                } else {
+                    let brewPaths = ["/opt/homebrew/bin", "/usr/local/bin", "\(NSHomeDirectory())/.homebrew/bin"]
+                    let existingPath = env["PATH"] ?? "/usr/bin:/bin:/usr/sbin:/sbin"
+                    env["PATH"] = brewPaths.joined(separator: ":") + ":" + existingPath
+                }
                 task.environment = env
 
                 let pipe = Pipe()
