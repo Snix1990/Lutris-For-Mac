@@ -152,7 +152,7 @@ struct Emulator: Identifiable, Codable {
             category: .retro,
             description: "macOS-native Multi-System-Emulator",
             supportsPlatforms: ["Multi"],
-            installType: .dmg,
+            installType: .zip,
             appName: "OpenEmu.app",
             bundleID: "org.openemu.OpenEmu",
             githubOwner: "OpenEmu",
@@ -167,11 +167,9 @@ struct Emulator: Identifiable, Codable {
             category: .nintendo,
             description: "GameCube- und Wii-Emulator mit hoher Kompatibilität",
             supportsPlatforms: ["GameCube", "Wii"],
-            installType: .dmg,
+            installType: .homebrew,
             appName: "Dolphin.app",
             brewName: "dolphin-emu",
-            githubOwner: "dolphin-emu",
-            githubRepo: "dolphin",
             downloadPageURL: "https://dolphin-emu.org/download/"
         ),
         Emulator(
@@ -186,18 +184,7 @@ struct Emulator: Identifiable, Codable {
             githubRepo: "melonDS",
             downloadPageURL: "https://melonds.kuribo64.net/downloads.php"
         ),
-        Emulator(
-            name: "Ryujinx",
-            displayName: "Ryujinx (Nintendo Switch)",
-            category: .nintendo,
-            description: "Nintendo-Switch-Emulator für macOS (Apple Silicon)",
-            supportsPlatforms: ["Switch"],
-            installType: .dmg,
-            appName: "Ryujinx.app",
-            githubOwner: "Ryujinx",
-            githubRepo: "Ryujinx",
-            downloadPageURL: "https://ryujinx.org/download"
-        ),
+        // Ryujinx entfernt (GitHub-Repository wurde auf Anfrage von Nintendo gelöscht)
         Emulator(
             name: "Astris",
             displayName: "Astris (Nintendo Switch)",
@@ -230,23 +217,14 @@ struct Emulator: Identifiable, Codable {
             category: .playstation,
             description: "PlayStation-2-Emulator mit breiter Spielunterstützung",
             supportsPlatforms: ["PS2"],
-            installType: .dmg,
+            installType: .tarGz,
             appName: "PCSX2.app",
             brewName: "pcsx2",
             githubOwner: "PCSX2",
             githubRepo: "pcsx2",
             downloadPageURL: "https://pcsx2.net/downloads/"
         ),
-        Emulator(
-            name: "RPCS3",
-            displayName: "RPCS3 (PlayStation 3)",
-            category: .playstation,
-            description: "PlayStation-3-Emulator – experimentell auf macOS",
-            supportsPlatforms: ["PS3"],
-            installType: .dmg,
-            appName: "RPCS3.app",
-            downloadPageURL: "https://rpcs3.net/download"
-        ),
+        // RPCS3 entfernt (kein macOS-Support mehr seit 2022)
         Emulator(
             name: "DuckStation",
             displayName: "DuckStation (PlayStation 1)",
@@ -280,7 +258,7 @@ struct Emulator: Identifiable, Codable {
             category: .handheld,
             description: "PSP-Emulator mit Hochskalierung",
             supportsPlatforms: ["PSP"],
-            installType: .dmg,
+            installType: .zip,
             appName: "PPSSPP.app",
             brewName: "ppsspp",
             githubOwner: "hrydgard",
