@@ -184,7 +184,16 @@ struct Emulator: Identifiable, Codable {
             githubRepo: "melonDS",
             downloadPageURL: "https://melonds.kuribo64.net/downloads.php"
         ),
-        // Ryujinx entfernt (GitHub-Repository wurde auf Anfrage von Nintendo gelöscht)
+        Emulator(
+            name: "Ryujinx",
+            displayName: "Ryujinx (Nintendo Switch, Canary)",
+            category: .nintendo,
+            description: "Nintendo-Switch-Emulator (Canary-Fork nach DMCA)",
+            supportsPlatforms: ["Switch"],
+            installType: .tarGz,
+            appName: "Ryujinx.app",
+            downloadPageURL: "https://git.ryujinx.app/Ryubing/Canary/releases"
+        ),
         Emulator(
             name: "Astris",
             displayName: "Astris (Nintendo Switch)",
@@ -224,7 +233,16 @@ struct Emulator: Identifiable, Codable {
             githubRepo: "pcsx2",
             downloadPageURL: "https://pcsx2.net/downloads/"
         ),
-        // RPCS3 entfernt (kein macOS-Support mehr seit 2022)
+        Emulator(
+            name: "RPCS3",
+            displayName: "RPCS3 (PlayStation 3)",
+            category: .playstation,
+            description: "PlayStation-3-Emulator – Download über rpcs3.net (kein Auto-Install)",
+            supportsPlatforms: ["PS3"],
+            installType: .tarGz,
+            appName: "RPCS3.app",
+            downloadPageURL: "https://github.com/RPCS3/rpcs3/releases"
+        ),
         Emulator(
             name: "DuckStation",
             displayName: "DuckStation (PlayStation 1)",
