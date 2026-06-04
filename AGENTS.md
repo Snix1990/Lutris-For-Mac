@@ -63,6 +63,7 @@ Build a SwiftUI macOS game library manager (LutrisForMac) with fully integrated 
 - DesktopIntegrationManager (create/remove .app shortcut bundles on Desktop, login item via SMAppService, Discord RPC via Unix socket IPC with SET_ACTIVITY)
 - DesktopIntegrationView (login item toggle, Discord RPC toggle, shortcut info)
 - **Discord RPC Lifecycle**: Discord-Presence wird beim Spielstart gesetzt und per pgrep-basierter Prozessüberwachung (`waitForGameProcess(exePath:)`) beim Spiel-Ende gelöscht
+- **Git**: Remote ist `origin` (HTTPS). `opencode` darf selbstständig committen und pushen. Vor Push immer `git pull --rebase` (global `pull.rebase true`). Commit-Nachrichten auf Englisch, prägnant.
 
 **Search & Organisation:**
 - SearchBar in LibraryView (Echtzeit-Filter, X-Button)
