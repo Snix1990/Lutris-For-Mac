@@ -285,7 +285,7 @@ struct Emulator: Identifiable, Codable {
             brewName: "ppsspp",
             githubOwner: "hrydgard",
             githubRepo: "ppsspp",
-            downloadPageURL: "https://www.ppsspp.org/download/"
+            downloadPageURL: "https://github.com/hrydgard/ppsspp/releases"
         ),
 
         // --- Mobile / iPad ---
