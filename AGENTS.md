@@ -95,7 +95,11 @@ Build a SwiftUI macOS game library manager (LutrisForMac) with fully integrated 
 - Goldberg DLLs deployen per Button in GameDetailView
 
 **Console Emulator System:**
-- 18 Emulatoren mit Download/Install/Update/GitHub-API/Version-Tracking
+- 16 Emulatoren mit Download/Install/Update/GitHub-API/Version-Tracking
+- Sources systematically verified via GitHub API, Homebrew, direct URLs
+- Ryujinx: re-hosted on git.ryujinx.app (Forgejo, behind Anubis) – manual download only
+- RPCS3: GitHub (RPCS3/rpcs3, v0.0.41, no assets) – manual download via rpcs3.net
+- DuckStation: direct download via `latest` tag (rolling release, no version comparison)
 
 **Language System:**
 - 18 Sprachen: de, en, fr, es, it, pt‑BR, ru, zh‑Hans, ja, ko, ar, hi, tr, pl, nl, sv, vi, cs
