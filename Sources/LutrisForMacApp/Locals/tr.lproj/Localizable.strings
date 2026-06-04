@@ -192,7 +192,7 @@
 "Keine Cover gefunden" = "Kapak bulunamadı";
 "Keine CrossOver-Installation gefunden. Stelle sicher, dass CrossOver.app im Programme-Ordner ist." = "CrossOver kurulumu bulunamadı. CrossOver.app'in Programlar klasöründe olduğundan emin olun.";
 "Keine CrossOver-Installationen gefunden" = "CrossOver kurulumu bulunamadı";
-"Keine Emulatoren in dieser Kategorie" = "Bu kategoride emülatör yok";
+"Keine Emulatoren für diese Plattform" = "Bu platformda emülatör yok";
 "Keine Prefixes vorhanden" = "Prefix mevcut değil";
 "Keine Skripte gefunden" = "Betik bulunamadı";
 "Keine Spiele gefunden" = "Oyun bulunamadı";

@@ -2,12 +2,15 @@ import SwiftUI
 
 struct GameRowView: View {
     let game: Game
+    let isSelected: Bool
     let onLaunch: (() -> Void)?
     private let mediaStore = MediaStore.shared
     @State private var coverImage: NSImage?
+    @State private var isHovered = false
 
-    init(game: Game, onLaunch: (() -> Void)? = nil) {
+    init(game: Game, isSelected: Bool = false, onLaunch: (() -> Void)? = nil) {
         self.game = game
+        self.isSelected = isSelected
         self.onLaunch = onLaunch
     }
 
@@ -71,6 +74,15 @@ struct GameRowView: View {
                 .onTapGesture(count: 2) {
                     onLaunch?()
                 }
+        )
+        .onHover { hovering in
+            withAnimation(.easeInOut(duration: 0.15)) {
+                isHovered = hovering
+            }
+        }
+        .overlay(
+            RoundedRectangle(cornerRadius: 6)
+                .stroke(Color.accentColor, lineWidth: isSelected || isHovered ? 1.5 : 0)
         )
         .onAppear {
             coverImage = mediaStore.cachedImage(for: game.id.uuidString, type: .cover)

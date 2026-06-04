@@ -1,6 +1,7 @@
 import SwiftUI
 
 struct WinetricksView: View {
+    @Environment(\.dismiss) private var dismiss
     @StateObject private var winetricks = WinetricksManager.shared
     @ObservedObject var wineManager: WineManager
     @State private var selectedPrefix: WinePrefix?
@@ -35,6 +36,18 @@ struct WinetricksView: View {
 
     var body: some View {
         VStack(spacing: 0) {
+            HStack {
+                LText("Winetricks")
+                    .font(.title2)
+                    .bold()
+                Spacer()
+                Button { dismiss() } label: { LText("Schliessen") }
+                    .keyboardShortcut(.cancelAction)
+            }
+            .padding()
+
+            Divider()
+
             if !winetricks.isInstalled {
                 notInstalledView
             } else {

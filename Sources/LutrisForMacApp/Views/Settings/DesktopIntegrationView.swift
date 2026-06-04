@@ -11,6 +11,8 @@ struct DesktopIntegrationView: View {
                 .bold()
                 .padding()
 
+            Divider()
+
             Form {
                 Section(header: Text(verbatim: tr("Allgemein"))) {
                     Toggle(isOn: $integration.launchAtLogin) {

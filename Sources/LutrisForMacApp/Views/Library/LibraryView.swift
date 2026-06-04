@@ -129,7 +129,7 @@ struct LibraryView: View {
         ScrollView {
             LazyVStack(spacing: 0) {
                 ForEach(viewModel.filteredGames) { game in
-                    GameRowView(game: game, onLaunch: onLaunch.map { launch in { launch(game) } })
+                    GameRowView(game: game, isSelected: game.id == selectedGameID, onLaunch: onLaunch.map { launch in { launch(game) } })
                         .highPriorityGesture(
                             TapGesture().onEnded { selectedGameID = game.id }
                         )
@@ -143,7 +143,7 @@ struct LibraryView: View {
         ScrollView {
             LazyVGrid(columns: [GridItem(.adaptive(minimum: 160), spacing: 16)], spacing: 16) {
                 ForEach(viewModel.filteredGames) { game in
-                    GameTileView(game: game, onLaunch: onLaunch.map { launch in { launch(game) } })
+                    GameTileView(game: game, isSelected: game.id == selectedGameID, onLaunch: onLaunch.map { launch in { launch(game) } })
                         .highPriorityGesture(
                             TapGesture().onEnded { selectedGameID = game.id }
                         )

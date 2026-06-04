@@ -1,6 +1,7 @@
 import SwiftUI
 
 struct CrossOverTricksView: View {
+    @Environment(\.dismiss) private var dismiss
     @StateObject private var manager = CrossOverTricksManager.shared
     @ObservedObject var wineManager: WineManager
     @State private var selectedBottle: WinePrefix?
@@ -29,6 +30,18 @@ struct CrossOverTricksView: View {
 
     var body: some View {
         VStack(spacing: 0) {
+            HStack {
+                LText("CrossOver Tricks")
+                    .font(.title2)
+                    .bold()
+                Spacer()
+                Button { dismiss() } label: { LText("Schliessen") }
+                    .keyboardShortcut(.cancelAction)
+            }
+            .padding()
+
+            Divider()
+
             if installFailed {
                 errorBanner
             }

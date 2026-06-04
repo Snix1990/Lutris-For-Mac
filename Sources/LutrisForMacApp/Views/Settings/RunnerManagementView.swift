@@ -12,6 +12,8 @@ struct RunnerManagementView: View {
                 .bold()
                 .padding()
 
+            Divider()
+
             List {
                 Section(header: Text(verbatim: tr("Verfügbare Runner"))) {
                     ForEach(runnerManager.runners) { runner in

@@ -1,6 +1,7 @@
 import SwiftUI
 
 struct WineSettingsView: View {
+    @Environment(\.dismiss) private var dismiss
     @StateObject private var wineManager = WineManager.shared
     @State private var selectedTab: Tab = .versions
 
@@ -13,13 +14,26 @@ struct WineSettingsView: View {
 
     var body: some View {
         VStack(spacing: 0) {
+            HStack {
+                LText("Wine-Einstellungen")
+                    .font(.title2)
+                    .bold()
+                Spacer()
+                Button { dismiss() } label: { LText("Schliessen") }
+                    .keyboardShortcut(.cancelAction)
+            }
+            .padding()
+
+            Divider()
+
             Picker("", selection: $selectedTab) {
                 ForEach(Tab.allCases, id: \.self) { tab in
                     Text(tab.rawValue).tag(tab)
                 }
             }
             .pickerStyle(.segmented)
-            .padding()
+            .padding(.horizontal)
+            .padding(.bottom, 8)
 
             switch selectedTab {
             case .versions:
@@ -32,7 +46,6 @@ struct WineSettingsView: View {
                 WinetricksView(wineManager: wineManager)
             }
         }
-        .frame(minWidth: 640, minHeight: 480)
     }
 
     // MARK: - Versions Tab

@@ -7,6 +7,7 @@ struct ControllerSettingsView: View {
     var body: some View {
         VStack(spacing: 0) {
             header
+            Divider()
             controllerList
 
             if !controllerManager.lastActivity.isEmpty {

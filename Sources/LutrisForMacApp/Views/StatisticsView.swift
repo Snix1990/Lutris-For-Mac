@@ -11,6 +11,8 @@ struct StatisticsView: View {
                 .bold()
                 .padding()
 
+            Divider()
+
             ScrollView {
                 VStack(spacing: 24) {
                     // Übersicht

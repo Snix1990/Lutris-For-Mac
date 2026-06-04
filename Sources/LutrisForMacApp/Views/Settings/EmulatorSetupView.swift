@@ -1,8 +1,9 @@
 import SwiftUI
 
 struct EmulatorSetupView: View {
+    @Environment(\.dismiss) private var dismiss
     @StateObject private var manager = EmulatorManager.shared
-    @State private var selectedCategory: String = "Alle"
+    @State private var selectedPlatform: String = "Alle"
     @State private var isCheckingUpdates = false
 
     var body: some View {
@@ -56,42 +57,68 @@ struct EmulatorSetupView: View {
                 .padding(.bottom, 4)
             }
 
-            // Kategorie-Auswahl
-            Picker(selection: $selectedCategory) {
-                LText("Alle").tag("Alle")
-                ForEach(Runner.RunnerCategory.allCases, id: \.rawValue) { cat in
-                    Text(cat.rawValue).tag(cat.rawValue)
-                }
-            } label: {
-                LText("Kategorie")
-            }
-            .pickerStyle(.segmented)
-            .padding(.horizontal)
-            .padding(.vertical, 8)
-
-            // Emulator-Liste
-            ScrollView {
-                LazyVStack(spacing: 8) {
-                    let filtered = filteredEmulators
-                    if filtered.isEmpty {
-                        VStack(spacing: 8) {
-                            Image(systemName: "magnifyingglass")
-                                .font(.largeTitle)
-                                .foregroundColor(.secondary)
-                            LText("Keine Emulatoren in dieser Kategorie")
-                                .foregroundColor(.secondary)
+            HStack(spacing: 0) {
+                ScrollView {
+                    VStack(spacing: 0) {
+                        ForEach(platforms, id: \.self) { platform in
+                            Button {
+                                selectedPlatform = platform
+                            } label: {
+                                HStack {
+                                    Text(platform)
+                                        .foregroundColor(selectedPlatform == platform ? .accentColor : .primary)
+                                    Spacer()
+                                }
+                                .padding(.horizontal, 12)
+                                .padding(.vertical, 8)
+                                .background(
+                                    selectedPlatform == platform
+                                        ? Color.accentColor.opacity(0.1)
+                                        : Color.clear
+                                )
+                            }
+                            .buttonStyle(.plain)
                         }
-                        .padding(.top, 40)
                     }
-                    ForEach(filtered) { emu in
-                        EmulatorRow(emu: emu, manager: manager)
-                    }
+                    .padding(.vertical, 8)
                 }
-                .padding()
+                .background(Color(nsColor: .controlBackgroundColor))
+                .frame(width: 130)
+
+                Divider()
+
+                ScrollView {
+                    VStack(spacing: 16) {
+                        let filtered = filteredEmulators
+                        if filtered.isEmpty {
+                            VStack(spacing: 8) {
+                                Image(systemName: "magnifyingglass")
+                                    .font(.largeTitle)
+                                    .foregroundColor(.secondary)
+                                LText("Keine Emulatoren für diese Plattform")
+                                    .foregroundColor(.secondary)
+                            }
+                            .padding(.top, 40)
+                            .frame(maxWidth: .infinity)
+                        }
+                        ForEach(filtered) { emu in
+                            EmulatorRow(emu: emu, manager: manager)
+                        }
+                    }
+                    .padding(20)
+                }
             }
+
+            Divider()
+
+            HStack {
+                Spacer()
+                Button { dismiss() } label: { LText("Schliessen") }
+                    .keyboardShortcut(.cancelAction)
+            }
+            .padding()
         }
         .frame(width: 640, height: 540)
-        .background(Color(nsColor: .controlBackgroundColor))
         .onAppear {
             manager.detectInstalled()
             Task { await manager.checkForUpdates() }
@@ -99,10 +126,15 @@ struct EmulatorSetupView: View {
     }
 
     private var filteredEmulators: [Emulator] {
-        if selectedCategory == "Alle" {
+        if selectedPlatform == "Alle" {
             return manager.emulators
         }
-        return manager.emulators.filter { $0.category.rawValue == selectedCategory }
+        return manager.emulators.filter { $0.supportsPlatforms.contains(selectedPlatform) }
+    }
+
+    private var platforms: [String] {
+        let all = manager.emulators.flatMap(\.supportsPlatforms)
+        return ["Alle"] + Set(all).sorted()
     }
 }
 
@@ -140,7 +172,6 @@ private struct EmulatorRow: View {
 
             Spacer()
 
-            // Status + Buttons
             if manager.isDownloading && manager.installStatus.contains(emu.displayName) {
                 if manager.downloadProgress > 0 && manager.downloadProgress < 1 {
                     ProgressView(value: manager.downloadProgress)
@@ -175,7 +206,6 @@ private struct EmulatorRow: View {
                         LText("Aktualisieren")
                     }
                     .buttonStyle(.borderedProminent)
-                    .controlSize(.small)
                 }
             } else if emu.installed {
                 HStack(spacing: 4) {
@@ -202,7 +232,6 @@ private struct EmulatorRow: View {
                     LText("Installieren")
                 }
                 .buttonStyle(.borderedProminent)
-                .controlSize(.small)
             }
 
             Button {
@@ -216,11 +245,5 @@ private struct EmulatorRow: View {
             .helpLText("Download-Seite öffnen")
         }
         .padding(10)
-        .background(Color(nsColor: .controlBackgroundColor))
-        .cornerRadius(8)
-        .overlay(
-            RoundedRectangle(cornerRadius: 8)
-                .stroke(Color(nsColor: .separatorColor).opacity(0.3), lineWidth: 1)
-        )
     }
 }

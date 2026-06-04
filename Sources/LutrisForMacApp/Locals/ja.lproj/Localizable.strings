@@ -193,7 +193,7 @@
 "Keine Cover gefunden" = "カバーが見つかりません";
 "Keine CrossOver-Installation gefunden. Stelle sicher, dass CrossOver.app im Programme-Ordner ist." = "CrossOverのインストールが見つかりません。CrossOver.appがアプリケーションフォルダにあることを確認してください。";
 "Keine CrossOver-Installationen gefunden" = "CrossOverのインストールが見つかりません";
-"Keine Emulatoren in dieser Kategorie" = "このカテゴリにエミュレータはありません";
+"Keine Emulatoren für diese Plattform" = "このプラットフォームにエミュレータはありません";
 "Keine Prefixes vorhanden" = "利用可能なPrefixがありません";
 "Keine Skripte gefunden" = "スクリプトが見つかりません";
 "Keine Spiele gefunden" = "ゲームが見つかりません";

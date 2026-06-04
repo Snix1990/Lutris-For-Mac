@@ -12,6 +12,7 @@ struct SteamLibrarySyncView: View {
     var body: some View {
         VStack(spacing: 0) {
             header
+            Divider()
             formContent
             Spacer()
             footer

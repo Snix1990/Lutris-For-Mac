@@ -39,7 +39,6 @@ struct LutrisForMacApp: App {
         }
         .windowResizability(.contentSize)
         .defaultSize(width: 520, height: 280)
-        .windowStyle(.hiddenTitleBar)
 
         WindowGroup(id: "installer") {
             InstallerWindowView(viewModel: viewModel)

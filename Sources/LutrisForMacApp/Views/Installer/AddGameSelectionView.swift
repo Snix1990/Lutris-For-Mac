@@ -36,7 +36,6 @@ struct AddGameSelectionView: View {
         }
         .padding(32)
         .frame(width: 520, height: 280)
-        .background(MovableWindow())
     }
 
     private func selectionButton(icon: String, title: String, description: String, action: @escaping () -> Void) -> some View {
@@ -63,25 +62,4 @@ struct AddGameSelectionView: View {
         }
         .buttonStyle(.plain)
     }
-}
-
-/// Borderloses Fenster ohne jegliche Dekoration.
-private struct MovableWindow: NSViewRepresentable {
-    func makeNSView(context: Context) -> NSView {
-        let view = NSView()
-        DispatchQueue.main.async {
-            guard let w = view.window else { return }
-            w.styleMask = [.fullSizeContentView, .titled, .closable]
-            w.titlebarAppearsTransparent = true
-            w.titleVisibility = .hidden
-            w.isMovableByWindowBackground = true
-            w.showsToolbarButton = false
-            // Alle Traffic-Lights verstecken
-            w.standardWindowButton(.closeButton)?.isHidden = true
-            w.standardWindowButton(.miniaturizeButton)?.isHidden = true
-            w.standardWindowButton(.zoomButton)?.isHidden = true
-        }
-        return view
-    }
-    func updateNSView(_ nsView: NSView, context: Context) {}
 }

@@ -14,12 +14,15 @@ struct SidebarView: View {
     @State private var showSteamSync = false
     @State private var crossoverImportResult: Int?
     @State private var showCrossOverAlert = false
+    @State private var isFavHovered = false
 
     var body: some View {
         List {
-            Toggle(isOn: $viewModel.showFavoritesOnly) {
+            Button {
+                viewModel.showFavoritesOnly.toggle()
+            } label: {
                 HStack {
-                    Image(systemName: "star.fill")
+                    Image(systemName: viewModel.showFavoritesOnly ? "star.fill" : "star")
                         .foregroundColor(.yellow)
                         .frame(width: 18)
                     LText("Favoriten").font(.system(size: 13))
@@ -30,8 +33,18 @@ struct SidebarView: View {
                             .foregroundColor(.secondary)
                     }
                 }
+                .frame(maxWidth: .infinity, alignment: .leading)
             }
-            .toggleStyle(.button)
+            .buttonStyle(.plain)
+            .background(
+                RoundedRectangle(cornerRadius: 6)
+                    .fill(isFavHovered || viewModel.showFavoritesOnly ? Color.accentColor : Color.clear)
+            )
+            .onHover { hovering in
+                withAnimation(.easeInOut(duration: 0.15)) {
+                    isFavHovered = hovering
+                }
+            }
 
             Section(header: Text(verbatim: tr("Filter")).font(.system(size: 16)).textCase(nil)) {
                 Button {
@@ -47,6 +60,7 @@ struct SidebarView: View {
                             .foregroundColor(isAllSelected ? .accentColor : .primary)
                         Spacer()
                     }
+                    .hoverBorder()
                 }
                 .buttonStyle(.plain)
             }
@@ -60,9 +74,10 @@ struct SidebarView: View {
                         } label: {
                             HStack {
                                 Text(platform)
-                                    .foregroundColor(.primary)
+                                    .foregroundColor(viewModel.selectedPlatform == platform ? .accentColor : .primary)
                                 Spacer()
                             }
+                            .hoverBorder()
                         }
                         .buttonStyle(.plain)
                     }
@@ -78,9 +93,10 @@ struct SidebarView: View {
                         } label: {
                             HStack {
                                 Text(cat)
-                                    .foregroundColor(.primary)
+                                    .foregroundColor(viewModel.selectedGameCategory == cat ? .accentColor : .primary)
                                 Spacer()
                             }
+                            .hoverBorder()
                         }
                         .buttonStyle(.plain)
                     }
@@ -96,7 +112,7 @@ struct SidebarView: View {
                         } label: {
                             HStack {
                                 Text(service.displayName)
-                                    .foregroundColor(.primary)
+                                    .foregroundColor(viewModel.selectedRunner == service.name ? .accentColor : .primary)
                                 Spacer()
                                 if service.gameCount > 0 {
                                     Text("\(service.gameCount)")
@@ -104,6 +120,7 @@ struct SidebarView: View {
                                         .foregroundColor(.secondary)
                                 }
                             }
+                            .hoverBorder()
                         }
                         .buttonStyle(.plain)
                     }
@@ -115,6 +132,7 @@ struct SidebarView: View {
                     showServices = true
                 } label: {
                     LText("Alle scannen")
+                        .hoverBorder()
                 }
                 .buttonStyle(.plain)
 
@@ -122,6 +140,7 @@ struct SidebarView: View {
                     showSteamSync = true
                 } label: {
                     LText("Steam-Bibliothek")
+                        .hoverBorder()
                 }
                 .buttonStyle(.plain)
 
@@ -133,6 +152,7 @@ struct SidebarView: View {
                     }
                 } label: {
                     LText("CrossOver scannen")
+                        .hoverBorder()
                 }
                 .buttonStyle(.plain)
             }
@@ -151,6 +171,7 @@ struct SidebarView: View {
                                 .foregroundColor(.secondary)
                         }
                     }
+                    .hoverBorder()
                 }
                 .buttonStyle(.plain)
 
@@ -167,6 +188,7 @@ struct SidebarView: View {
                                 .foregroundColor(.secondary)
                         }
                     }
+                    .hoverBorder()
                 }
                 .buttonStyle(.plain)
 
@@ -174,6 +196,7 @@ struct SidebarView: View {
                     showDesktopIntegration = true
                 } label: {
                     LText("Desktop")
+                        .hoverBorder()
                 }
                 .buttonStyle(.plain)
 
@@ -181,6 +204,7 @@ struct SidebarView: View {
                     showRunnerManager = true
                 } label: {
                     LText("Runner verwalten")
+                        .hoverBorder()
                 }
                 .buttonStyle(.plain)
 
@@ -188,6 +212,7 @@ struct SidebarView: View {
                     showStatistics = true
                 } label: {
                     LText("Statistiken")
+                        .hoverBorder()
                 }
                 .buttonStyle(.plain)
             }

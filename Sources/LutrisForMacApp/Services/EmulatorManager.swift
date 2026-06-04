@@ -182,16 +182,23 @@ final class EmulatorManager: ObservableObject {
 
     private func assetScore(_ name: String, _ keywords: [String]) -> Int {
         var score = 0
+
+        // Nicht-macOS-Plattformen stark bestrafen
+        if name.contains("windows") || name.contains("win-") { score -= 30 }
+        if name.contains("linux") || name.contains("anylinux") { score -= 30 }
+        if name.contains(".AppImage") || name.contains(".deb") || name.contains(".rpm") || name.contains(".ipa") { score -= 30 }
+
         if name.hasSuffix(".dmg") { score += 10 }
         if name.hasSuffix(".zip") { score += 5 }
         if name.hasSuffix(".tar.gz") || name.hasSuffix(".tar.xz") { score += 3 }
 
-        // ARM64 bevorzugen
+        // macOS-Keyword-Bonus hoch genug, um selbst Windows ARM64 zu schlagen
+        for kw in keywords where name.contains(kw) { score += 20 }
+
+        // Architektur nur innerhalb der macOS-Assets unterscheiden
         if name.contains("arm64") || name.contains("aarch64") || name.contains("apple-silicon") { score += 8 }
-        // x86_64
         if name.contains("x86_64") || name.contains("amd64") || name.contains("intel") { score += 4 }
 
-        for kw in keywords where name.contains(kw) { score += 2 }
         return score
     }
 

@@ -10,6 +10,7 @@ struct ServiceSettingsView: View {
     var body: some View {
         VStack(spacing: 0) {
             header
+            Divider()
             serviceList
             scannedList
             footer
