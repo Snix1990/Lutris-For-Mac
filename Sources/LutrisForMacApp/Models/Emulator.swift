@@ -26,9 +26,25 @@ struct Emulator: Identifiable, Codable {
     var installedVersion: String = ""
     var latestVersion: String = ""
 
+    private static func extractVersion(_ s: String) -> [Int] {
+        guard let range = s.range(of: #"\d+(\.\d+)*"#, options: .regularExpression) else { return [] }
+        return s[range].split(separator: ".").compactMap { Int($0) }
+    }
+
+    private static func compareVersions(_ a: String, _ b: String) -> ComparisonResult {
+        let va = extractVersion(a), vb = extractVersion(b)
+        for i in 0..<min(va.count, vb.count) {
+            if va[i] < vb[i] { return .orderedAscending }
+            if va[i] > vb[i] { return .orderedDescending }
+        }
+        if va.count < vb.count { return .orderedAscending }
+        if va.count > vb.count { return .orderedDescending }
+        return .orderedSame
+    }
+
     var updateAvailable: Bool {
         installed && !installedVersion.isEmpty && !latestVersion.isEmpty &&
-        installedVersion != latestVersion
+        Self.compareVersions(installedVersion, latestVersion) != .orderedSame
     }
 
     enum InstallType: String, Codable, CaseIterable {

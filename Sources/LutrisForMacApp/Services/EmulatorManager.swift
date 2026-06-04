@@ -63,7 +63,9 @@ final class EmulatorManager: ObservableObject {
         guard let http = response as? HTTPURLResponse, http.statusCode == 200 else { return "" }
         guard let json = try JSONSerialization.jsonObject(with: data) as? [String: Any],
               let tag = json["tag_name"] as? String else { return "" }
-        return tag.replacingOccurrences(of: "^v", with: "", options: .regularExpression)
+        let cleaned = tag.replacingOccurrences(of: "^v", with: "", options: .regularExpression)
+        guard let range = cleaned.range(of: #"\d+(\.\d+)*"#, options: .regularExpression) else { return cleaned }
+        return String(cleaned[range])
     }
 
     private func detectEmulator(_ emu: Emulator) -> (Bool, String) {
