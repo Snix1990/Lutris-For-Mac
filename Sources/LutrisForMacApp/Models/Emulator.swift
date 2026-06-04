@@ -136,17 +136,6 @@ struct Emulator: Identifiable, Codable {
             downloadPageURL: "https://www.scummvm.org/downloads/"
         ),
         Emulator(
-            name: "MAME",
-            displayName: "MAME (Arcade-Emulator)",
-            category: .retro,
-            description: "Multiplattform-Arcade-Emulator für tausende ROMs",
-            supportsPlatforms: ["Arcade"],
-            installType: .dmg,
-            appName: "MAME.app",
-            brewName: "mame",
-            downloadPageURL: "https://www.mamedev.org/release.php"
-        ),
-        Emulator(
             name: "RetroArch",
             displayName: "RetroArch (Multi-System)",
             category: .retro,
@@ -266,10 +255,8 @@ struct Emulator: Identifiable, Codable {
             supportsPlatforms: ["PS1"],
             installType: .zip,
             appName: "DuckStation.app",
-            brewName: "duckstation",
-            githubOwner: "stenzek",
-            githubRepo: "duckstation",
-            downloadPageURL: "https://duckstation.org/download/"
+            directDownloadURL: "https://github.com/stenzek/duckstation/releases/download/latest/duckstation-mac-release.zip",
+            downloadPageURL: "https://github.com/stenzek/duckstation/releases"
         ),
 
         // --- Sega ---
