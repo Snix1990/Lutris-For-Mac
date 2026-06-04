@@ -205,6 +205,18 @@ struct Emulator: Identifiable, Codable {
             githubRepo: "Astris.Binaries",
             downloadPageURL: "https://github.com/V380-Ori/Astris.Binaries/releases"
         ),
+        Emulator(
+            name: "Azahar",
+            displayName: "Azahar (Nintendo 3DS)",
+            category: .nintendo,
+            description: "Nintendo-3DS-Emulator mit Citra-Fork (Apple Silicon)",
+            supportsPlatforms: ["3DS"],
+            installType: .zip,
+            appName: "azahar.app",
+            githubOwner: "azahar-emu",
+            githubRepo: "azahar",
+            downloadPageURL: "https://github.com/azahar-emu/azahar/releases"
+        ),
 
         // --- PlayStation ---
         Emulator(
