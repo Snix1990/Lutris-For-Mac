@@ -63,6 +63,13 @@ final class EmulatorManager: ObservableObject {
         guard let http = response as? HTTPURLResponse, http.statusCode == 200 else { return "" }
         guard let json = try JSONSerialization.jsonObject(with: data) as? [String: Any],
               let tag = json["tag_name"] as? String else { return "" }
+        // Release-Name (human-readable) bevorzugen, z.B. "0.0.41-19432"
+        if let name = json["name"] as? String, !name.isEmpty, name != tag {
+            let cleaned = name.replacingOccurrences(of: "^v", with: "", options: .regularExpression)
+            if let range = cleaned.range(of: #"\d+(\.\d+)*"#, options: .regularExpression) {
+                return String(cleaned[range])
+            }
+        }
         let cleaned = tag.replacingOccurrences(of: "^v", with: "", options: .regularExpression)
         guard let range = cleaned.range(of: #"\d+(\.\d+)*"#, options: .regularExpression) else { return cleaned }
         return String(cleaned[range])
@@ -263,6 +270,8 @@ final class EmulatorManager: ObservableObject {
             try installPKG(file: file)
         case .homebrew:
             try installHomebrew(brewName: emu.brewName)
+        case .sevenZ:
+            try install7z(file: file, appName: emu.appName)
         }
     }
 
@@ -354,6 +363,50 @@ final class EmulatorManager: ObservableObject {
         guard !result.contains("Error") else {
             throw EmuInstallError.installFailed("Homebrew-Installation fehlgeschlagen: \(result)")
         }
+    }
+
+    private func install7z(file: URL, appName: String?) throws {
+        let tools = [
+            "/usr/local/bin/7z",
+            "/opt/homebrew/bin/7z",
+            "/usr/local/bin/unar",
+            "/opt/homebrew/bin/unar"
+        ]
+        var lastError: Error?
+        for tool in tools {
+            guard FileManager.default.isExecutableFile(atPath: tool) else { continue }
+            let extractDir = file.deletingLastPathComponent().appendingPathComponent("extract")
+            try? fm.removeItem(at: extractDir)
+            try fm.createDirectory(at: extractDir, withIntermediateDirectories: true)
+            let toolName = URL(fileURLWithPath: tool).lastPathComponent
+            do {
+                if toolName == "7z" {
+                    try shell(tool, ["x", file.path, "-o\(extractDir.path)", "-y"])
+                } else if toolName == "unar" {
+                    try shell(tool, ["-o", extractDir.path, file.path])
+                }
+
+                if let appPath = findApp(in: extractDir), let appName {
+                    let dest = "/Applications/\(appName)"
+                    try? fm.removeItem(atPath: dest)
+                    try fm.copyItem(at: appPath, to: URL(fileURLWithPath: dest))
+                    try? fm.removeItem(at: extractDir)
+                    return
+                } else if let appPath = findApp(in: extractDir) {
+                    let appName = appPath.lastPathComponent
+                    let dest = "/Applications/\(appName)"
+                    try? fm.removeItem(atPath: dest)
+                    try fm.copyItem(at: appPath, to: URL(fileURLWithPath: dest))
+                    try? fm.removeItem(at: extractDir)
+                    return
+                }
+            } catch {
+                lastError = error
+                try? fm.removeItem(at: extractDir)
+                continue
+            }
+        }
+        throw lastError ?? EmuInstallError.installFailed("Kein 7z-Tool gefunden – installiere p7zip: brew install p7zip")
     }
 
     // MARK: - Hilfsfunktionen

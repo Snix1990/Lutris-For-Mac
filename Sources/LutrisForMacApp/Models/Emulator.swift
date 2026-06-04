@@ -53,6 +53,7 @@ struct Emulator: Identifiable, Codable {
         case tarGz
         case pkg
         case homebrew
+        case sevenZ
 
         var displayName: String {
             switch self {
@@ -61,6 +62,7 @@ struct Emulator: Identifiable, Codable {
             case .tarGz: return "TAR.GZ"
             case .pkg: return "PKG-Installer"
             case .homebrew: return "Homebrew"
+            case .sevenZ: return "7z-Archiv"
             }
         }
     }
@@ -237,11 +239,13 @@ struct Emulator: Identifiable, Codable {
             name: "RPCS3",
             displayName: "RPCS3 (PlayStation 3)",
             category: .playstation,
-            description: "PlayStation-3-Emulator – Download über rpcs3.net (kein Auto-Install)",
+            description: "PlayStation-3-Emulator mit breiter Kompatibilität",
             supportsPlatforms: ["PS3"],
-            installType: .tarGz,
+            installType: .sevenZ,
             appName: "RPCS3.app",
-            downloadPageURL: "https://github.com/RPCS3/rpcs3/releases"
+            githubOwner: "RPCS3",
+            githubRepo: "rpcs3-binaries-mac-arm64",
+            downloadPageURL: "https://rpcs3.net/download"
         ),
         Emulator(
             name: "DuckStation",
