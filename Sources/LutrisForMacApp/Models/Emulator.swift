@@ -193,6 +193,18 @@ struct Emulator: Identifiable, Codable {
             githubRepo: "Ryujinx",
             downloadPageURL: "https://ryujinx.org/download"
         ),
+        Emulator(
+            name: "Astris",
+            displayName: "Astris (Nintendo Switch)",
+            category: .nintendo,
+            description: "Nintendo-Switch-Emulator mit Vulkan-Unterstützung (Apple Silicon)",
+            supportsPlatforms: ["Switch"],
+            installType: .dmg,
+            appName: "Astris.app",
+            githubOwner: "V380-Ori",
+            githubRepo: "Astris.Binaries",
+            downloadPageURL: "https://github.com/V380-Ori/Astris.Binaries/releases"
+        ),
 
         // --- PlayStation ---
         Emulator(
