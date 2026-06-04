@@ -19,6 +19,9 @@ struct GameService: Identifiable, Hashable, Codable {
         case epic
         case gog
         case ryujinx
+        case amazon
+        case ubisoft
+        case humble
         case custom
     }
 

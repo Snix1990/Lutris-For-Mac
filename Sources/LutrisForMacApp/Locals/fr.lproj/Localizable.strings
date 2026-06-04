@@ -251,7 +251,7 @@
 "Nochmal klicken entfernt den Shortcut" = "Un second clic supprime le raccourci";
 "Notizen" = "Notes";
 "OK" = "OK";
-"Oder via Homebrew:\\nbrew install winetricks" = "Ou via Homebrew :\\\\nbrew install winetricks";
+"Oder via Homebrew:\\\\nbrew install winetricks" = "Ou via Homebrew :\\\\\\\\nbrew install winetricks";
 "Online suchen..." = "Rechercher en ligne…";
 "Online suchen…" = "Rechercher en ligne…";
 "Optimierte Voreinstellungen für FF7 Rebirth (DX12, D3DMetal, ESync)" = "Préréglages optimisés pour FF7 Rebirth (DX12, D3DMetal, ESync)";
@@ -284,7 +284,7 @@
 "Runner" = "Runner";
 "Runner hinzufügen" = "Ajouter un runner";
 "Runner verwalten" = "Gérer les runners";
-"Scanne installierte Spiele von Steam, Heroic, itch.io und Battle.net" = "Scanner les jeux installés depuis Steam, Heroic, itch.io et Battle.net";
+"Scanne installierte Spiele von Steam, Heroic, itch.io, Battle.net, Amazon Games, Ubisoft und Humble Bundle" = "Analyse les jeux installés depuis Steam, Heroic, itch.io, Battle.net, Amazon Games, Ubisoft et Humble Bundle";
 "Scanne nach installierten Spielen..." = "Analyse des jeux installés…";
 "Scanne nach installierten Spielen…" = "Recherche de jeux installés…";
 "Scannen & Importieren" = "Scanner & Importer";

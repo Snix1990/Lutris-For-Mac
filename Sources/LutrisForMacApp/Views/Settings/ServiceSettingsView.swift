@@ -22,7 +22,7 @@ struct ServiceSettingsView: View {
             LText("Drittanbieter-Integrationen")
                 .font(.title2)
                 .bold()
-            LText("Scanne installierte Spiele von Steam, Heroic, itch.io und Battle.net")
+            LText("Scanne installierte Spiele von Steam, Heroic, itch.io, Battle.net, Amazon Games, Ubisoft und Humble Bundle")
                 .font(.caption)
                 .foregroundColor(.secondary)
         }

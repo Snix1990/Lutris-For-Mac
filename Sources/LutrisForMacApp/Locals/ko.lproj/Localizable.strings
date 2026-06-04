@@ -252,7 +252,7 @@
 "Nochmal klicken entfernt den Shortcut" = "다시 클릭하면 바로가기가 제거됩니다";
 "Notizen" = "메모";
 "OK" = "확인";
-"Oder via Homebrew:\\nbrew install winetricks" = "또는 Homebrew를 통해:\\\\nbrew install winetricks";
+"Oder via Homebrew:\\\\nbrew install winetricks" = "또는 Homebrew를 통해:\\\\\\\\nbrew install winetricks";
 "Online suchen..." = "온라인 검색…";
 "Online suchen…" = "온라인 검색…";
 "Optimierte Voreinstellungen für FF7 Rebirth (DX12, D3DMetal, ESync)" = "FF7 Rebirth 최적화 프리셋 (DX12, D3DMetal, ESync)";
@@ -285,7 +285,7 @@
 "Runner" = "러너";
 "Runner hinzufügen" = "러너 추가";
 "Runner verwalten" = "러너 관리";
-"Scanne installierte Spiele von Steam, Heroic, itch.io und Battle.net" = "Steam, Heroic, itch.io, Battle.net에서 설치된 게임 스캔";
+"Scanne installierte Spiele von Steam, Heroic, itch.io, Battle.net, Amazon Games, Ubisoft und Humble Bundle" = "Steam, Heroic, itch.io, Battle.net, Amazon Games, Ubisoft, Humble Bundle에서 설치된 게임 스캔";
 "Scanne nach installierten Spielen..." = "설치된 게임 검색 중…";
 "Scanne nach installierten Spielen…" = "설치된 게임 스캔 중…";
 "Scannen & Importieren" = "스캔 및 가져오기";

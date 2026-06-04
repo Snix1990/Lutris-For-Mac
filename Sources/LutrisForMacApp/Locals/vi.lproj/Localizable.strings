@@ -252,7 +252,7 @@
 "Nochmal klicken entfernt den Shortcut" = "Nhấp lại để xóa lối tắt";
 "Notizen" = "Ghi chú";
 "OK" = "OK";
-"Oder via Homebrew:\\nbrew install winetricks" = "Hoặc qua Homebrew:\\\\nbrew install winetricks";
+"Oder via Homebrew:\\\\nbrew install winetricks" = "Hoặc qua Homebrew:\\\\\\\\nbrew install winetricks";
 "Online suchen..." = "Tìm kiếm trực tuyến…";
 "Online suchen…" = "Tìm kiếm trực tuyến…";
 "Optimierte Voreinstellungen für FF7 Rebirth (DX12, D3DMetal, ESync)" = "Cài đặt trước tối ưu cho FF7 Rebirth (DX12, D3DMetal, ESync)";
@@ -285,7 +285,7 @@
 "Runner" = "Trình chạy";
 "Runner hinzufügen" = "Thêm trình chạy";
 "Runner verwalten" = "Quản lý trình chạy";
-"Scanne installierte Spiele von Steam, Heroic, itch.io und Battle.net" = "Quét game đã cài từ Steam, Heroic, itch.io và Battle.net";
+"Scanne installierte Spiele von Steam, Heroic, itch.io, Battle.net, Amazon Games, Ubisoft und Humble Bundle" = "Quét trò chơi đã cài đặt từ Steam, Heroic, itch.io, Battle.net, Amazon Games, Ubisoft và Humble Bundle";
 "Scanne nach installierten Spielen..." = "Đang quét trò chơi đã cài đặt…";
 "Scanne nach installierten Spielen…" = "Đang quét game đã cài đặt…";
 "Scannen & Importieren" = "Quét và nhập";

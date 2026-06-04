@@ -251,7 +251,7 @@
 "Nochmal klicken entfernt den Shortcut" = "Opětovné kliknutí odstraní zástupce";
 "Notizen" = "Poznámky";
 "OK" = "OK";
-"Oder via Homebrew:\\nbrew install winetricks" = "Nebo přes Homebrew:\\nbrew install winetricks";
+"Oder via Homebrew:\\\\nbrew install winetricks" = "Nebo přes Homebrew:\\\\nbrew install winetricks";
 "Online suchen..." = "Hledat online…";
 "Online suchen…" = "Hledat online…";
 "Optimierte Voreinstellungen für FF7 Rebirth (DX12, D3DMetal, ESync)" = "Optimalizovaná přednastavení pro FF7 Rebirth (DX12, D3DMetal, ESync)";
@@ -284,7 +284,7 @@
 "Runner" = "Runner";
 "Runner hinzufügen" = "Přidat runner";
 "Runner verwalten" = "Spravovat runnery";
-"Scanne installierte Spiele von Steam, Heroic, itch.io und Battle.net" = "Skenovat nainstalované hry ze Steam, Heroic, itch.io a Battle.net";
+"Scanne installierte Spiele von Steam, Heroic, itch.io, Battle.net, Amazon Games, Ubisoft und Humble Bundle" = "Skenuje nainstalované hry ze Steam, Heroic, itch.io, Battle.net, Amazon Games, Ubisoft a Humble Bundle";
 "Scanne nach installierten Spielen..." = "Prohledávání nainstalovaných her…";
 "Scanne nach installierten Spielen…" = "Vyhledávám nainstalované hry…";
 "Scannen & Importieren" = "Skenovat & Importovat";

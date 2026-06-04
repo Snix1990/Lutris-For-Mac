@@ -251,7 +251,7 @@
 "Nochmal klicken entfernt den Shortcut" = "Повторный щелчок удаляет ярлык";
 "Notizen" = "Заметки";
 "OK" = "ОК";
-"Oder via Homebrew:\\nbrew install winetricks" = "Или через Homebrew:\\nbrew install winetricks";
+"Oder via Homebrew:\\\\nbrew install winetricks" = "Или через Homebrew:\\\\nbrew install winetricks";
 "Online suchen..." = "Искать онлайн…";
 "Online suchen…" = "Искать онлайн…";
 "Optimierte Voreinstellungen für FF7 Rebirth (DX12, D3DMetal, ESync)" = "Оптимизированные пресеты для FF7 Rebirth (DX12, D3DMetal, ESync)";
@@ -284,7 +284,7 @@
 "Runner" = "Раннер";
 "Runner hinzufügen" = "Добавить раннер";
 "Runner verwalten" = "Управление раннерами";
-"Scanne installierte Spiele von Steam, Heroic, itch.io und Battle.net" = "Сканировать установленные игры из Steam, Heroic, itch.io и Battle.net";
+"Scanne installierte Spiele von Steam, Heroic, itch.io, Battle.net, Amazon Games, Ubisoft und Humble Bundle" = "Сканирует установленные игры из Steam, Heroic, itch.io, Battle.net, Amazon Games, Ubisoft и Humble Bundle";
 "Scanne nach installierten Spielen..." = "Сканирование установленных игр…";
 "Scanne nach installierten Spielen…" = "Сканирование установленных игр…";
 "Scannen & Importieren" = "Сканировать и импортировать";

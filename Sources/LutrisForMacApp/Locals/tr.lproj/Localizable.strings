@@ -251,7 +251,7 @@
 "Nochmal klicken entfernt den Shortcut" = "Tekrar tıklamak kısayolu kaldırır";
 "Notizen" = "Notlar";
 "OK" = "Tamam";
-"Oder via Homebrew:\\nbrew install winetricks" = "Veya Homebrew ile:\\nbrew install winetricks";
+"Oder via Homebrew:\\\\nbrew install winetricks" = "Veya Homebrew ile:\\\\nbrew install winetricks";
 "Online suchen..." = "Çevrimiçi ara…";
 "Online suchen…" = "Çevrimiçi ara…";
 "Optimierte Voreinstellungen für FF7 Rebirth (DX12, D3DMetal, ESync)" = "FF7 Rebirth için optimize edilmiş ön ayarlar (DX12, D3DMetal, ESync)";
@@ -284,7 +284,7 @@
 "Runner" = "Runner";
 "Runner hinzufügen" = "Runner ekle";
 "Runner verwalten" = "Runner'ları yönet";
-"Scanne installierte Spiele von Steam, Heroic, itch.io und Battle.net" = "Steam, Heroic, itch.io ve Battle.net'ten yüklü oyunları tara";
+"Scanne installierte Spiele von Steam, Heroic, itch.io, Battle.net, Amazon Games, Ubisoft und Humble Bundle" = "Steam, Heroic, itch.io, Battle.net, Amazon Games, Ubisoft ve Humble Bundle'dan yüklü oyunları tarar";
 "Scanne nach installierten Spielen..." = "Yüklü oyunlar taranıyor…";
 "Scanne nach installierten Spielen…" = "Yüklü oyunlar taranıyor…";
 "Scannen & Importieren" = "Tara ve İçe Aktar";

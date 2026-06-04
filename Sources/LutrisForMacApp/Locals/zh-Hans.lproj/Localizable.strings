@@ -252,7 +252,7 @@
 "Nochmal klicken entfernt den Shortcut" = "再次点击可移除快捷方式";
 "Notizen" = "备注";
 "OK" = "确定";
-"Oder via Homebrew:\\nbrew install winetricks" = "或通过 Homebrew：\\\\nbrew install winetricks";
+"Oder via Homebrew:\\\\nbrew install winetricks" = "或通过 Homebrew：\\\\\\\\nbrew install winetricks";
 "Online suchen..." = "在线搜索…";
 "Online suchen…" = "在线搜索…";
 "Optimierte Voreinstellungen für FF7 Rebirth (DX12, D3DMetal, ESync)" = "FF7 Rebirth优化预设（DX12, D3DMetal, ESync）";
@@ -285,7 +285,7 @@
 "Runner" = "运行器";
 "Runner hinzufügen" = "添加运行器";
 "Runner verwalten" = "管理运行器";
-"Scanne installierte Spiele von Steam, Heroic, itch.io und Battle.net" = "扫描Steam、Heroic、itch.io和Battle.net已安装的游戏";
+"Scanne installierte Spiele von Steam, Heroic, itch.io, Battle.net, Amazon Games, Ubisoft und Humble Bundle" = "扫描来自 Steam、Heroic、itch.io、Battle.net、Amazon Games、Ubisoft 和 Humble Bundle 的已安装游戏";
 "Scanne nach installierten Spielen..." = "正在扫描已安装的游戏…";
 "Scanne nach installierten Spielen…" = "正在扫描已安装的游戏…";
 "Scannen & Importieren" = "扫描与导入";

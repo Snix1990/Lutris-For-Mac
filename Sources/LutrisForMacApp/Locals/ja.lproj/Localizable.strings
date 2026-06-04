@@ -252,7 +252,7 @@
 "Nochmal klicken entfernt den Shortcut" = "もう一度クリックするとショートカットが削除されます";
 "Notizen" = "メモ";
 "OK" = "OK";
-"Oder via Homebrew:\\nbrew install winetricks" = "またはHomebrew経由：\\\\nbrew install winetricks";
+"Oder via Homebrew:\\\\nbrew install winetricks" = "またはHomebrew経由：\\\\\\\\nbrew install winetricks";
 "Online suchen..." = "オンラインで検索…";
 "Online suchen…" = "オンライン検索…";
 "Optimierte Voreinstellungen für FF7 Rebirth (DX12, D3DMetal, ESync)" = "FF7 Rebirth最適化プリセット（DX12, D3DMetal, ESync）";
@@ -285,7 +285,7 @@
 "Runner" = "ランナー";
 "Runner hinzufügen" = "ランナーを追加";
 "Runner verwalten" = "ランナーを管理";
-"Scanne installierte Spiele von Steam, Heroic, itch.io und Battle.net" = "Steam、Heroic、itch.io、Battle.netからインストール済みゲームをスキャン";
+"Scanne installierte Spiele von Steam, Heroic, itch.io, Battle.net, Amazon Games, Ubisoft und Humble Bundle" = "Steam、Heroic、itch.io、Battle.net、Amazon Games、Ubisoft、Humble Bundleからインストール済みゲームをスキャン";
 "Scanne nach installierten Spielen..." = "インストール済みゲームをスキャン中…";
 "Scanne nach installierten Spielen…" = "インストール済みゲームをスキャン中…";
 "Scannen & Importieren" = "スキャンとインポート";

@@ -252,7 +252,7 @@
 "Nochmal klicken entfernt den Shortcut" = "نقرة أخرى تزيل الاختصار";
 "Notizen" = "ملاحظات";
 "OK" = "موافق";
-"Oder via Homebrew:\\nbrew install winetricks" = "أو عبر Homebrew:\\\\nbrew install winetricks";
+"Oder via Homebrew:\\\\nbrew install winetricks" = "أو عبر Homebrew:\\\\\\\\nbrew install winetricks";
 "Online suchen..." = "بحث عبر الإنترنت…";
 "Online suchen…" = "بحث عبر الإنترنت…";
 "Optimierte Voreinstellungen für FF7 Rebirth (DX12, D3DMetal, ESync)" = "إعدادات مسبقة محسّنة لـ FF7 Rebirth (DX12, D3DMetal, ESync)";
@@ -285,7 +285,7 @@
 "Runner" = "المشغل";
 "Runner hinzufügen" = "إضافة مشغل";
 "Runner verwalten" = "إدارة المشغلين";
-"Scanne installierte Spiele von Steam, Heroic, itch.io und Battle.net" = "مسح الألعاب المثبتة من Steam وHeroic وitch.io وBattle.net";
+"Scanne installierte Spiele von Steam, Heroic, itch.io, Battle.net, Amazon Games, Ubisoft und Humble Bundle" = "يفحص الألعاب المثبتة من Steam وHeroic وitch.io وBattle.net وAmazon Games وUbisoft وHumble Bundle";
 "Scanne nach installierten Spielen..." = "جاري فحص الألعاب المثبتة…";
 "Scanne nach installierten Spielen…" = "جارٍ مسح الألعاب المثبتة…";
 "Scannen & Importieren" = "المسح والاستيراد";

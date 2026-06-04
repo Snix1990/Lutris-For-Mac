@@ -37,6 +37,9 @@ final class ServiceManager: ObservableObject {
             ("Epic", "Epic Games", .epic, "/Applications/Epic Games Launcher.app", "star"),
             ("GOG Galaxy", "GOG Galaxy", .gog, "/Applications/GOG Galaxy.app", "star"),
             ("Ryujinx", "Ryujinx (Switch)", .ryujinx, "/Applications/Ryujinx.app", "gamecontroller"),
+            ("Amazon Games", "Amazon Games", .amazon, "/Applications/Amazon Games.app", "cart"),
+            ("Ubisoft", "Ubisoft Connect", .ubisoft, "/Applications/Ubisoft Connect.app", "person.2"),
+            ("Humble Bundle", "Humble Bundle", .humble, "/Applications/Humble Bundle.app", "gift"),
         ]
 
         services = defs.map { def in
@@ -79,6 +82,9 @@ final class ServiceManager: ObservableObject {
             group.addTask { await self.scanItchio(home: home) }
             group.addTask { await self.scanBattleNet(home: home) }
             group.addTask { await self.scanRyujinx(lib: lib) }
+            group.addTask { await self.scanAmazon(lib: lib) }
+            group.addTask { await self.scanUbisoft(lib: lib) }
+            group.addTask { await self.scanHumble(lib: lib) }
 
             for await games in group {
                 scannedGames.append(contentsOf: games)
@@ -336,6 +342,174 @@ final class ServiceManager: ObservableObject {
         return results
     }
 
+    // MARK: - Amazon Games
+
+    private func scanAmazon(lib: String) async -> [ScannedGame] {
+        let amazonPath = "\(lib)/Amazon Games"
+        guard FileManager.default.fileExists(atPath: amazonPath) else { return [] }
+
+        var games: [ScannedGame] = []
+
+        // Amazon Games speichert Spiele in Data/Games/<gameID>/gameDetail.json
+        let gamesDataPath = "\(amazonPath)/Data/Games"
+        if let gameDirs = try? FileManager.default.contentsOfDirectory(atPath: gamesDataPath) {
+            for dir in gameDirs {
+                let detailPath = "\(gamesDataPath)/\(dir)/gameDetail.json"
+                guard let data = try? Data(contentsOf: URL(fileURLWithPath: detailPath)),
+                      let detail = try? JSONDecoder().decode(AmazonGameDetail.self, from: data)
+                else { continue }
+
+                games.append(ScannedGame(
+                    serviceName: "Amazon Games",
+                    gameID: detail.id ?? dir,
+                    name: detail.title ?? dir,
+                    installPath: detail.installPath ?? "\(amazonPath)/Games/\(detail.title ?? dir)",
+                    runner: "Native",
+                    iconPath: nil
+                ))
+            }
+        }
+
+        return games
+    }
+
+    private struct AmazonGameDetail: Codable {
+        let id: String?
+        let title: String?
+        let installPath: String?
+
+        enum CodingKeys: String, CodingKey {
+            case id = "Id"
+            case title = "Title"
+            case installPath = "InstallPath"
+        }
+    }
+
+    // MARK: - Ubisoft Connect
+
+    private func scanUbisoft(lib: String) async -> [ScannedGame] {
+        let ubisoftPath = "\(lib)/Ubisoft Game Launcher"
+        guard FileManager.default.fileExists(atPath: ubisoftPath) else { return [] }
+
+        var games: [ScannedGame] = []
+
+        // Ubisoft speichert Installationen in installs.json
+        let installsPath = "\(ubisoftPath)/installs.json"
+        if let data = try? Data(contentsOf: URL(fileURLWithPath: installsPath)),
+           let installs = try? JSONDecoder().decode([String: UbisoftInstall].self, from: data) {
+            for (id, entry) in installs {
+                games.append(ScannedGame(
+                    serviceName: "Ubisoft",
+                    gameID: id,
+                    name: entry.name ?? entry.title ?? id,
+                    installPath: entry.installPath ?? "\(NSHomeDirectory())/Games/Ubisoft Game Launcher/\(entry.name ?? id)",
+                    runner: "Native",
+                    iconPath: nil
+                ))
+            }
+        }
+
+        // Fallback: bekannte Ubisoft-Installationspfade scannen
+        if games.isEmpty {
+            let gamesPath = "\(NSHomeDirectory())/Games/Ubisoft Game Launcher"
+            if let gameDirs = try? FileManager.default.contentsOfDirectory(atPath: gamesPath) {
+                for dir in gameDirs where dir.hasSuffix(".app") {
+                    let name = (dir as NSString).deletingPathExtension
+                    games.append(ScannedGame(
+                        serviceName: "Ubisoft",
+                        gameID: name,
+                        name: name,
+                        installPath: "\(gamesPath)/\(dir)",
+                        runner: "Native",
+                        iconPath: nil
+                    ))
+                }
+            }
+        }
+
+        return games
+    }
+
+    private struct UbisoftInstall: Codable {
+        let name: String?
+        let title: String?
+        let installPath: String?
+
+        enum CodingKeys: String, CodingKey {
+            case name
+            case title
+            case installPath = "install_path"
+        }
+    }
+
+    // MARK: - Humble Bundle
+
+    private func scanHumble(lib: String) async -> [ScannedGame] {
+        let humblePath = "\(lib)/Humble Bundle"
+        guard FileManager.default.fileExists(atPath: humblePath) else { return [] }
+
+        var games: [ScannedGame] = []
+
+        // Humble Bundle library JSON
+        let libraryFiles = ["library.json", "game_config.json", "library/library.json"]
+        for file in libraryFiles {
+            let path = "\(humblePath)/\(file)"
+            guard let data = try? Data(contentsOf: URL(fileURLWithPath: path)),
+                  let library = try? JSONDecoder().decode([HumbleGame].self, from: data)
+            else { continue }
+
+            for entry in library {
+                games.append(ScannedGame(
+                    serviceName: "Humble Bundle",
+                    gameID: entry.id ?? entry.machineName ?? entry.title ?? UUID().uuidString,
+                    name: entry.title ?? entry.machineName ?? "Unknown",
+                    installPath: entry.installPath ?? entry.downloadPath ?? "",
+                    runner: entry.platform ?? "Native",
+                    iconPath: nil
+                ))
+            }
+            break
+        }
+
+        // Fallback: bekannte Installationspfade
+        if games.isEmpty {
+            let gamesPath = "\(lib)/Humble Bundle/Games"
+            if let gameDirs = try? FileManager.default.contentsOfDirectory(atPath: gamesPath) {
+                for dir in gameDirs where dir.hasSuffix(".app") {
+                    let name = (dir as NSString).deletingPathExtension
+                    games.append(ScannedGame(
+                        serviceName: "Humble Bundle",
+                        gameID: name,
+                        name: name,
+                        installPath: "\(gamesPath)/\(dir)",
+                        runner: "Native",
+                        iconPath: nil
+                    ))
+                }
+            }
+        }
+
+        return games
+    }
+
+    private struct HumbleGame: Codable {
+        let id: String?
+        let title: String?
+        let machineName: String?
+        let installPath: String?
+        let downloadPath: String?
+        let platform: String?
+
+        enum CodingKeys: String, CodingKey {
+            case id
+            case title
+            case machineName = "machine_name"
+            case installPath = "install_path"
+            case downloadPath = "download_path"
+            case platform
+        }
+    }
+
     // MARK: - Import
 
     private let importedGamesFile: URL = {
@@ -389,6 +563,9 @@ final class ServiceManager: ObservableObject {
         case "Battle.net": return "Battle.net"
         case "GOG Galaxy": return "GOG"
         case "Ryujinx": return "Switch"
+        case "Amazon Games": return "Amazon Games"
+        case "Ubisoft": return "Ubisoft"
+        case "Humble Bundle": return "Humble Bundle"
         default: return "Windows"
         }
     }

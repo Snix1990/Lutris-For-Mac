@@ -252,7 +252,7 @@
 "Nochmal klicken entfernt den Shortcut" = "फिर से क्लिक करने पर शॉर्टकट हट जाता है";
 "Notizen" = "नोट्स";
 "OK" = "ठीक";
-"Oder via Homebrew:\\nbrew install winetricks" = "या Homebrew के माध्यम से:\\\\nbrew install winetricks";
+"Oder via Homebrew:\\\\nbrew install winetricks" = "या Homebrew के माध्यम से:\\\\\\\\nbrew install winetricks";
 "Online suchen..." = "ऑनलाइन खोजें…";
 "Online suchen…" = "ऑनलाइन खोजें…";
 "Optimierte Voreinstellungen für FF7 Rebirth (DX12, D3DMetal, ESync)" = "FF7 Rebirth के लिए अनुकूलित प्रीसेट (DX12, D3DMetal, ESync)";
@@ -285,7 +285,7 @@
 "Runner" = "रनर";
 "Runner hinzufügen" = "रनर जोड़ें";
 "Runner verwalten" = "रनर प्रबंधित करें";
-"Scanne installierte Spiele von Steam, Heroic, itch.io und Battle.net" = "Steam, Heroic, itch.io और Battle.net से इंस्टॉल किए गए गेम स्कैन करें";
+"Scanne installierte Spiele von Steam, Heroic, itch.io, Battle.net, Amazon Games, Ubisoft und Humble Bundle" = "Steam, Heroic, itch.io, Battle.net, Amazon Games, Ubisoft और Humble Bundle से स्थापित गेम स्कैन करता है";
 "Scanne nach installierten Spielen..." = "स्थापित गेम खोजे जा रहे हैं…";
 "Scanne nach installierten Spielen…" = "इंस्टॉल किए गए गेम स्कैन किए जा रहे हैं…";
 "Scannen & Importieren" = "स्कैन और आयात";
