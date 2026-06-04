@@ -30,8 +30,11 @@ final class UpdaterService: @unchecked Sendable {
         else { return nil }
 
         let assets = json["assets"] as? [[String: Any]] ?? []
-        let dmgAsset = assets.first { ($0["name"] as? String)?.hasSuffix(".dmg") ?? false }
-        let downloadURL = dmgAsset.flatMap {
+        let packageAsset = assets.first { asset in
+            guard let name = asset["name"] as? String else { return false }
+            return name.hasSuffix(".dmg") || name.hasSuffix(".zip")
+        }
+        let downloadURL = packageAsset.flatMap {
             ($0["browser_download_url"] as? String).flatMap { URL(string: $0) }
         }
         let body = json["body"] as? String

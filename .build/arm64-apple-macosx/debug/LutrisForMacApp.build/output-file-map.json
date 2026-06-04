@@ -205,6 +205,13 @@
     "swift-dependencies": "/Users/mac/Documents/Lutris-For-Mac/.build/arm64-apple-macosx/debug/LutrisForMacApp.build/SteamGridDBSearcher.swiftdeps",
     "diagnostics": "/Users/mac/Documents/Lutris-For-Mac/.build/arm64-apple-macosx/debug/LutrisForMacApp.build/SteamGridDBSearcher.dia"
   },
+  "/Users/mac/Documents/Lutris-For-Mac/Sources/LutrisForMacApp/Services/UpdaterService.swift": {
+    "dependencies": "/Users/mac/Documents/Lutris-For-Mac/.build/arm64-apple-macosx/debug/LutrisForMacApp.build/UpdaterService.d",
+    "object": "/Users/mac/Documents/Lutris-For-Mac/.build/arm64-apple-macosx/debug/LutrisForMacApp.build/UpdaterService.swift.o",
+    "swiftmodule": "/Users/mac/Documents/Lutris-For-Mac/.build/arm64-apple-macosx/debug/LutrisForMacApp.build/UpdaterService~partial.swiftmodule",
+    "swift-dependencies": "/Users/mac/Documents/Lutris-For-Mac/.build/arm64-apple-macosx/debug/LutrisForMacApp.build/UpdaterService.swiftdeps",
+    "diagnostics": "/Users/mac/Documents/Lutris-For-Mac/.build/arm64-apple-macosx/debug/LutrisForMacApp.build/UpdaterService.dia"
+  },
   "/Users/mac/Documents/Lutris-For-Mac/Sources/LutrisForMacApp/Services/WineManager.swift": {
     "dependencies": "/Users/mac/Documents/Lutris-For-Mac/.build/arm64-apple-macosx/debug/LutrisForMacApp.build/WineManager.d",
     "object": "/Users/mac/Documents/Lutris-For-Mac/.build/arm64-apple-macosx/debug/LutrisForMacApp.build/WineManager.swift.o",

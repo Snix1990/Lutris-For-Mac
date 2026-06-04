@@ -90,8 +90,8 @@ final class AppDelegate: NSObject, NSApplicationDelegate {
             if let downloadURL = release.downloadURL {
                 Task {
                     do {
-                        let dmgURL = try await UpdaterService.shared.downloadAndInstall(at: downloadURL)
-                        NSWorkspace.shared.open(dmgURL)
+                        let fileURL = try await UpdaterService.shared.downloadAndInstall(at: downloadURL)
+                        NSWorkspace.shared.open(fileURL)
                     } catch {
                         NSWorkspace.shared.open(repoURL)
                     }

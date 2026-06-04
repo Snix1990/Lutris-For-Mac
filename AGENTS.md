@@ -64,6 +64,7 @@ Build a SwiftUI macOS game library manager (LutrisForMac) with fully integrated 
 - DesktopIntegrationManager (create/remove .app shortcut bundles on Desktop, login item via SMAppService, Discord RPC via Unix socket IPC with SET_ACTIVITY)
 - DesktopIntegrationView (login item toggle, Discord RPC toggle, shortcut info)
 - **Discord RPC Lifecycle**: Discord-Presence wird beim Spielstart gesetzt und per pgrep-basierter Prozessüberwachung (`waitForGameProcess(exePath:)`) beim Spiel-Ende gelöscht
+- **Auto-Update**: UpdaterService prüft via GitHub Releases API (`Snix1990/Lutris-For-Mac`) beim Start auf neue Version; NSAlert mit Release-Notes und Download/Later-Entscheidung; DMG-Download + Öffnen bei Zustimmung; Fallback auf GitHub-Releases-Seite
 - **Git**: Remote ist `origin` (HTTPS). `opencode` darf selbstständig committen und pushen. Vor Push immer `git pull --rebase` (global `pull.rebase true`). Commit-Nachrichten auf Englisch, prägnant.
 
 **Search & Organisation:**
@@ -168,9 +169,18 @@ Build a SwiftUI macOS game library manager (LutrisForMac) with fully integrated 
 - `Services/DesktopIntegration.swift`: waitForGameProcess mit pgrep, Discord RPC
 - `Services/SteamEmulatorManager.swift`: Steamless + Goldberg
 - `Services/EmulatorManager.swift`: 18 Emulatoren detect/install/update
+- `Services/UpdaterService.swift`: GitHub-Auto-Update-Check beim Start, NSAlert mit Release-Notes
 - `Services/ProcessRunner.swift`: Static async Process.run utility
 - `Services/ProcessError.swift`: Error types
 - `ViewModels/GameLibraryViewModel.swift`: Filter, sort, search, stats computed properties, `serviceName`-Filter
 - `Models/Game.swift`: ~30+ Felder + `serviceName`
 - `Locals/{lang}.lproj/Localizable.strings`: 18 Sprachen
 - `Package.swift`: `.copy("Locals")` resource, Info.plist linker setting
+
+## To Do
+- **Cloud Saves** (Speicherstände sichern/wiederherstellen)
+- **Lutris.net Account-Sync** (Library/Installer-Index)
+- **Screenshots/Galerie** pro Spiel
+- **Multi-Executable** (versch. launch configs pro Spiel)
+- **Import: Amazon Games, Ubisoft, Humble Bundle**
+- **Proton/Steam Play Support**

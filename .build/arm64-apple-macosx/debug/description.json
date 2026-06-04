@@ -167,6 +167,10 @@
         },
         {
           "kind" : "file",
+          "name" : "/Users/mac/Documents/Lutris-For-Mac/Sources/LutrisForMacApp/Services/UpdaterService.swift"
+        },
+        {
+          "kind" : "file",
           "name" : "/Users/mac/Documents/Lutris-For-Mac/Sources/LutrisForMacApp/Services/WineManager.swift"
         },
         {
@@ -335,6 +339,7 @@
         "/Users/mac/Documents/Lutris-For-Mac/.build/arm64-apple-macosx/debug/LutrisForMacApp.build/SteamAPI.swift.o",
         "/Users/mac/Documents/Lutris-For-Mac/.build/arm64-apple-macosx/debug/LutrisForMacApp.build/SteamEmulatorManager.swift.o",
         "/Users/mac/Documents/Lutris-For-Mac/.build/arm64-apple-macosx/debug/LutrisForMacApp.build/SteamGridDBSearcher.swift.o",
+        "/Users/mac/Documents/Lutris-For-Mac/.build/arm64-apple-macosx/debug/LutrisForMacApp.build/UpdaterService.swift.o",
         "/Users/mac/Documents/Lutris-For-Mac/.build/arm64-apple-macosx/debug/LutrisForMacApp.build/WineManager.swift.o",
         "/Users/mac/Documents/Lutris-For-Mac/.build/arm64-apple-macosx/debug/LutrisForMacApp.build/WinetricksManager.swift.o",
         "/Users/mac/Documents/Lutris-For-Mac/.build/arm64-apple-macosx/debug/LutrisForMacApp.build/GameLibraryViewModel.swift.o",
@@ -536,6 +541,10 @@
         },
         {
           "kind" : "file",
+          "name" : "/Users/mac/Documents/Lutris-For-Mac/.build/arm64-apple-macosx/debug/LutrisForMacApp.build/UpdaterService.swift.o"
+        },
+        {
+          "kind" : "file",
           "name" : "/Users/mac/Documents/Lutris-For-Mac/.build/arm64-apple-macosx/debug/LutrisForMacApp.build/WineManager.swift.o"
         },
         {
@@ -694,6 +703,7 @@
         "/Users/mac/Documents/Lutris-For-Mac/Sources/LutrisForMacApp/Services/SteamAPI.swift",
         "/Users/mac/Documents/Lutris-For-Mac/Sources/LutrisForMacApp/Services/SteamEmulatorManager.swift",
         "/Users/mac/Documents/Lutris-For-Mac/Sources/LutrisForMacApp/Services/SteamGridDBSearcher.swift",
+        "/Users/mac/Documents/Lutris-For-Mac/Sources/LutrisForMacApp/Services/UpdaterService.swift",
         "/Users/mac/Documents/Lutris-For-Mac/Sources/LutrisForMacApp/Services/WineManager.swift",
         "/Users/mac/Documents/Lutris-For-Mac/Sources/LutrisForMacApp/Services/WinetricksManager.swift",
         "/Users/mac/Documents/Lutris-For-Mac/Sources/LutrisForMacApp/ViewModels/GameLibraryViewModel.swift",
@@ -770,6 +780,7 @@
       "/Users/mac/Documents/Lutris-For-Mac/Sources/LutrisForMacApp/Services/SteamAPI.swift",
       "/Users/mac/Documents/Lutris-For-Mac/Sources/LutrisForMacApp/Services/SteamEmulatorManager.swift",
       "/Users/mac/Documents/Lutris-For-Mac/Sources/LutrisForMacApp/Services/SteamGridDBSearcher.swift",
+      "/Users/mac/Documents/Lutris-For-Mac/Sources/LutrisForMacApp/Services/UpdaterService.swift",
       "/Users/mac/Documents/Lutris-For-Mac/Sources/LutrisForMacApp/Services/WineManager.swift",
       "/Users/mac/Documents/Lutris-For-Mac/Sources/LutrisForMacApp/Services/WinetricksManager.swift",
       "/Users/mac/Documents/Lutris-For-Mac/Sources/LutrisForMacApp/ViewModels/GameLibraryViewModel.swift",
@@ -1094,6 +1105,10 @@
         },
         {
           "kind" : "file",
+          "name" : "/Users/mac/Documents/Lutris-For-Mac/.build/arm64-apple-macosx/debug/LutrisForMacApp.build/UpdaterService.swift.o"
+        },
+        {
+          "kind" : "file",
           "name" : "/Users/mac/Documents/Lutris-For-Mac/.build/arm64-apple-macosx/debug/LutrisForMacApp.build/WineConfigView.swift.o"
         },
         {
@@ -1257,6 +1272,10 @@
         {
           "kind" : "file",
           "name" : "/Users/mac/Documents/Lutris-For-Mac/Sources/LutrisForMacApp/Services/SteamGridDBSearcher.swift"
+        },
+        {
+          "kind" : "file",
+          "name" : "/Users/mac/Documents/Lutris-For-Mac/Sources/LutrisForMacApp/Services/UpdaterService.swift"
         },
         {
           "kind" : "file",

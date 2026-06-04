@@ -27,6 +27,7 @@
 /Users/mac/Documents/Lutris-For-Mac/Sources/LutrisForMacApp/Services/SteamAPI.swift
 /Users/mac/Documents/Lutris-For-Mac/Sources/LutrisForMacApp/Services/SteamEmulatorManager.swift
 /Users/mac/Documents/Lutris-For-Mac/Sources/LutrisForMacApp/Services/SteamGridDBSearcher.swift
+/Users/mac/Documents/Lutris-For-Mac/Sources/LutrisForMacApp/Services/UpdaterService.swift
 /Users/mac/Documents/Lutris-For-Mac/Sources/LutrisForMacApp/Services/WineManager.swift
 /Users/mac/Documents/Lutris-For-Mac/Sources/LutrisForMacApp/Services/WinetricksManager.swift
 /Users/mac/Documents/Lutris-For-Mac/Sources/LutrisForMacApp/ViewModels/GameLibraryViewModel.swift
