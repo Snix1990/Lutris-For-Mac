@@ -54,6 +54,15 @@ struct SettingsView: View {
                 SecureField(tr("SteamGridDB API Key"), text: $steamGridDBApiKey)
                     .helpLText("Dein persönlicher SteamGridDB API-Key. Wird für die Cover-Suche verwendet.")
             }
+
+            Section {
+                HStack {
+                    LText("Version")
+                    Spacer()
+                    Text(verbatim: Bundle.main.infoDictionary?["CFBundleShortVersionString"] as? String ?? "—")
+                        .foregroundColor(.secondary)
+                }
+            }
         }
         .formStyle(.grouped)
         .padding()
