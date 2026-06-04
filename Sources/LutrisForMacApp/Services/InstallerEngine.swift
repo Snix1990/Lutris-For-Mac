@@ -78,6 +78,7 @@ final class InstallerEngine: ObservableObject {
 
             do {
                 try await executeTask(task, vars: &vars)
+                variables = vars
             } catch {
                 let msg = "Fehler bei Schritt \(index + 1): \(error.localizedDescription)"
                 log.append("❌ \(msg)")

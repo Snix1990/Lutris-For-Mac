@@ -5,8 +5,14 @@ struct WineConfigView: View {
     @StateObject private var wineManager = WineManager.shared
     @State private var showWinetricks = false
     @State private var winetricksPrefix: WinePrefix?
+    @State private var winetricksWineBinaryPath: String? = nil
     @State private var showCrossOverTricks = false
     @State private var crossOverTricksPrefix: WinePrefix?
+
+    @State private var editWineBinaryPath: String = ""
+    @State private var editWinePrefixPath: String = ""
+    @FocusState private var isWineBinaryFocused: Bool
+    @FocusState private var isWinePrefixFocused: Bool
 
     private var selectedPrefix: WinePrefix? {
         if let id = game.winePrefixID {
@@ -68,7 +74,7 @@ struct WineConfigView: View {
         }
         .sheet(isPresented: $showWinetricks) {
             if let p = winetricksPrefix {
-                WinetricksView(wineManager: wineManager, initialPrefix: p)
+                WinetricksView(wineManager: wineManager, initialPrefix: p, wineBinaryPath: winetricksWineBinaryPath)
             }
         }
         .sheet(isPresented: $showCrossOverTricks) {
@@ -78,8 +84,10 @@ struct WineConfigView: View {
         }
     }
 
-    private func openWinetricks(for prefix: WinePrefix) {
-        winetricksPrefix = prefix
+    private func openWinetricksWithPath(_ path: String) {
+        winetricksPrefix = wineManager.prefixes.first(where: { $0.path == path })
+            ?? WinePrefix(name: URL(fileURLWithPath: path).lastPathComponent, path: path)
+        winetricksWineBinaryPath = editWineBinaryPath.isEmpty ? nil : editWineBinaryPath
         showWinetricks = true
     }
 
@@ -104,30 +112,57 @@ struct WineConfigView: View {
 
     @ViewBuilder
     private var genericWineContent: some View {
-        Picker(selection: $game.wineVersionName) {
-            LText("Automatisch (erste gefundene)").tag(nil as String?)
-            ForEach(wineManager.installedVersions) { v in
-                HStack {
-                    Text(v.displayName)
-                    if v.type == .crossover {
-                        Image(systemName: "star.fill")
-                            .font(.caption2)
-                            .foregroundColor(.purple)
-                    }
-                }
-                .tag(v.name as String?)
-            }
-        } label: {
-            LText("Wine-Version")
-        }
+        VStack(alignment: .leading, spacing: 6) {
+            LText("Wine-Pfad (Binär)").font(.caption).foregroundColor(.secondary)
+            TextField("/usr/local/bin/wine64", text: $editWineBinaryPath)
+                .focused($isWineBinaryFocused)
+                .onSubmit { commitWineBinaryPath() }
+                .textFieldStyle(.roundedBorder)
+                .font(.callout)
 
-        Picker(selection: prefixBinding) {
-            LText("Standard (kein Prefix)").tag(nil as UUID?)
-            ForEach(wineManager.prefixes) { p in
-                Text(p.name).tag(p.id as UUID?)
+            LText("Wineprefix-Pfad").font(.caption).foregroundColor(.secondary)
+            TextField("/pfad/zum/prefix", text: $editWinePrefixPath)
+                .focused($isWinePrefixFocused)
+                .onSubmit { commitWinePrefixPath() }
+                .textFieldStyle(.roundedBorder)
+                .font(.callout)
+
+            if let prefixPath = game.winePrefixPath, !prefixPath.isEmpty {
+                HStack(spacing: 8) {
+                    Button("winecfg") {
+                        if !editWineBinaryPath.isEmpty {
+                            wineManager.runWinecfg(wineBinaryPath: editWineBinaryPath, prefixPath: prefixPath)
+                        } else {
+                            wineManager.runWinecfg(prefixPath: prefixPath)
+                        }
+                    }
+                    .buttonStyle(.bordered)
+                    Button("regedit") {
+                        if !editWineBinaryPath.isEmpty {
+                            wineManager.runRegedit(wineBinaryPath: editWineBinaryPath, prefixPath: prefixPath)
+                        } else {
+                            wineManager.runRegedit(prefixPath: prefixPath)
+                        }
+                    }
+                    .buttonStyle(.bordered)
+                    Button { openWinetricksWithPath(prefixPath) } label: { LText("Winetricks") }
+                    .buttonStyle(.bordered)
+                }
             }
-        } label: {
-            LText("Wineprefix")
+        }
+        .onAppear {
+            editWineBinaryPath = game.wineBinaryPath ?? ""
+            editWinePrefixPath = game.winePrefixPath ?? ""
+        }
+        .onDisappear {
+            commitWineBinaryPath()
+            commitWinePrefixPath()
+        }
+        .onChange(of: isWineBinaryFocused) { _, focused in
+            if !focused { commitWineBinaryPath() }
+        }
+        .onChange(of: isWinePrefixFocused) { _, focused in
+            if !focused { commitWinePrefixPath() }
         }
 
         Picker(selection: $game.wineArchitecture) {
@@ -224,11 +259,6 @@ struct WineConfigView: View {
                 .helpLText("z.B. 1280x720, 1920x1080")
         }
 
-        // FF7 Rebirth Preset
-        Button { applyFF7RebirthPreset() } label: { LText("Preset: Final Fantasy VII Rebirth") }
-        .buttonStyle(.borderedProminent)
-        .helpLText("Optimierte Voreinstellungen für FF7 Rebirth (DX12, D3DMetal, ESync)")
-
         if wineManager.installedVersions.isEmpty {
             HStack {
                 Image(systemName: "exclamationmark.triangle.fill")
@@ -238,22 +268,14 @@ struct WineConfigView: View {
                     .foregroundColor(.secondary)
             }
         }
+    }
 
-        if let prefixName = game.winePrefixName,
-           let prefix = wineManager.prefixes.first(where: { $0.name == prefixName }) {
-            HStack(spacing: 8) {
-                Button("winecfg") {
-                    wineManager.runWinecfg(for: prefix)
-                }
-                .buttonStyle(.bordered)
-                Button("regedit") {
-                    wineManager.runRegedit(for: prefix)
-                }
-                .buttonStyle(.bordered)
-                Button { openWinetricks(for: prefix) } label: { LText("Winetricks") }
-                .buttonStyle(.bordered)
-            }
-        }
+    private func commitWineBinaryPath() {
+        game.wineBinaryPath = editWineBinaryPath.isEmpty ? nil : editWineBinaryPath
+    }
+
+    private func commitWinePrefixPath() {
+        game.winePrefixPath = editWinePrefixPath.isEmpty ? nil : editWinePrefixPath
     }
 
     @ViewBuilder
@@ -439,15 +461,5 @@ struct WineConfigView: View {
         if panel.runModal() == .OK, let url = panel.url {
             wineManager.addCrossOverInstallation(path: url.path)
         }
-    }
-
-    private func applyFF7RebirthPreset() {
-        game.wineRenderMode = .d3dMetal
-        game.wineESync = true
-        game.wineFSync = true
-        game.wineShaderCache = true
-        game.wineAudioDriver = "coreaudio"
-        game.wineArchitecture = "win64"
-        game.wineDesktopMode = false
     }
 }

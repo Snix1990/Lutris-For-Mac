@@ -9,9 +9,11 @@ struct WinetricksView: View {
     @State private var selectedCategory: String = "Alle"
     @State private var isRunning = false
     @State private var task: Task<Void, Never>?
+    var wineBinaryPath: String?
 
-    init(wineManager: WineManager, initialPrefix: WinePrefix? = nil) {
+    init(wineManager: WineManager, initialPrefix: WinePrefix? = nil, wineBinaryPath: String? = nil) {
         self.wineManager = wineManager
+        self.wineBinaryPath = wineBinaryPath
         _selectedPrefix = State(initialValue: initialPrefix)
     }
 
@@ -233,7 +235,8 @@ struct WinetricksView: View {
             let stream = winetricks.run(
                 verbs: Array(selectedVerbs),
                 prefix: prefix.path,
-                architecture: prefix.architecture.rawValue
+                architecture: prefix.architecture.rawValue,
+                winePath: wineBinaryPath
             )
             for await _ in stream {}
             isRunning = false

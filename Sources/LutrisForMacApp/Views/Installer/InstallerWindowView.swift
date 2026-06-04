@@ -709,13 +709,20 @@ struct InstallerWindowView: View {
                 engine.variables["useWineVersion"] = selectedWineVersion?.name
                 let success = await engine.run(script: script, gamePath: installPath, gameName: gameName)
                 if success {
-                    let game = Game(
+                    var game = Game(
                         name: gameName,
                         platform: script.platform,
                         installPath: installPath,
                         runner: script.runner,
                         notes: "Installiert via Assistent"
                     )
+                    // Save wine paths from the install process
+                    if let wineBin = engine.variables["wineBin"] {
+                        game.wineBinaryPath = wineBin
+                    }
+                    if let prefixPath = engine.variables["winePrefixPath"] {
+                        game.winePrefixPath = prefixPath
+                    }
                     await MainActor.run {
                         viewModel.games.append(game)
                         viewModel.saveLibrary()

@@ -22,6 +22,8 @@ struct Game: Identifiable, Hashable, Codable {
     var wineVersionName: String?
     var winePrefixName: String?
     var winePrefixID: UUID?
+    var wineBinaryPath: String?
+    var winePrefixPath: String?
     var wineArchitecture: String?
     var wineDesktopMode: Bool
     var wineDesktopResolution: String
@@ -76,6 +78,8 @@ struct Game: Identifiable, Hashable, Codable {
         wineVersionName: String? = nil,
         winePrefixName: String? = nil,
         winePrefixID: UUID? = nil,
+        wineBinaryPath: String? = nil,
+        winePrefixPath: String? = nil,
         wineArchitecture: String? = nil,
         wineDesktopMode: Bool = false,
         wineDesktopResolution: String = "1024x768",
@@ -121,6 +125,8 @@ struct Game: Identifiable, Hashable, Codable {
         self.wineVersionName = wineVersionName
         self.winePrefixName = winePrefixName
         self.winePrefixID = winePrefixID
+        self.wineBinaryPath = wineBinaryPath
+        self.winePrefixPath = winePrefixPath
         self.wineArchitecture = wineArchitecture
         self.wineDesktopMode = wineDesktopMode
         self.wineDesktopResolution = wineDesktopResolution
@@ -140,6 +146,7 @@ struct Game: Identifiable, Hashable, Codable {
         case id, name, platform, installPath, runner, launcherCommand, installScriptPath
         case environmentVariables, notes, category, isFavorite, rating, playTime, lastPlayed
         case wineVersionName, winePrefixName, winePrefixID, wineArchitecture
+        case wineBinaryPath, winePrefixPath
         case wineDesktopMode, wineDesktopResolution, wineDXMT, wineAudioDriver
         case wineLaunchArguments, wineRenderMode, wineESync, wineFSync, wineMSync, wineShaderCache
         case coverURL, coverPath, bannerURL, iconURL
@@ -165,6 +172,8 @@ struct Game: Identifiable, Hashable, Codable {
         wineVersionName = try c.decodeIfPresent(String.self, forKey: .wineVersionName)
         winePrefixName = try c.decodeIfPresent(String.self, forKey: .winePrefixName)
         winePrefixID = try c.decodeIfPresent(UUID.self, forKey: .winePrefixID)
+        wineBinaryPath = try c.decodeIfPresent(String.self, forKey: .wineBinaryPath)
+        winePrefixPath = try c.decodeIfPresent(String.self, forKey: .winePrefixPath)
         wineArchitecture = try c.decodeIfPresent(String.self, forKey: .wineArchitecture)
         wineDesktopMode = try c.decodeIfPresent(Bool.self, forKey: .wineDesktopMode) ?? false
         wineDesktopResolution = try c.decodeIfPresent(String.self, forKey: .wineDesktopResolution) ?? "1024x768"

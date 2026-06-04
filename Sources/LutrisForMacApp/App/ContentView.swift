@@ -259,7 +259,7 @@ struct ContentView: View {
                 if isWineRunner {
                     DesktopIntegrationManager.shared.updateDiscordPresence(gameName: game.name, coverURL: game.coverURL)
                     let wineVersion = wineManager.resolveWineVersion(for: game.wineVersionName)
-                    if wineVersion != nil {
+                    if wineVersion != nil || game.wineBinaryPath?.isEmpty == false {
                         _ = try await wineManager.launchGame(game: game)
                         let duration = Date().timeIntervalSince(startTime)
                         if duration > 10 { viewModel.recordPlaySession(gameID: game.id, duration: duration) }

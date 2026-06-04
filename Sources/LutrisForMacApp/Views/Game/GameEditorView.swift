@@ -116,36 +116,38 @@ struct GameEditorView: View {
                         .labelsHidden()
                     }
 
-                    VStack(alignment: .leading, spacing: 8) {
-                        Toggle(isOn: Binding(
-                            get: { game.launchViaSteam ?? false },
-                            set: { game.launchViaSteam = $0 }
-                        )) { LText("Über Steam starten") }
+                    if game.serviceName == "Steam" {
+                        VStack(alignment: .leading, spacing: 8) {
+                            Toggle(isOn: Binding(
+                                get: { game.launchViaSteam ?? false },
+                                set: { game.launchViaSteam = $0 }
+                            )) { LText("Über Steam starten") }
 
-                        LabeledContent(tr("Steam AppID")) {
-                            TextField("", text: $editSteamAppID)
-                                .focused($isSteamAppIDFocused)
-                                .onSubmit { commitSteamAppID() }
+                            LabeledContent(tr("Steam AppID")) {
+                                TextField("", text: $editSteamAppID)
+                                    .focused($isSteamAppIDFocused)
+                                    .onSubmit { commitSteamAppID() }
+                            }
+
+                            Toggle(isOn: Binding(
+                                get: { game.steamEmulatorEnabled ?? false },
+                                set: { game.steamEmulatorEnabled = $0 }
+                            )) { LText("Steam Emulator (Steamless + Goldberg)") }
+                            .helpLText("Entfernt Steam-DRM via Steamless und emuliert Steamworks-API. Setzt das Spiel nach dem Schließen wieder zurück.")
+                            .disabled(game.steamAppID?.isEmpty ?? true)
+
+                            if game.installPath.hasPrefix("steam://") {
+                                LText("Wird ignoriert – Spiel wird via Steam gestartet")
+                                    .font(.caption)
+                                    .foregroundColor(.secondary)
+                            }
+
+                            if game.steamEmulatorEnabled == true {
+                                SteamEmulatorToolsSection()
+                            }
                         }
-
-                        Toggle(isOn: Binding(
-                            get: { game.steamEmulatorEnabled ?? false },
-                            set: { game.steamEmulatorEnabled = $0 }
-                        )) { LText("Steam Emulator (Steamless + Goldberg)") }
-                        .helpLText("Entfernt Steam-DRM via Steamless und emuliert Steamworks-API. Setzt das Spiel nach dem Schließen wieder zurück.")
-                        .disabled(game.steamAppID?.isEmpty ?? true)
-
-                        if game.installPath.hasPrefix("steam://") {
-                            LText("Wird ignoriert – Spiel wird via Steam gestartet")
-                                .font(.caption)
-                                .foregroundColor(.secondary)
-                        }
-
-                        if game.steamEmulatorEnabled == true {
-                            SteamEmulatorToolsSection()
-                        }
+                        .padding(.leading, 100)
                     }
-                    .padding(.leading, 100)
                 }
             } label: {
                 LText("Spiel-Information").font(.system(size: 16)).frame(maxWidth: .infinity)

@@ -833,6 +833,28 @@ final class WineManager: ObservableObject {
         try? task.run()
     }
 
+    func runWinecfg(prefixPath: String, wineVersion: WineVersion? = nil) {
+        let tempPrefix = WinePrefix(name: "temp", path: prefixPath, architecture: .win64)
+        runWineTool(arguments: ["winecfg"], prefix: tempPrefix, wineVersion: wineVersion)
+    }
+
+    func runWinecfg(wineBinaryPath: String, prefixPath: String) {
+        let version = WineVersion(name: "custom", path: wineBinaryPath, wineBinaryPath: wineBinaryPath, type: .custom)
+        let tempPrefix = WinePrefix(name: "temp", path: prefixPath, architecture: .win64)
+        runWineTool(arguments: ["winecfg"], prefix: tempPrefix, wineVersion: version)
+    }
+
+    func runRegedit(prefixPath: String, wineVersion: WineVersion? = nil) {
+        let tempPrefix = WinePrefix(name: "temp", path: prefixPath, architecture: .win64)
+        runWineTool(arguments: ["regedit"], prefix: tempPrefix, wineVersion: wineVersion)
+    }
+
+    func runRegedit(wineBinaryPath: String, prefixPath: String) {
+        let version = WineVersion(name: "custom", path: wineBinaryPath, wineBinaryPath: wineBinaryPath, type: .custom)
+        let tempPrefix = WinePrefix(name: "temp", path: prefixPath, architecture: .win64)
+        runWineTool(arguments: ["regedit"], prefix: tempPrefix, wineVersion: version)
+    }
+
     // MARK: - D3DMetal / GPTK
 
     func detectD3DMetal() -> String? {
@@ -878,6 +900,9 @@ final class WineManager: ObservableObject {
         if let name = game.winePrefixName {
             return prefixes.first(where: { $0.name == name })
         }
+        if let path = game.winePrefixPath, !path.isEmpty {
+            return prefixes.first(where: { $0.path == path })
+        }
         return nil
     }
 
@@ -889,6 +914,8 @@ final class WineManager: ObservableObject {
         if let p = prefix ?? prefixForGame(game) {
             env["WINEPREFIX"] = p.path
             env["WINEARCH"] = p.architecture.rawValue
+        } else if let prefixPath = game.winePrefixPath, !prefixPath.isEmpty {
+            env["WINEPREFIX"] = prefixPath
         }
         if let arch = game.wineArchitecture, env["WINEARCH"] == nil {
             env["WINEARCH"] = arch
@@ -975,7 +1002,12 @@ final class WineManager: ObservableObject {
             return try await launchCrossOverGame(game: game)
         }
 
-        let wine = resolveWineVersion(for: game.wineVersionName)
+        let wine = resolveWineVersion(for: game.wineVersionName) ?? {
+            if let bp = game.wineBinaryPath, !bp.isEmpty, FileManager.default.isExecutableFile(atPath: bp) {
+                return WineVersion(name: "custom", path: bp, wineBinaryPath: bp, type: .custom)
+            }
+            return nil
+        }()
         guard let wine, FileManager.default.isExecutableFile(atPath: wine.wineBinaryPath) else {
             throw WineError.noWineVersion
         }
@@ -1013,7 +1045,7 @@ final class WineManager: ObservableObject {
             throw WineError.installPathNotFound(installPath)
         }
 
-        var cmd = wine.wineBinaryPath
+        var cmd = "\"\(wine.wineBinaryPath)\""
         if !game.wineLaunchArguments.isEmpty {
             cmd += " " + game.wineLaunchArguments
         }
@@ -1069,7 +1101,7 @@ final class WineManager: ObservableObject {
         // Steam-Spiel via CrossOver: steam.exe -applaunch {appid}
         if !useEmulator && game.launchViaSteam == true, let steamID = game.steamAppID, !steamID.isEmpty, let prefix {
             if let steamExe = findSteamExe(in: prefix.path) {
-                let cmd = "\(crossover.wineBinaryPath) \"\(steamExe)\" -applaunch \(steamID)"
+                let cmd = "\"\(crossover.wineBinaryPath)\" \"\(steamExe)\" -applaunch \(steamID)"
                 let steamResult: String
                 do {
                     steamResult = try await ProcessRunner.run(command: cmd, currentDirectory: nil, environment: env)
@@ -1117,7 +1149,7 @@ final class WineManager: ObservableObject {
             throw WineError.installPathNotFound(installPath)
         }
 
-        var cmd = crossover.wineBinaryPath
+        var cmd = "\"\(crossover.wineBinaryPath)\""
         if !useEmulator && game.launchViaSteam == true, let steamID = game.steamAppID, !steamID.isEmpty {
             cmd += " -applaunch \(steamID)"
         } else {
