@@ -252,7 +252,7 @@
 "Nochmal klicken entfernt den Shortcut" = "Nhấp lại để xóa lối tắt";
 "Notizen" = "Ghi chú";
 "OK" = "OK";
-"Oder via Homebrew:\nbrew install winetricks" = "Hoặc qua Homebrew:\\nbrew install winetricks";
+"Oder via Homebrew:\\nbrew install winetricks" = "Hoặc qua Homebrew:\\\\nbrew install winetricks";
 "Online suchen..." = "Tìm kiếm trực tuyến…";
 "Online suchen…" = "Tìm kiếm trực tuyến…";
 "Optimierte Voreinstellungen für FF7 Rebirth (DX12, D3DMetal, ESync)" = "Cài đặt trước tối ưu cho FF7 Rebirth (DX12, D3DMetal, ESync)";
@@ -320,6 +320,7 @@
 "Spielname..." = "Tên trò chơi…";
 "Spielzeit" = "Thời gian chơi";
 "Sprache / Language" = "Ngôn ngữ";
+"Später" = "Để sau";
 "Standard" = "Mặc định";
 "Standard (kein Prefix)" = "Mặc định (không có Prefix)";
 "Starten" = "Khởi chạy";
@@ -343,6 +344,7 @@
 "Umgebungsvariablen (optional)" = "Biến môi trường (tùy chọn)";
 "Ungültige URL:" = "URL không hợp lệ:";
 "Update" = "Cập nhật";
+"Update verfügbar" = "Có bản cập nhật";
 "Variable hinzufügen" = "Thêm biến";
 "Verb suchen…" = "Tìm verb…";
 "Verbinde einen Controller via Bluetooth oder USB" = "Kết nối tay cầm qua Bluetooth hoặc USB";
@@ -353,6 +355,7 @@
 "Verfügbare Runner" = "Trình chạy khả dụng";
 "Version" = "Phiên bản";
 "Version %@" = "Phiên bản %@";
+"Version %@ ist verfügbar. Möchtest du es jetzt herunterladen?" = "Phiên bản %@ có sẵn. Bạn có muốn tải xuống ngay không?";
 "Virtuellen Desktop verwenden" = "Sử dụng màn hình nền ảo";
 "Vorhandenen Prefix verwenden" = "Sử dụng tiền tố hiện có";
 "Vorlage wählen" = "Chọn mẫu";

@@ -251,7 +251,7 @@
 "Nochmal klicken entfernt den Shortcut" = "Tekrar tıklamak kısayolu kaldırır";
 "Notizen" = "Notlar";
 "OK" = "Tamam";
-"Oder via Homebrew:\nbrew install winetricks" = "Veya Homebrew ile:\nbrew install winetricks";
+"Oder via Homebrew:\\nbrew install winetricks" = "Veya Homebrew ile:\\nbrew install winetricks";
 "Online suchen..." = "Çevrimiçi ara…";
 "Online suchen…" = "Çevrimiçi ara…";
 "Optimierte Voreinstellungen für FF7 Rebirth (DX12, D3DMetal, ESync)" = "FF7 Rebirth için optimize edilmiş ön ayarlar (DX12, D3DMetal, ESync)";
@@ -319,6 +319,7 @@
 "Spielname..." = "Oyun adı…";
 "Spielzeit" = "Oynama süresi";
 "Sprache / Language" = "Dil";
+"Später" = "Sonra";
 "Standard" = "Varsayılan";
 "Standard (kein Prefix)" = "Varsayılan (prefix yok)";
 "Starten" = "Başlat";
@@ -342,6 +343,7 @@
 "Umgebungsvariablen (optional)" = "Ortam değişkenleri (isteğe bağlı)";
 "Ungültige URL:" = "Geçersiz URL:";
 "Update" = "Güncelle";
+"Update verfügbar" = "Güncelleme mevcut";
 "Variable hinzufügen" = "Değişken ekle";
 "Verb suchen…" = "Fiil ara…";
 "Verbinde einen Controller via Bluetooth oder USB" = "Bluetooth veya USB ile bir kumanda bağlayın";
@@ -352,6 +354,7 @@
 "Verfügbare Runner" = "Mevcut Runner'lar";
 "Version" = "Sürüm";
 "Version %@" = "Sürüm %@";
+"Version %@ ist verfügbar. Möchtest du es jetzt herunterladen?" = "Sürüm %@ mevcut. Şimdi indirmek ister misiniz?";
 "Virtuellen Desktop verwenden" = "Sanal masaüstü kullan";
 "Vorhandenen Prefix verwenden" = "Mevcut öneki kullan";
 "Vorlage wählen" = "Şablon seç";

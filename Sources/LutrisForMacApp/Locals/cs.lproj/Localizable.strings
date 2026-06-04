@@ -251,7 +251,7 @@
 "Nochmal klicken entfernt den Shortcut" = "Opětovné kliknutí odstraní zástupce";
 "Notizen" = "Poznámky";
 "OK" = "OK";
-"Oder via Homebrew:\nbrew install winetricks" = "Nebo přes Homebrew:\nbrew install winetricks";
+"Oder via Homebrew:\\nbrew install winetricks" = "Nebo přes Homebrew:\\nbrew install winetricks";
 "Online suchen..." = "Hledat online…";
 "Online suchen…" = "Hledat online…";
 "Optimierte Voreinstellungen für FF7 Rebirth (DX12, D3DMetal, ESync)" = "Optimalizovaná přednastavení pro FF7 Rebirth (DX12, D3DMetal, ESync)";
@@ -319,6 +319,7 @@
 "Spielname..." = "Název hry…";
 "Spielzeit" = "Doba hraní";
 "Sprache / Language" = "Jazyk";
+"Später" = "Později";
 "Standard" = "Výchozí";
 "Standard (kein Prefix)" = "Výchozí (žádný prefix)";
 "Starten" = "Spustit";
@@ -342,6 +343,7 @@
 "Umgebungsvariablen (optional)" = "Proměnné prostředí (volitelné)";
 "Ungültige URL:" = "Neplatná URL:";
 "Update" = "Aktualizovat";
+"Update verfügbar" = "Aktualizace k dispozici";
 "Variable hinzufügen" = "Přidat proměnnou";
 "Verb suchen…" = "Hledat sloveso…";
 "Verbinde einen Controller via Bluetooth oder USB" = "Připojte ovladač přes Bluetooth nebo USB";
@@ -352,6 +354,7 @@
 "Verfügbare Runner" = "Dostupné runnery";
 "Version" = "Verze";
 "Version %@" = "Verze %@";
+"Version %@ ist verfügbar. Möchtest du es jetzt herunterladen?" = "Verze %@ je k dispozici. Chcete ji nyní stáhnout?";
 "Virtuellen Desktop verwenden" = "Použít virtuální plochu";
 "Vorhandenen Prefix verwenden" = "Použít existující prefix";
 "Vorlage wählen" = "Vybrat šablonu";

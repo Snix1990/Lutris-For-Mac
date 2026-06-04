@@ -251,7 +251,7 @@
 "Nochmal klicken entfernt den Shortcut" = "Kliknij ponownie, aby usunąć skrót";
 "Notizen" = "Notatki";
 "OK" = "OK";
-"Oder via Homebrew:\nbrew install winetricks" = "Lub przez Homebrew:\nbrew install winetricks";
+"Oder via Homebrew:\\nbrew install winetricks" = "Lub przez Homebrew:\\nbrew install winetricks";
 "Online suchen..." = "Szukaj online…";
 "Online suchen…" = "Szukaj online…";
 "Optimierte Voreinstellungen für FF7 Rebirth (DX12, D3DMetal, ESync)" = "Zoptymalizowane ustawienia dla FF7 Rebirth (DX12, D3DMetal, ESync)";
@@ -319,6 +319,7 @@
 "Spielname..." = "Nazwa gry…";
 "Spielzeit" = "Czas gry";
 "Sprache / Language" = "Język";
+"Später" = "Później";
 "Standard" = "Domyślny";
 "Standard (kein Prefix)" = "Domyślny (bez prefiksu)";
 "Starten" = "Uruchom";
@@ -342,6 +343,7 @@
 "Umgebungsvariablen (optional)" = "Zmienne środowiskowe (opcjonalnie)";
 "Ungültige URL:" = "Nieprawidłowy URL:";
 "Update" = "Aktualizuj";
+"Update verfügbar" = "Aktualizacja dostępna";
 "Variable hinzufügen" = "Dodaj zmienną";
 "Verb suchen…" = "Szukaj verb…";
 "Verbinde einen Controller via Bluetooth oder USB" = "Podłącz kontroler przez Bluetooth lub USB";
@@ -352,6 +354,7 @@
 "Verfügbare Runner" = "Dostępne runnery";
 "Version" = "Wersja";
 "Version %@" = "Wersja %@";
+"Version %@ ist verfügbar. Möchtest du es jetzt herunterladen?" = "Wersja %@ jest dostępna. Czy chcesz ją teraz pobrać?";
 "Virtuellen Desktop verwenden" = "Użyj wirtualnego pulpitu";
 "Vorhandenen Prefix verwenden" = "Użyj istniejącego prefiksu";
 "Vorlage wählen" = "Wybierz szablon";

@@ -251,7 +251,7 @@
 "Nochmal klicken entfernt den Shortcut" = "Klicka igen för att ta bort genvägen";
 "Notizen" = "Anteckningar";
 "OK" = "OK";
-"Oder via Homebrew:\nbrew install winetricks" = "Eller via Homebrew:\nbrew install winetricks";
+"Oder via Homebrew:\\nbrew install winetricks" = "Eller via Homebrew:\\nbrew install winetricks";
 "Online suchen..." = "Sök online…";
 "Online suchen…" = "Sök online…";
 "Optimierte Voreinstellungen für FF7 Rebirth (DX12, D3DMetal, ESync)" = "Optimerade förinställningar för FF7 Rebirth (DX12, D3DMetal, ESync)";
@@ -319,6 +319,7 @@
 "Spielname..." = "Spelnamn…";
 "Spielzeit" = "Speltid";
 "Sprache / Language" = "Språk";
+"Später" = "Senare";
 "Standard" = "Standard";
 "Standard (kein Prefix)" = "Standard (inget prefix)";
 "Starten" = "Starta";
@@ -342,6 +343,7 @@
 "Umgebungsvariablen (optional)" = "Miljövariabler (valfritt)";
 "Ungültige URL:" = "Ogiltig URL:";
 "Update" = "Uppdatera";
+"Update verfügbar" = "Uppdatering tillgänglig";
 "Variable hinzufügen" = "Lägg till variabel";
 "Verb suchen…" = "Sök verb…";
 "Verbinde einen Controller via Bluetooth oder USB" = "Anslut en kontrollenhet via Bluetooth eller USB";
@@ -352,6 +354,7 @@
 "Verfügbare Runner" = "Tillgängliga runners";
 "Version" = "Version";
 "Version %@" = "Version %@";
+"Version %@ ist verfügbar. Möchtest du es jetzt herunterladen?" = "Version %@ är tillgänglig. Vill du ladda ner den nu?";
 "Virtuellen Desktop verwenden" = "Använd virtuellt skrivbord";
 "Vorhandenen Prefix verwenden" = "Använd befintligt prefix";
 "Vorlage wählen" = "Välj mall";

@@ -251,8 +251,7 @@
 "Nochmal klicken entfernt den Shortcut" = "Un second clic supprime le raccourci";
 "Notizen" = "Notes";
 "OK" = "OK";
-"Oder via Homebrew:\nbrew install winetricks" = "Ou via Homebrew :\nbrew install winetricks";
-"Oder via Homebrew:\nbrew install winetricks" = "Ou via Homebrew :\\nbrew install winetricks";
+"Oder via Homebrew:\\nbrew install winetricks" = "Ou via Homebrew :\\\\nbrew install winetricks";
 "Online suchen..." = "Rechercher en ligne…";
 "Online suchen…" = "Rechercher en ligne…";
 "Optimierte Voreinstellungen für FF7 Rebirth (DX12, D3DMetal, ESync)" = "Préréglages optimisés pour FF7 Rebirth (DX12, D3DMetal, ESync)";
@@ -320,6 +319,7 @@
 "Spielname..." = "Nom du jeu…";
 "Spielzeit" = "Temps de jeu";
 "Sprache / Language" = "Langue";
+"Später" = "Plus tard";
 "Standard" = "Défaut";
 "Standard (kein Prefix)" = "Par défaut (aucun préfixe)";
 "Starten" = "Lancer";
@@ -343,6 +343,7 @@
 "Umgebungsvariablen (optional)" = "Variables d'environnement (optionnel)";
 "Ungültige URL:" = "URL invalide :";
 "Update" = "Mettre à jour";
+"Update verfügbar" = "Mise à jour disponible";
 "Variable hinzufügen" = "Ajouter une variable";
 "Verb suchen…" = "Rechercher un verb…";
 "Verbinde einen Controller via Bluetooth oder USB" = "Connectez une manette via Bluetooth ou USB";
@@ -353,6 +354,7 @@
 "Verfügbare Runner" = "Runners disponibles";
 "Version" = "Version";
 "Version %@" = "Version %@";
+"Version %@ ist verfügbar. Möchtest du es jetzt herunterladen?" = "La version %@ est disponible. Voulez-vous la télécharger maintenant ?";
 "Virtuellen Desktop verwenden" = "Utiliser un bureau virtuel";
 "Vorhandenen Prefix verwenden" = "Utiliser un préfixe existant";
 "Vorlage wählen" = "Choisir un modèle";

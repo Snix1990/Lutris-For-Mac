@@ -59,6 +59,47 @@ struct LutrisForMacApp: App {
 final class AppDelegate: NSObject, NSApplicationDelegate {
     func applicationDidFinishLaunching(_ notification: Notification) {
         NSApplication.shared.setActivationPolicy(.regular)
+        Task { await checkForUpdate() }
+    }
+
+    private func checkForUpdate() async {
+        guard let release = await UpdaterService.shared.checkForUpdate() else { return }
+
+        await MainActor.run {
+            let alert = NSAlert()
+            alert.messageText = tr("Update verfügbar")
+            alert.informativeText = String(format: tr("Version %@ ist verfügbar. Möchtest du es jetzt herunterladen?"), release.version)
+            alert.addButton(withTitle: tr("Herunterladen"))
+            alert.addButton(withTitle: tr("Später"))
+
+            if let notes = release.releaseNotes, !notes.isEmpty {
+                let scrollView = NSScrollView(frame: NSRect(x: 0, y: 0, width: 400, height: 200))
+                let textView = NSTextView(frame: NSRect(x: 0, y: 0, width: 400, height: 200))
+                textView.isEditable = false
+                textView.string = notes
+                scrollView.documentView = textView
+                scrollView.hasVerticalScroller = true
+                alert.accessoryView = scrollView
+            }
+
+            let response = alert.runModal()
+            guard response == .alertFirstButtonReturn else { return }
+
+            let repoURL = URL(string: "https://github.com/\(UpdaterService.shared.repoOwner)/\(UpdaterService.shared.repoName)/releases/latest")!
+
+            if let downloadURL = release.downloadURL {
+                Task {
+                    do {
+                        let dmgURL = try await UpdaterService.shared.downloadAndInstall(at: downloadURL)
+                        NSWorkspace.shared.open(dmgURL)
+                    } catch {
+                        NSWorkspace.shared.open(repoURL)
+                    }
+                }
+            } else {
+                NSWorkspace.shared.open(repoURL)
+            }
+        }
     }
 
     func application(_ application: NSApplication, open urls: [URL]) {

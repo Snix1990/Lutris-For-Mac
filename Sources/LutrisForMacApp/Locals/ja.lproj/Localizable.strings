@@ -252,7 +252,7 @@
 "Nochmal klicken entfernt den Shortcut" = "もう一度クリックするとショートカットが削除されます";
 "Notizen" = "メモ";
 "OK" = "OK";
-"Oder via Homebrew:\nbrew install winetricks" = "またはHomebrew経由：\\nbrew install winetricks";
+"Oder via Homebrew:\\nbrew install winetricks" = "またはHomebrew経由：\\\\nbrew install winetricks";
 "Online suchen..." = "オンラインで検索…";
 "Online suchen…" = "オンライン検索…";
 "Optimierte Voreinstellungen für FF7 Rebirth (DX12, D3DMetal, ESync)" = "FF7 Rebirth最適化プリセット（DX12, D3DMetal, ESync）";
@@ -320,6 +320,7 @@
 "Spielname..." = "ゲーム名…";
 "Spielzeit" = "プレイ時間";
 "Sprache / Language" = "言語";
+"Später" = "後で";
 "Standard" = "デフォルト";
 "Standard (kein Prefix)" = "デフォルト（Prefixなし）";
 "Starten" = "起動";
@@ -343,6 +344,7 @@
 "Umgebungsvariablen (optional)" = "環境変数（オプション）";
 "Ungültige URL:" = "無効なURL：";
 "Update" = "更新";
+"Update verfügbar" = "アップデートがあります";
 "Variable hinzufügen" = "変数を追加";
 "Verb suchen…" = "verbを検索…";
 "Verbinde einen Controller via Bluetooth oder USB" = "BluetoothまたはUSBでコントローラーを接続";
@@ -353,6 +355,7 @@
 "Verfügbare Runner" = "利用可能なランナー";
 "Version" = "バージョン";
 "Version %@" = "バージョン%@";
+"Version %@ ist verfügbar. Möchtest du es jetzt herunterladen?" = "バージョン%@が利用可能です。今すぐダウンロードしますか？";
 "Virtuellen Desktop verwenden" = "仮想デスクトップを使用";
 "Vorhandenen Prefix verwenden" = "既存のプレフィックスを使用";
 "Vorlage wählen" = "テンプレートを選択";

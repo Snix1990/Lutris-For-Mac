@@ -252,7 +252,7 @@
 "Nochmal klicken entfernt den Shortcut" = "다시 클릭하면 바로가기가 제거됩니다";
 "Notizen" = "메모";
 "OK" = "확인";
-"Oder via Homebrew:\nbrew install winetricks" = "또는 Homebrew를 통해:\\nbrew install winetricks";
+"Oder via Homebrew:\\nbrew install winetricks" = "또는 Homebrew를 통해:\\\\nbrew install winetricks";
 "Online suchen..." = "온라인 검색…";
 "Online suchen…" = "온라인 검색…";
 "Optimierte Voreinstellungen für FF7 Rebirth (DX12, D3DMetal, ESync)" = "FF7 Rebirth 최적화 프리셋 (DX12, D3DMetal, ESync)";
@@ -320,6 +320,7 @@
 "Spielname..." = "게임 이름…";
 "Spielzeit" = "플레이 시간";
 "Sprache / Language" = "언어";
+"Später" = "나중에";
 "Standard" = "기본값";
 "Standard (kein Prefix)" = "기본 (Prefix 없음)";
 "Starten" = "실행";
@@ -343,6 +344,7 @@
 "Umgebungsvariablen (optional)" = "환경 변수 (선택 사항)";
 "Ungültige URL:" = "잘못된 URL:";
 "Update" = "업데이트";
+"Update verfügbar" = "업데이트 가능";
 "Variable hinzufügen" = "변수 추가";
 "Verb suchen…" = "verb 검색…";
 "Verbinde einen Controller via Bluetooth oder USB" = "Bluetooth 또는 USB로 컨트롤러 연결";
@@ -353,6 +355,7 @@
 "Verfügbare Runner" = "사용 가능한 러너";
 "Version" = "버전";
 "Version %@" = "버전 %@";
+"Version %@ ist verfügbar. Möchtest du es jetzt herunterladen?" = "버전 %@을(를) 사용할 수 있습니다. 지금 다운로드하시겠습니까?";
 "Virtuellen Desktop verwenden" = "가상 데스크탑 사용";
 "Vorhandenen Prefix verwenden" = "기존 접두사 사용";
 "Vorlage wählen" = "템플릿 선택";

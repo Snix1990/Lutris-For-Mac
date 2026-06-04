@@ -251,7 +251,7 @@
 "Nochmal klicken entfernt den Shortcut" = "Nogmaals klikken verwijdert de snelkoppeling";
 "Notizen" = "Notities";
 "OK" = "OK";
-"Oder via Homebrew:\nbrew install winetricks" = "Of via Homebrew:\nbrew install winetricks";
+"Oder via Homebrew:\\nbrew install winetricks" = "Of via Homebrew:\\nbrew install winetricks";
 "Online suchen..." = "Online zoeken…";
 "Online suchen…" = "Online zoeken…";
 "Optimierte Voreinstellungen für FF7 Rebirth (DX12, D3DMetal, ESync)" = "Geoptimaliseerde voorinstellingen voor FF7 Rebirth (DX12, D3DMetal, ESync)";
@@ -319,6 +319,7 @@
 "Spielname..." = "Spelnaam…";
 "Spielzeit" = "Speeltijd";
 "Sprache / Language" = "Taal";
+"Später" = "Later";
 "Standard" = "Standaard";
 "Standard (kein Prefix)" = "Standaard (geen prefix)";
 "Starten" = "Starten";
@@ -342,6 +343,7 @@
 "Umgebungsvariablen (optional)" = "Omgevingsvariabelen (optioneel)";
 "Ungültige URL:" = "Ongeldige URL:";
 "Update" = "Bijwerken";
+"Update verfügbar" = "Update beschikbaar";
 "Variable hinzufügen" = "Variabele toevoegen";
 "Verb suchen…" = "Zoek werkwoord…";
 "Verbinde einen Controller via Bluetooth oder USB" = "Sluit een controller aan via Bluetooth of USB";
@@ -352,6 +354,7 @@
 "Verfügbare Runner" = "Beschikbare runners";
 "Version" = "Versie";
 "Version %@" = "Versie %@";
+"Version %@ ist verfügbar. Möchtest du es jetzt herunterladen?" = "Versie %@ is beschikbaar. Wil je het nu downloaden?";
 "Virtuellen Desktop verwenden" = "Virtueel bureaublad gebruiken";
 "Vorhandenen Prefix verwenden" = "Bestaand prefix gebruiken";
 "Vorlage wählen" = "Sjabloon kiezen";

@@ -251,7 +251,7 @@
 "Nochmal klicken entfernt den Shortcut" = "Повторный щелчок удаляет ярлык";
 "Notizen" = "Заметки";
 "OK" = "ОК";
-"Oder via Homebrew:\nbrew install winetricks" = "Или через Homebrew:\nbrew install winetricks";
+"Oder via Homebrew:\\nbrew install winetricks" = "Или через Homebrew:\\nbrew install winetricks";
 "Online suchen..." = "Искать онлайн…";
 "Online suchen…" = "Искать онлайн…";
 "Optimierte Voreinstellungen für FF7 Rebirth (DX12, D3DMetal, ESync)" = "Оптимизированные пресеты для FF7 Rebirth (DX12, D3DMetal, ESync)";
@@ -319,6 +319,7 @@
 "Spielname..." = "Название игры…";
 "Spielzeit" = "Время игры";
 "Sprache / Language" = "Язык";
+"Später" = "Позже";
 "Standard" = "По умолчанию";
 "Standard (kein Prefix)" = "По умолчанию (без префикса)";
 "Starten" = "Запуск";
@@ -342,6 +343,7 @@
 "Umgebungsvariablen (optional)" = "Переменные окружения (опционально)";
 "Ungültige URL:" = "Некорректный URL:";
 "Update" = "Обновить";
+"Update verfügbar" = "Доступно обновление";
 "Variable hinzufügen" = "Добавить переменную";
 "Verb suchen…" = "Поиск verb…";
 "Verbinde einen Controller via Bluetooth oder USB" = "Подключите контроллер через Bluetooth или USB";
@@ -352,6 +354,7 @@
 "Verfügbare Runner" = "Доступные раннеры";
 "Version" = "Версия";
 "Version %@" = "Версия %@";
+"Version %@ ist verfügbar. Möchtest du es jetzt herunterladen?" = "Версия %@ доступна. Хотите скачать её сейчас?";
 "Virtuellen Desktop verwenden" = "Использовать виртуальный рабочий стол";
 "Vorhandenen Prefix verwenden" = "Использовать существующий префикс";
 "Vorlage wählen" = "Выбрать шаблон";

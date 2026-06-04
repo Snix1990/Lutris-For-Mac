@@ -252,7 +252,7 @@
 "Nochmal klicken entfernt den Shortcut" = "نقرة أخرى تزيل الاختصار";
 "Notizen" = "ملاحظات";
 "OK" = "موافق";
-"Oder via Homebrew:\nbrew install winetricks" = "أو عبر Homebrew:\\nbrew install winetricks";
+"Oder via Homebrew:\\nbrew install winetricks" = "أو عبر Homebrew:\\\\nbrew install winetricks";
 "Online suchen..." = "بحث عبر الإنترنت…";
 "Online suchen…" = "بحث عبر الإنترنت…";
 "Optimierte Voreinstellungen für FF7 Rebirth (DX12, D3DMetal, ESync)" = "إعدادات مسبقة محسّنة لـ FF7 Rebirth (DX12, D3DMetal, ESync)";
@@ -320,6 +320,7 @@
 "Spielname..." = "اسم اللعبة…";
 "Spielzeit" = "وقت اللعب";
 "Sprache / Language" = "اللغة";
+"Später" = "لاحقاً";
 "Standard" = "افتراضي";
 "Standard (kein Prefix)" = "افتراضي (بدون Prefix)";
 "Starten" = "تشغيل";
@@ -343,6 +344,7 @@
 "Umgebungsvariablen (optional)" = "متغيرات البيئة (اختياري)";
 "Ungültige URL:" = "رابط غير صالح:";
 "Update" = "تحديث";
+"Update verfügbar" = "تحديث متاح";
 "Variable hinzufügen" = "إضافة متغير";
 "Verb suchen…" = "البحث عن verb…";
 "Verbinde einen Controller via Bluetooth oder USB" = "قم بتوصيل وحدة تحكم عبر Bluetooth أو USB";
@@ -353,6 +355,7 @@
 "Verfügbare Runner" = "المشغلون المتاحون";
 "Version" = "الإصدار";
 "Version %@" = "الإصدار %@";
+"Version %@ ist verfügbar. Möchtest du es jetzt herunterladen?" = "الإصدار %@ متاح. هل تريد تنزيله الآن؟";
 "Virtuellen Desktop verwenden" = "استخدام سطح مكتب افتراضي";
 "Vorhandenen Prefix verwenden" = "استخدام بادئة موجودة";
 "Vorlage wählen" = "اختيار قالب";

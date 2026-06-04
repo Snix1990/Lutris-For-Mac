@@ -252,7 +252,7 @@
 "Nochmal klicken entfernt den Shortcut" = "फिर से क्लिक करने पर शॉर्टकट हट जाता है";
 "Notizen" = "नोट्स";
 "OK" = "ठीक";
-"Oder via Homebrew:\nbrew install winetricks" = "या Homebrew के माध्यम से:\\nbrew install winetricks";
+"Oder via Homebrew:\\nbrew install winetricks" = "या Homebrew के माध्यम से:\\\\nbrew install winetricks";
 "Online suchen..." = "ऑनलाइन खोजें…";
 "Online suchen…" = "ऑनलाइन खोजें…";
 "Optimierte Voreinstellungen für FF7 Rebirth (DX12, D3DMetal, ESync)" = "FF7 Rebirth के लिए अनुकूलित प्रीसेट (DX12, D3DMetal, ESync)";
@@ -320,6 +320,7 @@
 "Spielname..." = "गेम का नाम…";
 "Spielzeit" = "खेल का समय";
 "Sprache / Language" = "भाषा";
+"Später" = "बाद में";
 "Standard" = "डिफ़ॉल्ट";
 "Standard (kein Prefix)" = "डिफ़ॉल्ट (कोई Prefix नहीं)";
 "Starten" = "लॉन्च करें";
@@ -343,6 +344,7 @@
 "Umgebungsvariablen (optional)" = "पर्यावरण चर (वैकल्पिक)";
 "Ungültige URL:" = "अमान्य URL:";
 "Update" = "अपडेट करें";
+"Update verfügbar" = "अपडेट उपलब्ध";
 "Variable hinzufügen" = "चर जोड़ें";
 "Verb suchen…" = "verb खोजें…";
 "Verbinde einen Controller via Bluetooth oder USB" = "Bluetooth या USB के माध्यम से नियंत्रक कनेक्ट करें";
@@ -353,6 +355,7 @@
 "Verfügbare Runner" = "उपलब्ध रनर";
 "Version" = "संस्करण";
 "Version %@" = "संस्करण %@";
+"Version %@ ist verfügbar. Möchtest du es jetzt herunterladen?" = "संस्करण %@ उपलब्ध है। क्या आप इसे अभी डाउनलोड करना चाहते हैं?";
 "Virtuellen Desktop verwenden" = "वर्चुअल डेस्कटॉप का उपयोग करें";
 "Vorhandenen Prefix verwenden" = "मौजूदा उपसर्ग का उपयोग करें";
 "Vorlage wählen" = "टेम्पलेट चुनें";

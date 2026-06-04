@@ -23,6 +23,7 @@ Build a SwiftUI macOS game library manager (LutrisForMac) with fully integrated 
 - Plus button shows menu: "Manuell" (name input → library entry) or "Installieren" (existing installer)
 - Game deselection: click sidebar filter, click empty space in library, or press sidebar "Alle Spiele" → panel slides out
 - All content in detail panel has consistent 10px horizontal padding; GroupBox titles centered at 16pt font
+- **All UI strings must be translated into all 16 languages immediately** — vor jedem Build prüfen, ob neue Keys fehlen, und sofort in allen Sprachen übersetzen. Nie nur in einer Sprache lassen.
 - Bottom toolbar (delete/shortcut/play) fixed at bottom of panel, scrollable content above
 - Folder structure: `App/`, `Locals/`, `Models/`, `Services/`, `ViewModels/`, `Views/`
 

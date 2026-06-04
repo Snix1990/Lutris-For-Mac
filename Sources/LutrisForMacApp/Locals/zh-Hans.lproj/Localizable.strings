@@ -252,7 +252,7 @@
 "Nochmal klicken entfernt den Shortcut" = "再次点击可移除快捷方式";
 "Notizen" = "备注";
 "OK" = "确定";
-"Oder via Homebrew:\nbrew install winetricks" = "或通过 Homebrew：\\nbrew install winetricks";
+"Oder via Homebrew:\\nbrew install winetricks" = "或通过 Homebrew：\\\\nbrew install winetricks";
 "Online suchen..." = "在线搜索…";
 "Online suchen…" = "在线搜索…";
 "Optimierte Voreinstellungen für FF7 Rebirth (DX12, D3DMetal, ESync)" = "FF7 Rebirth优化预设（DX12, D3DMetal, ESync）";
@@ -320,6 +320,7 @@
 "Spielname..." = "游戏名称…";
 "Spielzeit" = "游戏时间";
 "Sprache / Language" = "语言";
+"Später" = "稍后";
 "Standard" = "默认";
 "Standard (kein Prefix)" = "默认（无Prefix）";
 "Starten" = "启动";
@@ -343,6 +344,7 @@
 "Umgebungsvariablen (optional)" = "环境变量（可选）";
 "Ungültige URL:" = "无效URL：";
 "Update" = "更新";
+"Update verfügbar" = "更新可用";
 "Variable hinzufügen" = "添加变量";
 "Verb suchen…" = "搜索verb…";
 "Verbinde einen Controller via Bluetooth oder USB" = "通过蓝牙或USB连接控制器";
@@ -353,6 +355,7 @@
 "Verfügbare Runner" = "可用运行器";
 "Version" = "版本";
 "Version %@" = "版本 %@";
+"Version %@ ist verfügbar. Möchtest du es jetzt herunterladen?" = "版本 %@ 可用。是否立即下载？";
 "Virtuellen Desktop verwenden" = "使用虚拟桌面";
 "Vorhandenen Prefix verwenden" = "使用现有前缀";
 "Vorlage wählen" = "选择模板";
