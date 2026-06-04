@@ -28,6 +28,7 @@ struct InstallerWindowView: View {
     @State private var installSuccess = false
     @State private var jsonError: String?
 
+    @ObservedObject private var emuManager = EmulatorManager.shared
     @State private var showWineManager = false
 
     enum SourceType: String, CaseIterable {
@@ -189,19 +190,38 @@ struct InstallerWindowView: View {
 
     // MARK: - Step 1: Runner
 
+    private var runnerOptions: [(String, String, String)] {
+        var options: [(String, String, String)] = [
+            ("Wine", "wineglass", "Windows-Spiele (via Wine/Crossover/GPTK)"),
+            ("Native macOS", "macwindow", "Mac-.app oder .dmg"),
+        ]
+        for emu in emuManager.emulators {
+            options.append((emu.name, self.icon(for: emu.name), emu.description))
+        }
+        return options
+    }
+
+    private func icon(for name: String) -> String {
+        switch name {
+        case "DOSBox", "DOSBox-X": "terminal"
+        case "RetroArch", "OpenEmu": "gamecontroller"
+        case "ScummVM": "pointfilltopleft"
+        case "Dolphin": "gamecontroller"
+        case "MelonDS": "gamecontroller"
+        case "Ryujinx", "Astris": "gamecontroller"
+        case "Azahar": "gamecontroller"
+        case "PCSX2", "RPCS3", "DuckStation": "gamecontroller"
+        case "Flycast": "gamecontroller"
+        case "PPSSPP": "gamecontroller"
+        case "PlayCover": "app"
+        default: "gamecontroller"
+        }
+    }
+
     private var stepRunner: some View {
         VStack(alignment: .leading, spacing: 12) {
             LText("Welche Art von Spiel möchtest du installieren?")
                 .font(.title2).bold()
-
-            let runnerOptions = [
-                ("Wine", "wineglass", "Windows-Spiele (via Wine/Crossover/GPTK)"),
-                ("Native macOS", "macwindow", "Mac-.app oder .dmg"),
-                ("DOSBox", "terminal", "DOS-Spiele"),
-                ("RetroArch", "gamecontroller", "Retro-Konsolen via RetroArch"),
-                ("ScummVM", "pointfilltopleft", "Point-and-Click-Adventures"),
-                ("MAME", "cpu", "Arcade-Spiele"),
-            ]
 
             ForEach(runnerOptions, id: \.0) { (name, icon, desc) in
                 Button {
