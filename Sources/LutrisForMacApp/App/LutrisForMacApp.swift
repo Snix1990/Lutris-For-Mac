@@ -102,6 +102,7 @@ struct LutrisForMacApp: App {
         }
         .defaultSize(width: 760, height: 560)
         .windowResizability(.contentMinSize)
+        .windowStyle(HiddenTitleBarWindowStyle())
     }
 }
 

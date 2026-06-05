@@ -46,6 +46,14 @@ struct WineSettingsView: View {
                 WinetricksView(wineManager: wineManager, showHeader: false)
             }
         }
+        .onAppear {
+            DispatchQueue.main.asyncAfter(deadline: .now() + 0.1) {
+                guard let window = NSApp.keyWindow else { return }
+                window.standardWindowButton(.closeButton)?.isHidden = true
+                window.standardWindowButton(.miniaturizeButton)?.isHidden = true
+                window.standardWindowButton(.zoomButton)?.isHidden = true
+            }
+        }
     }
 
     // MARK: - Versions Tab
