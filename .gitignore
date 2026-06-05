@@ -1,3 +1,6 @@
 .swiftpm/xcode/package.xcworkspace/xcuserdata/
 .DS_Store
 *.xcuserstate
+
+# In-Progress features – nicht committen
+WorkInProgress/
