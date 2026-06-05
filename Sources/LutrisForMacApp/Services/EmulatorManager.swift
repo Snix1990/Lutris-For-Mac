@@ -205,6 +205,9 @@ final class EmulatorManager: ObservableObject {
         if name.contains("linux") || name.contains("anylinux") { score -= 30 }
         if name.contains(".AppImage") || name.contains(".deb") || name.contains(".rpm") || name.contains(".ipa") { score -= 30 }
 
+        // Libretro-Cores sind keine standalone Apps
+        if name.contains("libretro") { score -= 20 }
+
         if name.hasSuffix(".dmg") { score += 10 }
         if name.hasSuffix(".zip") { score += 5 }
         if name.hasSuffix(".tar.gz") || name.hasSuffix(".tar.xz") { score += 3 }
