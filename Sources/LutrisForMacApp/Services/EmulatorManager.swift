@@ -76,6 +76,23 @@ final class EmulatorManager: ObservableObject {
     }
 
     private func detectEmulator(_ emu: Emulator) -> (Bool, String) {
+        // 0. Custom install path prüfen (Vorrang, falls gesetzt)
+        if let custom = emu.customInstallPath {
+            let customPath = (custom as NSString).expandingTildeInPath
+            if let appName = emu.appName {
+                let appPath = "\(customPath)/\(appName)"
+                if fm.fileExists(atPath: appPath) {
+                    return (true, appPath)
+                }
+            }
+            // Auch ohne appName nach .app im custom dir suchen
+            if let apps = try? fm.contentsOfDirectory(atPath: customPath) {
+                for entry in apps where entry.hasSuffix(".app") {
+                    return (true, "\(customPath)/\(entry)")
+                }
+            }
+        }
+
         // 1. Bundle-ID prüfen (genaueste Methode)
         if let bundleID = emu.bundleID {
             if let appPath = NSWorkspace.shared.urlForApplication(withBundleIdentifier: bundleID)?.path {
@@ -265,24 +282,34 @@ final class EmulatorManager: ObservableObject {
 
     // MARK: - Installationsmethoden
 
+    private func installTargetDir(_ emu: Emulator) -> String {
+        if let custom = emu.customInstallPath {
+            return (custom as NSString).expandingTildeInPath
+        }
+        return "/Applications"
+    }
+
     private func performInstall(_ emu: Emulator, file: URL) async throws {
+        let targetDir = installTargetDir(emu)
+        try? fm.createDirectory(atPath: targetDir, withIntermediateDirectories: true)
+
         switch emu.installType {
         case .dmg:
-            try installDMG(file: file, appName: emu.appName)
+            try installDMG(file: file, appName: emu.appName, targetDir: targetDir)
         case .zip:
-            try installZIP(file: file, appName: emu.appName)
+            try installZIP(file: file, appName: emu.appName, targetDir: targetDir)
         case .tarGz:
-            try installTarGz(file: file, appName: emu.appName)
+            try installTarGz(file: file, appName: emu.appName, targetDir: targetDir)
         case .pkg:
             try installPKG(file: file)
         case .homebrew:
             try installHomebrew(brewName: emu.brewName)
         case .sevenZ:
-            try install7z(file: file, appName: emu.appName)
+            try install7z(file: file, appName: emu.appName, targetDir: targetDir)
         }
     }
 
-    private func installDMG(file: URL, appName: String?) throws {
+    private func installDMG(file: URL, appName: String?, targetDir: String = "/Applications") throws {
         // DMG mounten
         let mountOutput = try shell("/usr/bin/hdiutil", ["attach", "-nobrowse", "-plist", file.path])
         // Mount-Pfad aus plist parsen
@@ -297,12 +324,12 @@ final class EmulatorManager: ObservableObject {
 
         if let preferred = appName, apps.contains(preferred) {
             let src = "\(mountPath)/\(preferred)"
-            let dest = "/Applications/\(preferred)"
+            let dest = "\(targetDir)/\(preferred)"
             try? fm.removeItem(atPath: dest)
             try fm.copyItem(atPath: src, toPath: dest)
         } else if let firstApp = apps.first {
             // Erste gefundene .app
-            let dest = "/Applications/\(firstApp)"
+            let dest = "\(targetDir)/\(firstApp)"
             try? fm.removeItem(atPath: dest)
             try fm.copyItem(atPath: "\(mountPath)/\(firstApp)", toPath: dest)
         } else {
@@ -310,20 +337,19 @@ final class EmulatorManager: ObservableObject {
         }
     }
 
-    private func installZIP(file: URL, appName: String?) throws {
+    private func installZIP(file: URL, appName: String?, targetDir: String = "/Applications") throws {
         let extractDir = file.deletingLastPathComponent().appendingPathComponent("extract")
         try? fm.removeItem(at: extractDir)
         try fm.createDirectory(at: extractDir, withIntermediateDirectories: true)
         try shell("/usr/bin/unzip", ["-o", file.path, "-d", extractDir.path])
 
-        // .app rekusiv finden
         if let appPath = findApp(in: extractDir), let appName {
-            let dest = "/Applications/\(appName)"
+            let dest = "\(targetDir)/\(appName)"
             try? fm.removeItem(atPath: dest)
             try fm.copyItem(at: appPath, to: URL(fileURLWithPath: dest))
         } else if let appPath = findApp(in: extractDir) {
             let appName = appPath.lastPathComponent
-            let dest = "/Applications/\(appName)"
+            let dest = "\(targetDir)/\(appName)"
             try? fm.removeItem(atPath: dest)
             try fm.copyItem(at: appPath, to: URL(fileURLWithPath: dest))
         }
@@ -331,19 +357,19 @@ final class EmulatorManager: ObservableObject {
         try? fm.removeItem(at: extractDir)
     }
 
-    private func installTarGz(file: URL, appName: String?) throws {
+    private func installTarGz(file: URL, appName: String?, targetDir: String = "/Applications") throws {
         let extractDir = file.deletingLastPathComponent().appendingPathComponent("extract")
         try? fm.removeItem(at: extractDir)
         try fm.createDirectory(at: extractDir, withIntermediateDirectories: true)
         try shell("/usr/bin/tar", ["-xzf", file.path, "-C", extractDir.path])
 
         if let appPath = findApp(in: extractDir), let appName {
-            let dest = "/Applications/\(appName)"
+            let dest = "\(targetDir)/\(appName)"
             try? fm.removeItem(atPath: dest)
             try fm.copyItem(at: appPath, to: URL(fileURLWithPath: dest))
         } else if let appPath = findApp(in: extractDir) {
             let appName = appPath.lastPathComponent
-            let dest = "/Applications/\(appName)"
+            let dest = "\(targetDir)/\(appName)"
             try? fm.removeItem(atPath: dest)
             try fm.copyItem(at: appPath, to: URL(fileURLWithPath: dest))
         }
@@ -372,7 +398,7 @@ final class EmulatorManager: ObservableObject {
         }
     }
 
-    private func install7z(file: URL, appName: String?) throws {
+    private func install7z(file: URL, appName: String?, targetDir: String = "/Applications") throws {
         let tools = [
             "/usr/local/bin/7z",
             "/opt/homebrew/bin/7z",
@@ -394,14 +420,14 @@ final class EmulatorManager: ObservableObject {
                 }
 
                 if let appPath = findApp(in: extractDir), let appName {
-                    let dest = "/Applications/\(appName)"
+                    let dest = "\(targetDir)/\(appName)"
                     try? fm.removeItem(atPath: dest)
                     try fm.copyItem(at: appPath, to: URL(fileURLWithPath: dest))
                     try? fm.removeItem(at: extractDir)
                     return
                 } else if let appPath = findApp(in: extractDir) {
                     let appName = appPath.lastPathComponent
-                    let dest = "/Applications/\(appName)"
+                    let dest = "\(targetDir)/\(appName)"
                     try? fm.removeItem(atPath: dest)
                     try fm.copyItem(at: appPath, to: URL(fileURLWithPath: dest))
                     try? fm.removeItem(at: extractDir)

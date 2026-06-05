@@ -11,6 +11,7 @@ struct Emulator: Identifiable, Codable {
     let appName: String?
     let brewName: String?
     let bundleID: String?
+    let customInstallPath: String?  // z.B. "~/Programms/Azahar"
 
     // GitHub Release-Quelle (wenn verfügbar)
     let githubOwner: String?
@@ -83,7 +84,8 @@ struct Emulator: Identifiable, Codable {
         directDownloadURL: String? = nil,
         downloadPageURL: String = "",
         installed: Bool = false,
-        installPath: String = ""
+        installPath: String = "",
+        customInstallPath: String? = nil
     ) {
         self.id = id
         self.name = name
@@ -95,6 +97,7 @@ struct Emulator: Identifiable, Codable {
         self.appName = appName
         self.brewName = brewName
         self.bundleID = bundleID
+        self.customInstallPath = customInstallPath
         self.githubOwner = githubOwner
         self.githubRepo = githubRepo
         self.directDownloadURL = directDownloadURL
@@ -218,7 +221,8 @@ struct Emulator: Identifiable, Codable {
             appName: "azahar.app",
             githubOwner: "azahar-emu",
             githubRepo: "azahar",
-            downloadPageURL: "https://github.com/azahar-emu/azahar/releases"
+            downloadPageURL: "https://github.com/azahar-emu/azahar/releases",
+            customInstallPath: "~/Programms/Azahar"
         ),
 
         // --- PlayStation ---
