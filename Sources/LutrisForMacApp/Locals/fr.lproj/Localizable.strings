@@ -421,3 +421,14 @@
 "Übersetzungsweg für DirectX → Metal" = "Chemin de traduction pour DirectX → Metal";
 "Übersicht" = "Aperçu";
 "✅ Emulator installiert" = "✅ Émulateur installé";
+
+"ROM-Ordner verwalten" = "Gérer les dossiers ROM";
+"Ordner hinzufügen" = "Ajouter un dossier";
+"Scannen" = "Analyser";
+"Gefundene Spiele importieren" = "Importer les jeux trouvés";
+"Keine ROMs gefunden" = "Aucune ROM trouvée";
+"Scan abgeschlossen" = "Analyse terminée";
+"In den konfigurierten Ordnern wurden keine ROM-Dateien gefunden." = "Aucun fichier ROM trouvé dans les dossiers configurés.";
+"ROM-Ordner" = "Dossiers ROM";
+"Alle scannen" = "Tout analyser";
+"Importieren" = "Importer";

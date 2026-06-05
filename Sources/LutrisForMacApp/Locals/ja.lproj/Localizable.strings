@@ -422,3 +422,14 @@
 "Übersetzungsweg für DirectX → Metal" = "DirectX → Metal変換パス";
 "Übersicht" = "概要";
 "✅ Emulator installiert" = "✅ エミュレータがインストールされました";
+
+"ROM-Ordner verwalten" = "ROMフォルダを管理";
+"Ordner hinzufügen" = "フォルダを追加";
+"Scannen" = "スキャン";
+"Gefundene Spiele importieren" = "見つかったゲームをインポート";
+"Keine ROMs gefunden" = "ROMが見つかりません";
+"Scan abgeschlossen" = "スキャン完了";
+"In den konfigurierten Ordnern wurden keine ROM-Dateien gefunden." = "設定されたフォルダにROMファイルが見つかりませんでした。";
+"ROM-Ordner" = "ROMフォルダ";
+"Alle scannen" = "すべてスキャン";
+"Importieren" = "インポート";

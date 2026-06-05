@@ -16,8 +16,13 @@ struct SettingsView: View {
                 .tabItem {
                     Label { LText("Allgemein") } icon: { Image(systemName: "gearshape") }
                 }
+
+            romFoldersTab
+                .tabItem {
+                    Label { LText("ROM-Ordner") } icon: { Image(systemName: "folder") }
+                }
         }
-        .frame(width: 480, height: 360)
+        .frame(width: 540, height: 440)
     }
 
     private var languageTab: some View {
@@ -66,5 +71,9 @@ struct SettingsView: View {
         }
         .formStyle(.grouped)
         .padding()
+    }
+
+    private var romFoldersTab: some View {
+        RomFolderSettingsView()
     }
 }

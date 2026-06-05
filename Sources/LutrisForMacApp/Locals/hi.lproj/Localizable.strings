@@ -422,3 +422,14 @@
 "Übersetzungsweg für DirectX → Metal" = "DirectX → Metal अनुवाद पथ";
 "Übersicht" = "अवलोकन";
 "✅ Emulator installiert" = "✅ एमुलेटर स्थापित";
+
+"ROM-Ordner verwalten" = "ROM फ़ोल्डर प्रबंधित करें";
+"Ordner hinzufügen" = "फ़ोल्डर जोड़ें";
+"Scannen" = "स्कैन करें";
+"Gefundene Spiele importieren" = "मिले गेम आयात करें";
+"Keine ROMs gefunden" = "कोई ROM नहीं मिला";
+"Scan abgeschlossen" = "स्कैन पूर्ण";
+"In den konfigurierten Ordnern wurden keine ROM-Dateien gefunden." = "कॉन्फ़िगर किए गए फ़ोल्डरों में कोई ROM फ़ाइल नहीं मिली।";
+"ROM-Ordner" = "ROM फ़ोल्डर";
+"Alle scannen" = "सभी स्कैन करें";
+"Importieren" = "आयात करें";

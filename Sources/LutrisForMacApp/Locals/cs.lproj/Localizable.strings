@@ -421,3 +421,14 @@
 "Übersetzungsweg für DirectX → Metal" = "Překladová cesta pro DirectX → Metal";
 "Übersicht" = "Přehled";
 "✅ Emulator installiert" = "✅ Emulátor nainstalován";
+
+"ROM-Ordner verwalten" = "Spravovat složky ROM";
+"Ordner hinzufügen" = "Přidat složku";
+"Scannen" = "Skenovat";
+"Gefundene Spiele importieren" = "Importovat nalezené hry";
+"Keine ROMs gefunden" = "Nenalezeny žádné ROM";
+"Scan abgeschlossen" = "Skenování dokončeno";
+"In den konfigurierten Ordnern wurden keine ROM-Dateien gefunden." = "V nakonfigurovaných složkách nebyly nalezeny žádné soubory ROM.";
+"ROM-Ordner" = "Složky ROM";
+"Alle scannen" = "Skenovat vše";
+"Importieren" = "Importovat";

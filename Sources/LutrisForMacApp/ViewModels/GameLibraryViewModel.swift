@@ -18,6 +18,7 @@ enum SortOption: String, CaseIterable {
 
 @MainActor
 final class GameLibraryViewModel: ObservableObject {
+    static let shared = GameLibraryViewModel()
     // MARK: - Published State
     @Published var games: [Game] = []
     @Published var selectedRunner: String? = nil

@@ -421,3 +421,14 @@
 "Übersetzungsweg für DirectX → Metal" = "Ścieżka translacji DirectX → Metal";
 "Übersicht" = "Przegląd";
 "✅ Emulator installiert" = "✅ Emulator zainstalowany";
+
+"ROM-Ordner verwalten" = "Zarządzaj folderami ROM";
+"Ordner hinzufügen" = "Dodaj folder";
+"Scannen" = "Skanuj";
+"Gefundene Spiele importieren" = "Importuj znalezione gry";
+"Keine ROMs gefunden" = "Nie znaleziono ROM-ów";
+"Scan abgeschlossen" = "Skanowanie zakończone";
+"In den konfigurierten Ordnern wurden keine ROM-Dateien gefunden." = "W skonfigurowanych folderach nie znaleziono plików ROM.";
+"ROM-Ordner" = "Foldery ROM";
+"Alle scannen" = "Skanuj wszystko";
+"Importieren" = "Importuj";

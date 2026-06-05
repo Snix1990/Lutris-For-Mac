@@ -4,7 +4,7 @@ import SwiftUI
 struct LutrisForMacApp: App {
     @NSApplicationDelegateAdaptor(AppDelegate.self) var appDelegate
     @StateObject private var lang = LanguageManager.shared
-    @StateObject private var viewModel = GameLibraryViewModel()
+    @StateObject private var viewModel = GameLibraryViewModel.shared
     @StateObject private var wineManager = WineManager.shared
     @StateObject private var runnerManager = RunnerManager.shared
 
@@ -24,6 +24,56 @@ struct LutrisForMacApp: App {
                     viewModel.refreshLibrary()
                 }
                 .keyboardShortcut("r", modifiers: [.command])
+
+                Divider()
+
+                Button("Alle scannen") {
+                    Task {
+                        let folders = RomFolderManager.shared.folders
+                        guard !folders.isEmpty else { return }
+                        let results = RomFolderManager.shared.scanROMs()
+                        let total = results.values.reduce(0) { $0 + $1.count }
+
+                        let alert = NSAlert()
+                        if total == 0 {
+                            alert.messageText = tr("Keine ROMs gefunden")
+                            alert.informativeText = tr("In den konfigurierten Ordnern wurden keine ROM-Dateien gefunden.")
+                            alert.addButton(withTitle: tr("OK"))
+                            alert.runModal()
+                        } else {
+                            let platforms = results.keys.sorted().joined(separator: ", ")
+                            alert.messageText = tr("Scan abgeschlossen")
+                            alert.informativeText = "\(total) ROMs gefunden in: \(platforms)"
+                            alert.addButton(withTitle: tr("Importieren"))
+                            alert.addButton(withTitle: tr("Abbrechen"))
+
+                            let response = alert.runModal()
+                            guard response == .alertFirstButtonReturn else { return }
+
+                            var imported = 0
+                            for (platform, files) in results {
+                                for url in files {
+                                    let name = url.deletingPathExtension().lastPathComponent
+                                    let game = Game(
+                                        name: name,
+                                        platform: platform,
+                                        installPath: url.path,
+                                        runner: "RetroArch"
+                                    )
+                                    if !viewModel.games.contains(where: { $0.installPath == url.path }) {
+                                        viewModel.games.append(game)
+                                        imported += 1
+                                    }
+                                }
+                            }
+                            if imported > 0 {
+                                viewModel.saveLibrary()
+                            }
+                        }
+                    }
+                }
+                .keyboardShortcut("s", modifiers: [.command, .shift])
+                .disabled(RomFolderManager.shared.folders.isEmpty)
             }
 
             WineMenuCommands(wineManager: wineManager)

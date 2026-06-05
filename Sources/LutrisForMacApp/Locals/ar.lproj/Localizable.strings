@@ -422,3 +422,14 @@
 "Übersetzungsweg für DirectX → Metal" = "مسار الترجمة لـ DirectX → Metal";
 "Übersicht" = "نظرة عامة";
 "✅ Emulator installiert" = "✅ تم تثبيت المحاكي";
+
+"ROM-Ordner verwalten" = "إدارة مجلدات ROM";
+"Ordner hinzufügen" = "إضافة مجلد";
+"Scannen" = "مسح";
+"Gefundene Spiele importieren" = "استيراد الألعاب التي تم العثور عليها";
+"Keine ROMs gefunden" = "لم يتم العثور على ROM";
+"Scan abgeschlossen" = "اكتمل المسح";
+"In den konfigurierten Ordnern wurden keine ROM-Dateien gefunden." = "لم يتم العثور على ملفات ROM في المجلدات التي تم تكوينها.";
+"ROM-Ordner" = "مجلدات ROM";
+"Alle scannen" = "مسح الكل";
+"Importieren" = "استيراد";

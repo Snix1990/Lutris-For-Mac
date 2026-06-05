@@ -421,3 +421,14 @@
 "Übersetzungsweg für DirectX → Metal" = "Översättningsväg för DirectX → Metal";
 "Übersicht" = "Översikt";
 "✅ Emulator installiert" = "✅ Emulator installerad";
+
+"ROM-Ordner verwalten" = "Hantera ROM-mappar";
+"Ordner hinzufügen" = "Lägg till mapp";
+"Scannen" = "Skanna";
+"Gefundene Spiele importieren" = "Importera hittade spel";
+"Keine ROMs gefunden" = "Inga ROM hittades";
+"Scan abgeschlossen" = "Skanna slutförd";
+"In den konfigurierten Ordnern wurden keine ROM-Dateien gefunden." = "Inga ROM-filer hittades i de konfigurerade mapparna.";
+"ROM-Ordner" = "ROM-mappar";
+"Alle scannen" = "Skanna alla";
+"Importieren" = "Importera";

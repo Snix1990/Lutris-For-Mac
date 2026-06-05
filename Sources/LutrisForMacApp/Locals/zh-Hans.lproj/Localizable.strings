@@ -422,3 +422,14 @@
 "Übersetzungsweg für DirectX → Metal" = "DirectX → Metal转换路径";
 "Übersicht" = "概览";
 "✅ Emulator installiert" = "✅ 模拟器已安装";
+
+"ROM-Ordner verwalten" = "管理 ROM 文件夹";
+"Ordner hinzufügen" = "添加文件夹";
+"Scannen" = "扫描";
+"Gefundene Spiele importieren" = "导入找到的游戏";
+"Keine ROMs gefunden" = "未找到 ROM";
+"Scan abgeschlossen" = "扫描完成";
+"In den konfigurierten Ordnern wurden keine ROM-Dateien gefunden." = "在配置的文件夹中未找到 ROM 文件。";
+"ROM-Ordner" = "ROM 文件夹";
+"Alle scannen" = "扫描全部";
+"Importieren" = "导入";

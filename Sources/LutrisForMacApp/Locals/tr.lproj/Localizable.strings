@@ -421,3 +421,14 @@
 "Übersetzungsweg für DirectX → Metal" = "DirectX → Metal çeviri yolu";
 "Übersicht" = "Genel Bakış";
 "✅ Emulator installiert" = "✅ Emülatör yüklendi";
+
+"ROM-Ordner verwalten" = "ROM Klasörlerini Yönet";
+"Ordner hinzufügen" = "Klasör Ekle";
+"Scannen" = "Tara";
+"Gefundene Spiele importieren" = "Bulunan Oyunları İçe Aktar";
+"Keine ROMs gefunden" = "ROM Bulunamadı";
+"Scan abgeschlossen" = "Tarama Tamamlandı";
+"In den konfigurierten Ordnern wurden keine ROM-Dateien gefunden." = "Yapılandırılan klasörlerde ROM dosyası bulunamadı.";
+"ROM-Ordner" = "ROM Klasörleri";
+"Alle scannen" = "Tümünü Tara";
+"Importieren" = "İçe Aktar";

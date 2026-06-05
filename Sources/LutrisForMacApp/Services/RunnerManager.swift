@@ -40,22 +40,6 @@ final class RunnerManager: ObservableObject {
             launchTemplate: .wine("/Applications/CrossOver.app/Contents/SharedSupport/CrossOver/bin/wine"),
             supportsPlatforms: ["Windows"]
         ),
-        Runner(
-            name: "Whisky",
-            displayName: "Whisky (GPTK)",
-            category: .wine,
-            installType: "GPTK + Wine",
-            launchTemplate: .wine("\(NSHomeDirectory())/Applications/Whisky.app/Contents/Resources/wine/bin/wine"),
-            supportsPlatforms: ["Windows"]
-        ),
-        Runner(
-            name: "Kegworks",
-            displayName: "Kegworks (WineBottler)",
-            category: .wine,
-            installType: "WineBottler Fork",
-            launchTemplate: .wine("/Applications/Kegworks.app/Contents/SharedSupport/bin/wine"),
-            supportsPlatforms: ["Windows"]
-        ),
 
         // --- Emulatoren ---
         Runner(
@@ -88,18 +72,6 @@ final class RunnerManager: ObservableObject {
                 Runner.RunnerConfigField(id: "scummvm_game_id", label: "ScummVM Game-ID", type: .text, defaultValue: "", help: "Spiele-ID aus ScummVM (z.B. monkey1)")
             ]
         ),
-        Runner(
-            name: "MAME",
-            displayName: "MAME",
-            category: .retro,
-            installType: "Homebrew / App",
-            launchTemplate: .mame,
-            supportsPlatforms: ["Arcade"],
-            configFields: [
-                Runner.RunnerConfigField(id: "mame_rom", label: "ROM-Name", type: .text, defaultValue: "", help: "MAME ROM-Name (z.B. pacman)")
-            ]
-        ),
-
         // --- Nintendo ---
         Runner(
             name: "Dolphin",
@@ -113,19 +85,19 @@ final class RunnerManager: ObservableObject {
             ]
         ),
         Runner(
-            name: "Citra",
-            displayName: "Citra (3DS)",
-            category: .nintendo,
-            installType: "Homebrew / App",
-            launchTemplate: .nativeApp,
-            supportsPlatforms: ["3DS"]
-        ),
-        Runner(
             name: "Ryujinx",
             displayName: "Ryujinx (Switch)",
             category: .nintendo,
             installType: "App",
             launchTemplate: .cli("{runnerPath} \"{gamePath}\""),
+            supportsPlatforms: ["Switch"]
+        ),
+        Runner(
+            name: "Astris",
+            displayName: "Astris (Switch)",
+            category: .nintendo,
+            installType: "App (DMG)",
+            launchTemplate: .nativeApp,
             supportsPlatforms: ["Switch"]
         ),
         Runner(
@@ -135,6 +107,14 @@ final class RunnerManager: ObservableObject {
             installType: "Homebrew / App",
             launchTemplate: .nativeApp,
             supportsPlatforms: ["Nintendo DS"]
+        ),
+        Runner(
+            name: "Azahar",
+            displayName: "Azahar (3DS)",
+            category: .nintendo,
+            installType: "App (ZIP)",
+            launchTemplate: .nativeApp,
+            supportsPlatforms: ["3DS"]
         ),
 
         // --- PlayStation ---
@@ -206,6 +186,16 @@ final class RunnerManager: ObservableObject {
             launchTemplate: .nativeApp,
             supportsPlatforms: ["Multi"]
         ),
+
+        // --- Mobile ---
+        Runner(
+            name: "PlayCover",
+            displayName: "PlayCover (iOS/iPadOS)",
+            category: .other,
+            installType: "App (DMG)",
+            launchTemplate: .nativeApp,
+            supportsPlatforms: ["iOS", "iPadOS"]
+        ),
     ]
 
     // MARK: - Erkennung
@@ -235,10 +225,6 @@ final class RunnerManager: ObservableObject {
             return detectWine()
         case "CrossOver":
             return detectApp(path: "/Applications/CrossOver.app", binary: "Contents/SharedSupport/CrossOver/bin/wine")
-        case "Whisky":
-            return detectApp(path: "\(NSHomeDirectory())/Applications/Whisky.app", binary: "Contents/Resources/wine/bin/wine")
-        case "Kegworks":
-            return detectApp(path: "/Applications/Kegworks.app", binary: "Contents/SharedSupport/bin/wine")
         case "DOSBox":
             let (installed, path, _) = detectAppOrBrew(appName: "DOSBox", brewName: "dosbox")
             let bin = installed ? "\(path)/Contents/MacOS/DOSBox" : ""
@@ -247,12 +233,8 @@ final class RunnerManager: ObservableObject {
             return detectAppOrBrew(appName: "DOSBox-X", brewName: "dosbox-x")
         case "ScummVM":
             return detectAppOrBrew(appName: "ScummVM", brewName: "scummvm")
-        case "MAME":
-            return detectAppOrBrew(appName: "MAME", brewName: "mame")
         case "Dolphin":
             return detectAppOrBrew(appName: "Dolphin", brewName: "dolphin-emu")
-        case "Citra":
-            return detectApp(path: "/Applications/Citra.app", binary: "Contents/MacOS/citra-qt")
         case "Ryujinx":
             return detectApp(path: "/Applications/Ryujinx.app", binary: "Contents/MacOS/Ryujinx")
         case "MelonDS":
@@ -271,6 +253,12 @@ final class RunnerManager: ObservableObject {
             return detectAppOrBrew(appName: "RetroArch", brewName: "retroarch")
         case "OpenEmu":
             return detectApp(path: "/Applications/OpenEmu.app", binary: "Contents/MacOS/OpenEmu")
+        case "Astris":
+            return detectApp(path: "/Applications/Astris.app", binary: "Contents/MacOS/Astris")
+        case "Azahar":
+            return detectApp(path: "\(NSHomeDirectory())/Programms/Azahar/azahar.app", binary: "Contents/MacOS/azahar")
+        case "PlayCover":
+            return detectApp(path: "/Applications/PlayCover.app", binary: "Contents/MacOS/PlayCover")
         default:
             return (false, "", "")
         }
@@ -410,12 +398,6 @@ final class RunnerManager: ObservableObject {
             _ = try await ProcessRunner.run(command: cmd, currentDirectory: nil, environment: environment)
             DesktopIntegrationManager.shared.clearDiscordPresence()
 
-        case .mame:
-            let bin = runner.binaryPath.isEmpty ? "/Applications/MAME.app/Contents/MacOS/mame" : runner.binaryPath
-            let rom = runnerConfig["mame_rom"] ?? installPath
-            _ = try await ProcessRunner.run(command: "\"\(bin)\" \"\(rom)\"", currentDirectory: nil, environment: environment)
-            DesktopIntegrationManager.shared.clearDiscordPresence()
-
         case .retroarch:
             let bin = runner.binaryPath.isEmpty ? "/Applications/RetroArch.app/Contents/MacOS/RetroArch" : runner.binaryPath
             let core = runnerConfig["retroarch_core"] ?? ""
@@ -425,6 +407,9 @@ final class RunnerManager: ObservableObject {
 
         case .custom:
             throw RunnerError.customRunnerNoCommand
+
+        default:
+            break
         }
     }
 }

@@ -422,3 +422,14 @@
 "Übersetzungsweg für DirectX → Metal" = "Đường dẫn chuyển đổi DirectX → Metal";
 "Übersicht" = "Tổng quan";
 "✅ Emulator installiert" = "✅ Đã cài đặt trình giả lập";
+
+"ROM-Ordner verwalten" = "Quản lý thư mục ROM";
+"Ordner hinzufügen" = "Thêm thư mục";
+"Scannen" = "Quét";
+"Gefundene Spiele importieren" = "Nhập trò chơi đã tìm thấy";
+"Keine ROMs gefunden" = "Không tìm thấy ROM";
+"Scan abgeschlossen" = "Quét hoàn tất";
+"In den konfigurierten Ordnern wurden keine ROM-Dateien gefunden." = "Không tìm thấy tệp ROM trong các thư mục đã cấu hình.";
+"ROM-Ordner" = "Thư mục ROM";
+"Alle scannen" = "Quét tất cả";
+"Importieren" = "Nhập";
