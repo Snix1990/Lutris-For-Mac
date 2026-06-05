@@ -183,4 +183,3 @@ Build a SwiftUI macOS game library manager (LutrisForMac) with fully integrated 
 - **Screenshots/Galerie** pro Spiel
 - **Multi-Executable** (versch. launch configs pro Spiel)
 - **Import: Amazon Games, Ubisoft, Humble Bundle**
-- **Proton/Steam Play Support**

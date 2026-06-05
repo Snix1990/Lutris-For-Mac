@@ -145,8 +145,10 @@ struct WineConfigView: View {
                         }
                     }
                     .buttonStyle(.bordered)
-                    Button { openWinetricksWithPath(prefixPath) } label: { LText("Winetricks") }
-                    .buttonStyle(.bordered)
+                    if game.runner != "CrossOver" {
+                        Button { openWinetricksWithPath(prefixPath) } label: { LText("Winetricks") }
+                        .buttonStyle(.bordered)
+                    }
                 }
             }
         }
@@ -360,8 +362,10 @@ struct WineConfigView: View {
                     wineManager.runRegedit(for: prefix)
                 }
                 .buttonStyle(.bordered)
-                Button { openCrossOverTricks(for: prefix) } label: { LText("Crossovertricks") }
-                .buttonStyle(.bordered)
+                if game.runner != "CrossOver" {
+                    Button { openCrossOverTricks(for: prefix) } label: { LText("Crossovertricks") }
+                    .buttonStyle(.bordered)
+                }
             }
         }
     }

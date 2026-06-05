@@ -20,6 +20,10 @@ final class WineManager: ObservableObject {
     private let prefixesDir: URL
     private let wineCacheDir: URL
 
+    static var allKnownDownloads: [WineDownloadInfo] {
+        knownDownloads
+    }
+
     private static let knownDownloads: [WineDownloadInfo] = {
         let pairs: [(name: String, displayName: String, urlString: String, type: WineVersion.WineSource)] = [
             ("Wine-Crossover 24.0.1", "Wine Crossover 24.0.1 (Apple Silicon)",

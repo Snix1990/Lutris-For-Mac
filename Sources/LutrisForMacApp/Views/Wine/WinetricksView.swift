@@ -11,10 +11,12 @@ struct WinetricksView: View {
     @State private var isRunning = false
     @State private var task: Task<Void, Never>?
     var wineBinaryPath: String?
+    var showHeader = true
 
-    init(wineManager: WineManager, initialPrefix: WinePrefix? = nil, wineBinaryPath: String? = nil) {
+    init(wineManager: WineManager, initialPrefix: WinePrefix? = nil, wineBinaryPath: String? = nil, showHeader: Bool = true) {
         self.wineManager = wineManager
         self.wineBinaryPath = wineBinaryPath
+        self.showHeader = showHeader
         _selectedPrefix = State(initialValue: initialPrefix)
     }
 
@@ -36,17 +38,19 @@ struct WinetricksView: View {
 
     var body: some View {
         VStack(spacing: 0) {
-            HStack {
-                LText("Winetricks")
-                    .font(.title2)
-                    .bold()
-                Spacer()
-                Button { dismiss() } label: { LText("Schliessen") }
-                    .keyboardShortcut(.cancelAction)
-            }
-            .padding()
+            if showHeader {
+                HStack {
+                    LText("Winetricks")
+                        .font(.title2)
+                        .bold()
+                    Spacer()
+                    Button { dismiss() } label: { LText("Schliessen") }
+                        .keyboardShortcut(.cancelAction)
+                }
+                .padding()
 
-            Divider()
+                Divider()
+            }
 
             if !winetricks.isInstalled {
                 notInstalledView
@@ -128,7 +132,7 @@ struct WinetricksView: View {
     private var prefixPicker: some View {
         Picker(selection: $selectedPrefix) {
             LText("Kein Prefix ausgewählt").tag(nil as WinePrefix?)
-            ForEach(wineManager.prefixes) { p in
+            ForEach(wineManager.prefixes.filter { !$0.name.hasPrefix("CrossOver: ") }) { p in
                 Text(p.name).tag(p as WinePrefix?)
             }
         } label: {

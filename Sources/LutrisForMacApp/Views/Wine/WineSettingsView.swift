@@ -43,258 +43,183 @@ struct WineSettingsView: View {
             case .crossover:
                 crossoverTab
             case .winetricks:
-                WinetricksView(wineManager: wineManager)
+                WinetricksView(wineManager: wineManager, showHeader: false)
             }
         }
     }
 
     // MARK: - Versions Tab
 
+    @State private var hoveredDownload: String?
+
     private var versionsTab: some View {
-        List {
-            if !wineManager.installedVersions.isEmpty {
-                Section(header: Text(verbatim: tr("Installierte Versionen"))) {
-                    ForEach(wineManager.installedVersions) { version in
-                        HStack {
-                            VStack(alignment: .leading, spacing: 2) {
-                                Text(version.displayName)
-                                    .font(.headline)
-                                Text(version.path)
-                                    .font(.caption)
-                                    .foregroundColor(.secondary)
-                                HStack(spacing: 8) {
-                                    iconBadge(systemName: "checkmark.circle.fill", color: .green, text: tr("Installiert"))
-                                    sourceBadge(version.type)
-                                }
-                            }
-                            Spacer()
-                            if version.wineBinaryPath.isEmpty || !FileManager.default.isExecutableFile(atPath: version.wineBinaryPath) {
-                                Image(systemName: "exclamationmark.triangle.fill")
-                                    .foregroundColor(.orange)
-                                    .helpLText("Wine-Binary nicht gefunden")
-                            }
-                        }
-                        .padding(.vertical, 4)
+        GroupBox {
+            ScrollView {
+                let downloads = WineManager.allKnownDownloads
+                if downloads.isEmpty {
+                    VStack(spacing: 12) {
+                        Image(systemName: "tray")
+                            .font(.system(size: 32))
+                            .foregroundColor(.secondary)
+                        LText("Keine Wine-Versionen gefunden")
+                            .foregroundColor(.secondary)
+                        Button { wineManager.refresh() } label: { LText("Nach Wine-Versionen suchen") }
+                            .buttonStyle(.bordered)
                     }
-                    .onDelete { indexSet in
-                        for index in indexSet {
-                            wineManager.removeVersion(wineManager.installedVersions[index])
-                        }
-                    }
-                }
-            }
-
-            let available = wineManager.availableDownloads
-            if !available.isEmpty {
-                Section(header: Text(verbatim: tr("Verfügbar zum Download"))) {
-                    ForEach(available) { download in
-                        HStack {
-                            VStack(alignment: .leading, spacing: 2) {
-                                Text(download.displayName)
-                                    .font(.headline)
-                                Text(download.url.lastPathComponent)
-                                    .font(.caption)
-                                    .foregroundColor(.secondary)
-                            }
-                            Spacer()
-                            Button {
-                                Task {
-                                    try? await wineManager.downloadWine(download)
-                                }
-                            } label: {
-                                LText("Herunterladen")
-                            }
-                            .buttonStyle(.borderedProminent)
-                            .disabled(wineManager.isDownloading)
-                        }
-                        .padding(.vertical, 4)
-                    }
-                }
-            }
-
-            if wineManager.isDownloading {
-                Section("Download") {
-                    VStack(alignment: .leading, spacing: 8) {
-                        LText("Lade Wine herunter...")
-                            .font(.headline)
-                        ProgressView(value: wineManager.downloadProgress)
-                        if let pct = wineManager.downloadProgress.map({ Int($0 * 100) }) {
-                            Text("\(pct)%")
-                                .font(.caption)
-                                .foregroundColor(.secondary)
-                        }
-                    }
-                    .padding(.vertical, 8)
-                }
-            }
-
-            // Wine-Cache
-            let cached = wineManager.cachedDownloadNames
-            if !cached.isEmpty || !wineManager.availableDownloads.isEmpty {
-                Section(header: Text(verbatim: tr("Wine-Cache (vorab geladen)"))) {
-                    if !cached.isEmpty {
-                        ForEach(cached, id: \.self) { name in
-                            let isInstalled = wineManager.installedVersions.contains(where: { $0.name == name })
+                    .frame(maxWidth: .infinity)
+                    .padding(.vertical, 40)
+                } else {
+                    VStack(spacing: 4) {
+                        ForEach(downloads) { download in
+                            let isHovered = hoveredDownload == download.name
+                            let isCached = wineManager.cachedDownloadNames.contains(download.name)
                             HStack {
-                                VStack(alignment: .leading) {
-                                    Text(name)
+                                VStack(alignment: .leading, spacing: 2) {
+                                    Text(download.displayName)
                                         .font(.headline)
-                                    if isInstalled {
-                                        iconBadge(systemName: "checkmark.circle.fill", color: .green, text: tr("Installiert"))
-                                    } else {
-                                        iconBadge(systemName: "archivebox.fill", color: .orange, text: "Im Cache")
-                                    }
                                 }
                                 Spacer()
-                                if !isInstalled {
+                                if isCached {
+                                    HStack(spacing: 4) {
+                                        Image(systemName: "checkmark.circle.fill")
+                                            .font(.caption)
+                                        LText("Downloaded")
+                                            .font(.caption)
+                                    }
+                                    .foregroundColor(.accentColor)
+                                } else {
                                     Button {
-                                        if let dl = wineManager.availableDownloads.first(where: { $0.name == name }) {
-                                            Task { try? await wineManager.downloadWine(dl) }
-                                        }
-                                    } label: { LText("Installieren") }
+                                        Task { try? await wineManager.downloadToCacheOnly(download) }
+                                    } label: {
+                                        LText("In Cache laden")
+                                    }
+                                    .buttonStyle(.borderedProminent)
+                                    .disabled(wineManager.isDownloadingToCache)
                                 }
-                                Button(role: .destructive) {
-                                    wineManager.removeCachedArchive(name)
-                                } label: { LText("Cache leeren") }
-                                    .buttonStyle(.bordered)
                             }
-                        }
-                    } else {
-                        LText("Noch nichts im Cache")
-                            .foregroundColor(.secondary)
-                    }
-
-                    // Pre-download Buttons
-                    if !wineManager.availableDownloads.isEmpty {
-                        HStack(spacing: 8) {
-                            LText("Ins Cache laden für später:")
-                                .font(.caption)
-                                .foregroundColor(.secondary)
-                            ForEach(wineManager.availableDownloads) { dl in
-                                let already = wineManager.isCached(dl.name)
-                                Button {
-                                    if already {
-                                        wineManager.removeCachedArchive(dl.name)
-                                    } else {
-                                        Task { try? await wineManager.downloadToCacheOnly(dl) }
-                                    }
-                                } label: {
-                                    if already {
-                                        Image(systemName: "archivebox.fill")
-                                    } else {
-                                        Image(systemName: "archivebox")
-                                    }
-                                }
-                                .help(dl.displayName)
+                            .padding(10)
+                            .background(isHovered ? Color.accentColor.opacity(0.12) : Color.clear)
+                            .cornerRadius(8)
+                            .onHover { hovering in
+                                hoveredDownload = hovering ? download.name : nil
                             }
                         }
                     }
                 }
             }
-
-            if wineManager.isDownloadingToCache {
-                Section("Cache-Download") {
-                    VStack(alignment: .leading, spacing: 8) {
-                        LText("Lade ins Cache...")
-                            .font(.headline)
-                        ProgressView(value: wineManager.cacheDownloadProgress)
-                    }
-                    .padding(.vertical, 8)
-                }
-            }
-
-            Section {
-                HStack {
-                    Spacer()
-                    Button { wineManager.refresh() } label: { LText("Nach Wine-Versionen suchen") }
-                    .buttonStyle(.bordered)
-                    Spacer()
-                }
-            }
+            .padding(6)
         }
-        .listStyle(.bordered)
-        .alternatingRowBackgrounds()
+        .padding(.horizontal)
+        .padding(.vertical, 8)
     }
 
     // MARK: - Prefixes Tab
 
     @State private var showNewPrefixSheet = false
+    @State private var hoveredPrefix: UUID?
 
     private var prefixesTab: some View {
-        List {
-            if wineManager.prefixes.isEmpty {
-                Section {
-                    VStack(spacing: 12) {
-                        Image(systemName: "folder.badge.questionmark")
-                            .font(.system(size: 32))
-                            .foregroundColor(.secondary)
-                        LText("Keine Wineprefixes vorhanden")
-                            .foregroundColor(.secondary)
-                    }
-                    .frame(maxWidth: .infinity)
-                    .padding(.vertical, 20)
-                }
-            } else {
-                Section("Wineprefixes") {
-                    ForEach(wineManager.prefixes) { prefix in
-                        HStack {
-                            VStack(alignment: .leading, spacing: 2) {
-                                HStack(spacing: 6) {
-                                    Text(prefix.name)
-                                        .font(.headline)
-                                    if prefix.name.hasPrefix("CrossOver: ") {
-                                        badgeCrossOverBottle
+        GroupBox {
+            ScrollView {
+                VStack(spacing: 6) {
+                    if wineManager.prefixes.isEmpty {
+                        VStack(spacing: 12) {
+                            Image(systemName: "folder.badge.questionmark")
+                                .font(.system(size: 32))
+                                .foregroundColor(.secondary)
+                            LText("Keine Wineprefixes vorhanden")
+                                .foregroundColor(.secondary)
+                        }
+                        .frame(maxWidth: .infinity)
+                        .padding(.vertical, 20)
+                    } else {
+                        Text(verbatim: "Wineprefixes")
+                            .font(.headline)
+                            .frame(maxWidth: .infinity, alignment: .leading)
+                            .padding(.horizontal, 4)
+
+                        ForEach(wineManager.prefixes) { prefix in
+                            let isHovered = hoveredPrefix == prefix.id
+                            HStack {
+                                VStack(alignment: .leading, spacing: 2) {
+                                    HStack(spacing: 6) {
+                                        Text(prefix.name)
+                                            .font(.headline)
+                                        if prefix.name.hasPrefix("CrossOver: ") {
+                                            badge(text: "CrossOver", color: .purple)
+                                        }
                                     }
-                                }
-                                Text(prefix.path)
-                                    .font(.caption)
-                                    .foregroundColor(.secondary)
-                                HStack(spacing: 8) {
-                                    iconBadge(systemName: "cpu", color: .blue, text: prefix.architecture.displayName)
-                                    if !prefix.windowsVersion.isEmpty {
-                                        iconBadge(systemName: "pc", color: .secondary, text: prefix.windowsVersion)
-                                    }
-                                    if let last = prefix.lastUsed {
-                                        Text(verbatim: trf("Zuletzt: %@", last.formatted(date: .abbreviated, time: .shortened)))
-                                            .font(.caption2)
+                                    Text(prefix.path)
+                                        .font(.caption)
+                                        .foregroundColor(.secondary)
+                                    HStack(spacing: 8) {
+                                        HStack(spacing: 4) {
+                                            Image(systemName: "cpu")
+                                                .font(.caption2)
+                                            Text(prefix.architecture.displayName)
+                                                .font(.caption2)
+                                        }
+                                        .foregroundColor(.blue)
+                                        if !prefix.windowsVersion.isEmpty {
+                                            HStack(spacing: 4) {
+                                                Image(systemName: "pc")
+                                                    .font(.caption2)
+                                                Text(prefix.windowsVersion)
+                                                    .font(.caption2)
+                                            }
                                             .foregroundColor(.secondary)
+                                        }
+                                        if let last = prefix.lastUsed {
+                                            Text(verbatim: trf("Zuletzt: %@", last.formatted(date: .abbreviated, time: .shortened)))
+                                                .font(.caption2)
+                                                .foregroundColor(.secondary)
+                                        }
                                     }
                                 }
-                            }
-                            Spacer()
-                            Button("winecfg") {
-                                wineManager.runWinecfg(for: prefix)
-                            }
-                            .buttonStyle(.bordered)
-                            .helpLText("Wine-Konfiguration öffnen")
+                                Spacer()
+                                Button("winecfg") {
+                                    wineManager.runWinecfg(for: prefix)
+                                }
+                                .buttonStyle(.bordered)
+                                .helpLText("Wine-Konfiguration öffnen")
 
-                            Button("regedit") {
-                                wineManager.runRegedit(for: prefix)
-                            }
-                            .buttonStyle(.bordered)
-                            .helpLText("Registry-Editor öffnen")
-                        }
-                        .padding(.vertical, 4)
-                    }
-                    .onDelete { indexSet in
-                        for index in indexSet {
-                            wineManager.deletePrefix(wineManager.prefixes[index])
-                        }
-                    }
-                }
-            }
+                                Button("regedit") {
+                                    wineManager.runRegedit(for: prefix)
+                                }
+                                .buttonStyle(.bordered)
+                                .helpLText("Registry-Editor öffnen")
 
-            Section {
-                HStack {
-                    Spacer()
-                    Button { showNewPrefixSheet = true } label: { LText("Neuen Wineprefix erstellen") }
-                    .buttonStyle(.borderedProminent)
-                    Spacer()
+                                Button {
+                                    wineManager.deletePrefix(prefix)
+                                } label: {
+                                    Image(systemName: "trash")
+                                }
+                                .buttonStyle(.bordered)
+                                .foregroundColor(.red)
+                                .helpLText("Prefix löschen")
+                            }
+                            .padding(10)
+                            .background(isHovered ? Color.accentColor.opacity(0.12) : Color.clear)
+                            .cornerRadius(8)
+                            .onHover { hovering in
+                                hoveredPrefix = hovering ? prefix.id : nil
+                            }
+                        }
+                    }
+
+                    HStack {
+                        Spacer()
+                        Button { showNewPrefixSheet = true } label: { LText("Neuen Wineprefix erstellen") }
+                            .buttonStyle(.borderedProminent)
+                        Spacer()
+                    }
+                    .padding(.top, 4)
                 }
+                .padding(6)
             }
         }
-        .listStyle(.bordered)
-        .alternatingRowBackgrounds()
+        .padding(.horizontal)
+        .padding(.vertical, 8)
         .sheet(isPresented: $showNewPrefixSheet) {
             NewPrefixSheet(wineManager: wineManager)
         }
@@ -303,76 +228,89 @@ struct WineSettingsView: View {
     // MARK: - CrossOver Tab
 
     @State private var showAddCrossover = false
+    @State private var hoveredCrossover: UUID?
 
     private var crossoverTab: some View {
-        List {
-            if wineManager.crossOverInstallations.isEmpty {
-                Section {
-                    VStack(spacing: 12) {
-                        Image(systemName: "star.slash")
-                            .font(.system(size: 32))
-                            .foregroundColor(.secondary)
-                        LText("Keine CrossOver-Installationen gefunden")
-                            .foregroundColor(.secondary)
-                        LText("Lege CrossOver.app in den Programme-Ordner oder füge es manuell hinzu.")
-                            .font(.caption)
-                            .foregroundColor(.secondary)
-                            .multilineTextAlignment(.center)
-                    }
-                    .frame(maxWidth: .infinity)
-                    .padding(.vertical, 20)
-                }
-            } else {
-                Section(header: Text(verbatim: tr("Installierte CrossOver-Versionen"))) {
-                    ForEach(wineManager.crossOverInstallations) { co in
-                        HStack {
-                            VStack(alignment: .leading, spacing: 2) {
-                                HStack(spacing: 6) {
-                                    Text(co.name)
-                                        .font(.headline)
-                                    if co.isCXPatch {
-                                        badgeCXPatch
+        GroupBox {
+            ScrollView {
+                VStack(spacing: 6) {
+                    if wineManager.crossOverInstallations.isEmpty {
+                        VStack(spacing: 12) {
+                            Image(systemName: "star.slash")
+                                .font(.system(size: 32))
+                                .foregroundColor(.secondary)
+                            LText("Keine CrossOver-Installationen gefunden")
+                                .foregroundColor(.secondary)
+                            LText("Lege CrossOver.app in den Programme-Ordner oder füge es manuell hinzu.")
+                                .font(.caption)
+                                .foregroundColor(.secondary)
+                                .multilineTextAlignment(.center)
+                        }
+                        .frame(maxWidth: .infinity)
+                        .padding(.vertical, 20)
+                    } else {
+                        Text(verbatim: tr("Installierte CrossOver-Versionen"))
+                            .font(.headline)
+                            .frame(maxWidth: .infinity, alignment: .leading)
+                            .padding(.horizontal, 4)
+
+                        ForEach(wineManager.crossOverInstallations) { co in
+                            let isHovered = hoveredCrossover == co.id
+                            HStack {
+                                VStack(alignment: .leading, spacing: 2) {
+                                    HStack(spacing: 6) {
+                                        Text(co.name)
+                                            .font(.headline)
+                                        if co.isCXPatch {
+                                            badge(text: "CXPatch", color: .purple)
+                                        }
                                     }
-                                }
-                                Text(co.path)
-                                    .font(.caption)
-                                    .foregroundColor(.secondary)
-                                if !co.version.isEmpty {
-                                    Text(verbatim: trf("Version %@", co.version))
+                                    Text(co.path)
                                         .font(.caption)
                                         .foregroundColor(.secondary)
+                                    if !co.version.isEmpty {
+                                        Text(verbatim: trf("Version %@", co.version))
+                                            .font(.caption)
+                                            .foregroundColor(.secondary)
+                                    }
+                                }
+                                Spacer()
+                                if co.isInstalled {
+                                    HStack(spacing: 4) {
+                                        Image(systemName: "checkmark.circle.fill")
+                                            .font(.caption2)
+                                        Text(verbatim: tr("Verfügbar"))
+                                            .font(.caption2)
+                                    }
+                                    .foregroundColor(.green)
+                                } else {
+                                    Image(systemName: "exclamationmark.triangle.fill")
+                                        .foregroundColor(.orange)
+                                        .helpLText("Binary nicht gefunden")
                                 }
                             }
-                            Spacer()
-                            if co.isInstalled {
-                                iconBadge(systemName: "checkmark.circle.fill", color: .green, text: tr("Verfügbar"))
-                            } else {
-                                Image(systemName: "exclamationmark.triangle.fill")
-                                    .foregroundColor(.orange)
-                                    .helpLText("Binary nicht gefunden")
+                            .padding(10)
+                            .background(isHovered ? Color.accentColor.opacity(0.12) : Color.clear)
+                            .cornerRadius(8)
+                            .onHover { hovering in
+                                hoveredCrossover = hovering ? co.id : nil
                             }
                         }
-                        .padding(.vertical, 4)
                     }
-                    .onDelete { indexSet in
-                        for index in indexSet {
-                            wineManager.removeCrossOverInstallation(wineManager.crossOverInstallations[index])
-                        }
-                    }
-                }
-            }
 
-            Section {
-                HStack {
-                    Spacer()
-                    Button { showAddCrossover = true } label: { LText("CrossOver-Installation hinzufügen…") }
-                    .buttonStyle(.borderedProminent)
-                    Spacer()
+                    HStack {
+                        Spacer()
+                        Button { showAddCrossover = true } label: { LText("CrossOver-Installation hinzufügen…") }
+                            .buttonStyle(.borderedProminent)
+                        Spacer()
+                    }
+                    .padding(.top, 4)
                 }
+                .padding(6)
             }
         }
-        .listStyle(.bordered)
-        .alternatingRowBackgrounds()
+        .padding(.horizontal)
+        .padding(.vertical, 8)
         .fileImporter(isPresented: $showAddCrossover, allowedContentTypes: [.applicationBundle]) { result in
             if case .success(let url) = result {
                 let path = url.path
@@ -383,37 +321,19 @@ struct WineSettingsView: View {
         }
     }
 
-    private var badgeCXPatch: some View {
-        LText("CXPatch")
-            .font(.caption2)
-            .padding(.horizontal, 4)
-            .padding(.vertical, 1)
-            .background(Color.purple.opacity(0.15))
-            .foregroundColor(.purple)
-            .cornerRadius(4)
-    }
+    // MARK: - Badges
 
-    private var badgeCrossOverBottle: some View {
-        LText("CrossOver")
+    private func badge(text: String, color: Color) -> some View {
+        LText(text)
             .font(.caption2)
             .padding(.horizontal, 4)
             .padding(.vertical, 1)
-            .background(Color.purple.opacity(0.15))
-            .foregroundColor(.purple)
+            .background(color.opacity(0.15))
+            .foregroundColor(color)
             .cornerRadius(4)
     }
 
     // MARK: - Helpers
-
-    private func iconBadge(systemName: String, color: Color, text: String) -> some View {
-        HStack(spacing: 4) {
-            Image(systemName: systemName)
-                .font(.caption2)
-            Text(text)
-                .font(.caption2)
-        }
-        .foregroundColor(color)
-    }
 
     private func sourceBadge(_ source: WineVersion.WineSource) -> some View {
         let (icon, color): (String, Color) = {
