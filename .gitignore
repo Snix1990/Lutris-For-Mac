@@ -7,6 +7,7 @@ WorkInProgress/
 
 # Build artifacts
 build/
+.build/
 
 # Persönliche TODO-Notizen
 TODO_*.md

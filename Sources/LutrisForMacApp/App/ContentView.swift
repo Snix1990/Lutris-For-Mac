@@ -23,6 +23,7 @@ struct ContentView: View {
     @State private var columnVisibility: NavigationSplitViewVisibility = .all
     @AppStorage("viewMode") private var viewMode: LibraryView.ViewMode = .list
     @State private var launchError: String?
+    @State private var saveLibraryTask: Task<Void, Never>?
     @Environment(\.openWindow) private var openWindow
 
     // MARK: - Empty Game Sentinel
@@ -40,7 +41,12 @@ struct ContentView: View {
             set: { newGame in
                 if let id = selectedGameID, let idx = viewModel.games.firstIndex(where: { $0.id == id }) {
                     viewModel.games[idx] = newGame
-                    viewModel.saveLibrary()
+                    saveLibraryTask?.cancel()
+                    saveLibraryTask = Task {
+                        try? await Task.sleep(nanoseconds: 500_000_000)
+                        guard !Task.isCancelled else { return }
+                        viewModel.saveLibrary()
+                    }
                 }
             }
         )

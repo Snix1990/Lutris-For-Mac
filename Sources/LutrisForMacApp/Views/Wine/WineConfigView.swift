@@ -2,17 +2,20 @@ import SwiftUI
 
 struct WineConfigView: View {
     @Binding var game: Game
-    @StateObject private var wineManager = WineManager.shared
+    private let wineManager = WineManager.shared
     @State private var showWinetricks = false
     @State private var winetricksPrefix: WinePrefix?
     @State private var winetricksWineBinaryPath: String? = nil
     @State private var showCrossOverTricks = false
     @State private var crossOverTricksPrefix: WinePrefix?
+    @State private var d3dMetalAvailable = false
 
     @State private var editWineBinaryPath: String = ""
     @State private var editWinePrefixPath: String = ""
+    @State private var editDesktopResolution: String = ""
     @FocusState private var isWineBinaryFocused: Bool
     @FocusState private var isWinePrefixFocused: Bool
+    @FocusState private var isDesktopResFocused: Bool
 
     private var selectedPrefix: WinePrefix? {
         if let id = game.winePrefixID {
@@ -159,6 +162,8 @@ struct WineConfigView: View {
         .onAppear {
             editWineBinaryPath = game.wineBinaryPath ?? ""
             editWinePrefixPath = game.winePrefixPath ?? ""
+            editDesktopResolution = game.wineDesktopResolution
+            d3dMetalAvailable = wineManager.detectD3DMetal() != nil
         }
         .onDisappear {
             commitWineBinaryPath()
@@ -169,6 +174,9 @@ struct WineConfigView: View {
         }
         .onChange(of: isWinePrefixFocused) { _, focused in
             if !focused { commitWinePrefixPath() }
+        }
+        .onChange(of: isDesktopResFocused) { _, focused in
+            if !focused { commitDesktopResolution() }
         }
 
         Picker(selection: $game.wineArchitecture) {
@@ -197,7 +205,7 @@ struct WineConfigView: View {
         .helpLText("Übersetzungsweg für DirectX → Metal")
 
         // D3DMetal-Verfügbarkeit anzeigen
-        if wineManager.detectD3DMetal() != nil {
+        if d3dMetalAvailable {
             HStack(spacing: 4) {
                 Image(systemName: "checkmark.circle.fill")
                     .foregroundColor(.green)
@@ -261,7 +269,8 @@ struct WineConfigView: View {
         Toggle(isOn: $game.wineDesktopMode) { LText("Virtuellen Desktop verwenden") }
 
         if game.wineDesktopMode {
-            TextField(tr("Desktop-Auflösung"), text: $game.wineDesktopResolution)
+            TextField(tr("Desktop-Auflösung"), text: $editDesktopResolution)
+                .focused($isDesktopResFocused)
                 .helpLText("z.B. 1280x720, 1920x1080")
         }
 
@@ -282,6 +291,11 @@ struct WineConfigView: View {
 
     private func commitWinePrefixPath() {
         game.winePrefixPath = editWinePrefixPath.isEmpty ? nil : editWinePrefixPath
+    }
+
+    private func commitDesktopResolution() {
+        guard editDesktopResolution != game.wineDesktopResolution else { return }
+        game.wineDesktopResolution = editDesktopResolution
     }
 
     @ViewBuilder

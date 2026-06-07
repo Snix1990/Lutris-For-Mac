@@ -25,6 +25,8 @@ struct GameEditorView: View {
     @State private var editBannerURL: String = ""
     @State private var editIconURL: String = ""
     @State private var editCategory: String = ""
+    @State private var editNotes: String = ""
+    @State private var editEnvVars: String = ""
     @FocusState private var isNameFocused: Bool
     @FocusState private var isInstallPathFocused: Bool
     @FocusState private var isLauncherCommandFocused: Bool
@@ -33,6 +35,8 @@ struct GameEditorView: View {
     @FocusState private var isBannerURLFocused: Bool
     @FocusState private var isIconURLFocused: Bool
     @FocusState private var isCategoryFocused: Bool
+    @FocusState private var isNotesFocused: Bool
+    @FocusState private var isEnvVarsFocused: Bool
     private let runnerManager = RunnerManager.shared
     private let mediaStore = MediaStore.shared
     private let serviceManager = ServiceManager.shared
@@ -322,7 +326,8 @@ struct GameEditorView: View {
             }
 
             GroupBox {
-                TextEditor(text: $game.notes)
+                TextEditor(text: $editNotes)
+                    .focused($isNotesFocused)
                     .frame(minHeight: 100)
             } label: {
                 LText("Notizen").font(.system(size: 16)).frame(maxWidth: .infinity)
@@ -333,7 +338,8 @@ struct GameEditorView: View {
                     LText("Eine pro Zeile (SCHLÜSSEL=WERT):")
                         .font(.footnote)
                         .foregroundColor(.secondary)
-                    TextEditor(text: $game.environmentVariables)
+                    TextEditor(text: $editEnvVars)
+                        .focused($isEnvVarsFocused)
                         .frame(minHeight: 80)
                         .overlay(
                             RoundedRectangle(cornerRadius: 6)
@@ -373,6 +379,8 @@ struct GameEditorView: View {
             editBannerURL = game.bannerURL
             editIconURL = game.iconURL
             editCategory = game.category
+            editNotes = game.notes
+            editEnvVars = game.environmentVariables
         }
         .onChange(of: game.id) { oldID, newID in
             guard oldID != newID else { return }
@@ -395,6 +403,8 @@ struct GameEditorView: View {
             editBannerURL = game.bannerURL
             editIconURL = game.iconURL
             editCategory = game.category
+            editNotes = game.notes
+            editEnvVars = game.environmentVariables
         }
         .onChange(of: isNameFocused) { _, focused in
             if !focused { commitName() }
@@ -419,6 +429,12 @@ struct GameEditorView: View {
         }
         .onChange(of: isCategoryFocused) { _, focused in
             if !focused { commitCategory() }
+        }
+        .onChange(of: isNotesFocused) { _, focused in
+            if !focused { commitNotes() }
+        }
+        .onChange(of: isEnvVarsFocused) { _, focused in
+            if !focused { commitEnvVars() }
         }
     }
 
@@ -522,6 +538,16 @@ struct GameEditorView: View {
     private func commitCategory() {
         guard editCategory != game.category else { return }
         game.category = editCategory
+    }
+
+    private func commitNotes() {
+        guard editNotes != game.notes else { return }
+        game.notes = editNotes
+    }
+
+    private func commitEnvVars() {
+        guard editEnvVars != game.environmentVariables else { return }
+        game.environmentVariables = editEnvVars
     }
 
     private func chooseInstallPath() {

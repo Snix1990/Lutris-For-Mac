@@ -270,13 +270,19 @@ struct CommunityInstallerView: View {
 
             let success = await engine.run(script: script, gamePath: installPath, gameName: meta.gameName)
             if success {
-                let game = Game(
+                var game = Game(
                     name: meta.gameName,
                     platform: meta.platform,
                     installPath: installPath,
                     runner: meta.runner,
                     notes: "Installiert via Community-Skript (\(meta.version))"
                 )
+                if let wineBin = engine.variables["wineBin"] {
+                    game.wineBinaryPath = wineBin
+                }
+                if let prefixPath = engine.variables["winePrefixPath"] {
+                    game.winePrefixPath = prefixPath
+                }
                 await MainActor.run {
                     viewModel.games.append(game)
                     viewModel.saveLibrary()

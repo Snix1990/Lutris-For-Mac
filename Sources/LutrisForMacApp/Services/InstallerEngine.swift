@@ -162,6 +162,7 @@ final class InstallerEngine: ObservableObject {
             } else {
                 throw InstallerError.noWineVersion
             }
+            vars["wineBin"] = wineBin
 
             var env = ProcessInfo.processInfo.environment
             // respect absolute prefix paths
@@ -170,6 +171,7 @@ final class InstallerEngine: ObservableObject {
             } else {
                 env["WINEPREFIX"] = "\(vars["supportDir"] ?? "")/prefixes/\(prefixRaw ?? "default")"
             }
+            vars["winePrefixPath"] = env["WINEPREFIX"] ?? ""
 
             // Ensure the prefix directory exists before running wine
             if let wpPath = env["WINEPREFIX"] {
@@ -239,6 +241,8 @@ final class InstallerEngine: ObservableObject {
                 guard !wineBin.isEmpty, FileManager.default.isExecutableFile(atPath: wineBin) else {
                     throw InstallerError.noWineVersion
                 }
+                vars["wineBin"] = wineBin
+                vars["winePrefixPath"] = explicitPath
 
                 var env = ProcessInfo.processInfo.environment
                 env["WINEPREFIX"] = explicitPath
