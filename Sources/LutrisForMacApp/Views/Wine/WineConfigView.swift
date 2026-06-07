@@ -132,6 +132,8 @@ struct WineConfigView: View {
                     Button("winecfg") {
                         if !editWineBinaryPath.isEmpty {
                             wineManager.runWinecfg(wineBinaryPath: editWineBinaryPath, prefixPath: prefixPath)
+                        } else if let wv = wineManager.resolveWineVersion(for: game.wineVersionName) {
+                            wineManager.runWinecfg(prefixPath: prefixPath, wineVersion: wv)
                         } else {
                             wineManager.runWinecfg(prefixPath: prefixPath)
                         }
@@ -140,6 +142,8 @@ struct WineConfigView: View {
                     Button("regedit") {
                         if !editWineBinaryPath.isEmpty {
                             wineManager.runRegedit(wineBinaryPath: editWineBinaryPath, prefixPath: prefixPath)
+                        } else if let wv = wineManager.resolveWineVersion(for: game.wineVersionName) {
+                            wineManager.runRegedit(prefixPath: prefixPath, wineVersion: wv)
                         } else {
                             wineManager.runRegedit(prefixPath: prefixPath)
                         }
@@ -355,11 +359,19 @@ struct WineConfigView: View {
         if let prefix = selectedPrefix {
             HStack(spacing: 8) {
                 Button("winecfg") {
-                    wineManager.runWinecfg(for: prefix)
+                    if let wv = wineManager.resolveWineVersion(for: game.wineVersionName) {
+                        wineManager.runWinecfg(for: prefix, wineVersion: wv)
+                    } else {
+                        wineManager.runWinecfg(for: prefix)
+                    }
                 }
                 .buttonStyle(.bordered)
                 Button("regedit") {
-                    wineManager.runRegedit(for: prefix)
+                    if let wv = wineManager.resolveWineVersion(for: game.wineVersionName) {
+                        wineManager.runRegedit(for: prefix, wineVersion: wv)
+                    } else {
+                        wineManager.runRegedit(for: prefix)
+                    }
                 }
                 .buttonStyle(.bordered)
                 if game.runner != "CrossOver" {

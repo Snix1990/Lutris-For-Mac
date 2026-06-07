@@ -22,6 +22,7 @@
 /Users/mac/Documents/Lutris-For-Mac/Sources/LutrisForMacApp/Services/MediaStore.swift
 /Users/mac/Documents/Lutris-For-Mac/Sources/LutrisForMacApp/Services/ProcessError.swift
 /Users/mac/Documents/Lutris-For-Mac/Sources/LutrisForMacApp/Services/ProcessRunner.swift
+/Users/mac/Documents/Lutris-For-Mac/Sources/LutrisForMacApp/Services/RomFolderManager.swift
 /Users/mac/Documents/Lutris-For-Mac/Sources/LutrisForMacApp/Services/RunnerManager.swift
 /Users/mac/Documents/Lutris-For-Mac/Sources/LutrisForMacApp/Services/ServiceManager.swift
 /Users/mac/Documents/Lutris-For-Mac/Sources/LutrisForMacApp/Services/SteamAPI.swift
@@ -31,6 +32,7 @@
 /Users/mac/Documents/Lutris-For-Mac/Sources/LutrisForMacApp/Services/WineManager.swift
 /Users/mac/Documents/Lutris-For-Mac/Sources/LutrisForMacApp/Services/WinetricksManager.swift
 /Users/mac/Documents/Lutris-For-Mac/Sources/LutrisForMacApp/ViewModels/GameLibraryViewModel.swift
+/Users/mac/Documents/Lutris-For-Mac/Sources/LutrisForMacApp/Views/Components/HoverBorderModifier.swift
 /Users/mac/Documents/Lutris-For-Mac/Sources/LutrisForMacApp/Views/Game/CoverSearchView.swift
 /Users/mac/Documents/Lutris-For-Mac/Sources/LutrisForMacApp/Views/Game/GameDetailView.swift
 /Users/mac/Documents/Lutris-For-Mac/Sources/LutrisForMacApp/Views/Game/GameEditorView.swift
@@ -46,6 +48,7 @@
 /Users/mac/Documents/Lutris-For-Mac/Sources/LutrisForMacApp/Views/Settings/ControllerSettingsView.swift
 /Users/mac/Documents/Lutris-For-Mac/Sources/LutrisForMacApp/Views/Settings/DesktopIntegrationView.swift
 /Users/mac/Documents/Lutris-For-Mac/Sources/LutrisForMacApp/Views/Settings/EmulatorSetupView.swift
+/Users/mac/Documents/Lutris-For-Mac/Sources/LutrisForMacApp/Views/Settings/RomFolderSettingsView.swift
 /Users/mac/Documents/Lutris-For-Mac/Sources/LutrisForMacApp/Views/Settings/RunnerManagementView.swift
 /Users/mac/Documents/Lutris-For-Mac/Sources/LutrisForMacApp/Views/Settings/ServiceSettingsView.swift
 /Users/mac/Documents/Lutris-For-Mac/Sources/LutrisForMacApp/Views/Settings/SettingsView.swift

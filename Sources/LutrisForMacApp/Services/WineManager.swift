@@ -623,6 +623,7 @@ final class WineManager: ObservableObject {
             ("Homebrew (Apple Silicon)", "/opt/homebrew/bin/wine", .homebrew),
             ("Whisky", "\(NSHomeDirectory())/Applications/Whisky.app/Contents/Resources/wine/bin/wine", .whisky),
             ("Kegworks", "/Applications/Kegworks.app/Contents/SharedSupport/bin/wine", .wineskin),
+            ("Heroic (GPTK)", "\(NSHomeDirectory())/Library/Application Support/heroic/tools/game-porting-toolkit/Game-Porting-Toolkit-latest/Contents/Resources/wine/bin/wine64", .system),
         ]
 
         for co in crossOverInstallations {
@@ -829,6 +830,11 @@ final class WineManager: ObservableObject {
         env["WINEPREFIX"] = prefix.path
         env["WINEARCH"] = prefix.architecture.rawValue
 
+        if wine.type == .crossover {
+            let bottleName = URL(fileURLWithPath: prefix.path).lastPathComponent
+            env["CX_BOTTLE"] = bottleName
+        }
+
         let task = Process()
         task.launchPath = wine.wineBinaryPath
         task.arguments = arguments
@@ -864,10 +870,12 @@ final class WineManager: ObservableObject {
     func detectD3DMetal() -> String? {
         var candidates = [
             "\(NSHomeDirectory())/Applications/Whisky.app/Contents/Resources/libD3DMetal.dylib",
+            "/Applications/Whisky.app/Contents/Resources/libD3DMetal.dylib",
             "/usr/local/lib/libD3DMetal.dylib",
             "/opt/homebrew/lib/libD3DMetal.dylib",
             "\(NSHomeDirectory())/Library/Application Support/CrossOver/libD3DMetal.dylib",
             "\(NSHomeDirectory())/.wine/lib/libD3DMetal.dylib",
+            "\(NSHomeDirectory())/Library/Application Support/heroic/tools/game-porting-toolkit/Game-Porting-Toolkit-latest/Contents/Resources/wine/lib/external/D3DMetal.framework/Versions/A/D3DMetal",
         ]
         for co in crossOverInstallations {
             if let path = co.d3dMetalLibPath {
@@ -939,6 +947,14 @@ final class WineManager: ObservableObject {
             overrides += ";d3d10,d3d10_1,d3d10core,d3d11,d3d12=n,b"
             if let d3dmetalPath = detectD3DMetal() {
                 env["D3DMETAL_LIB"] = d3dmetalPath
+                // GPTK d3d12.so sucht D3DMetal.framework via dlopen() – DYLD_FRAMEWORK_PATH setzen
+                let frameworkDir = URL(fileURLWithPath: d3dmetalPath).deletingLastPathComponent().deletingLastPathComponent().deletingLastPathComponent().deletingLastPathComponent()
+                let currentFw = env["DYLD_FRAMEWORK_PATH"] ?? ""
+                let fwPath = frameworkDir.path
+                if !currentFw.contains(fwPath) {
+                    env["DYLD_FRAMEWORK_PATH"] = currentFw.isEmpty ? fwPath : "\(fwPath):\(currentFw)"
+                }
+
             }
             env["D3DMETAL_SHADER_CACHE"] = game.wineShaderCache ? "1" : "0"
             env["D3DMETAL_LOG"] = "0"
@@ -969,6 +985,12 @@ final class WineManager: ObservableObject {
         } else {
             if game.wineESync { env["WINEESYNC"] = "1" }
             if game.wineFSync { env["WINEFSYNC"] = "1" }
+        }
+
+        // CX_BOTTLE für CrossOver wine binary (Perl-Wrapper benötigt Bottle-Name)
+        if wineVersion?.type == .crossover, let p = prefix ?? prefixForGame(game) {
+            let bottleName = URL(fileURLWithPath: p.path).lastPathComponent
+            env["CX_BOTTLE"] = bottleName
         }
 
         if game.wineDesktopMode && !game.wineDesktopResolution.isEmpty {
@@ -1006,12 +1028,29 @@ final class WineManager: ObservableObject {
             return try await launchCrossOverGame(game: game)
         }
 
-        let wine = resolveWineVersion(for: game.wineVersionName) ?? {
-            if let bp = game.wineBinaryPath, !bp.isEmpty, FileManager.default.isExecutableFile(atPath: bp) {
-                return WineVersion(name: "custom", path: bp, wineBinaryPath: bp, type: .custom)
-            }
-            return nil
+        // D3DMetal-Render-Mode: bevorzugt Heroic GPTK wine64, falls verfügbar
+        let wantsD3DMetal: Bool = {
+            if game.wineRenderMode == .d3dMetal { return true }
+            if game.wineRenderMode == .auto, detectD3DMetal() != nil { return true }
+            return false
         }()
+
+        var wine: WineVersion?
+        if let bp = game.wineBinaryPath, !bp.isEmpty, FileManager.default.isExecutableFile(atPath: bp) {
+            wine = WineVersion(name: "custom", path: bp, wineBinaryPath: bp, type: .custom)
+        } else if wantsD3DMetal {
+            // Direkte Prüfung auf Heroic GPTK wine64
+            let heroicPath = "\(NSHomeDirectory())/Library/Application Support/heroic/tools/game-porting-toolkit/Game-Porting-Toolkit-latest/Contents/Resources/wine/bin/wine64"
+            if FileManager.default.isExecutableFile(atPath: heroicPath) {
+                let heroicDir = URL(fileURLWithPath: heroicPath).deletingLastPathComponent().deletingLastPathComponent()
+                wine = WineVersion(name: "HeroicGPTK", displayName: "Heroic (GPTK)", path: heroicDir.path, wineBinaryPath: heroicPath, wineServerPath: heroicDir.appendingPathComponent("bin/wineserver").path, type: .system)
+                print("[WineManager] Using Heroic GPTK wine64 for D3DMetal")
+            } else {
+                wine = resolveWineVersion(for: game.wineVersionName)
+            }
+        } else {
+            wine = resolveWineVersion(for: game.wineVersionName)
+        }
         guard let wine, FileManager.default.isExecutableFile(atPath: wine.wineBinaryPath) else {
             throw WineError.noWineVersion
         }
@@ -1049,6 +1088,8 @@ final class WineManager: ObservableObject {
             throw WineError.installPathNotFound(installPath)
         }
 
+        let gameDir = URL(fileURLWithPath: installPath).deletingLastPathComponent()
+
         var cmd = "\"\(wine.wineBinaryPath)\""
         if !game.wineLaunchArguments.isEmpty {
             cmd += " " + game.wineLaunchArguments
@@ -1059,8 +1100,16 @@ final class WineManager: ObservableObject {
             cmd += " \"\(installPath)\""
         }
 
-        let result = try await ProcessRunner.run(command: cmd, currentDirectory: nil, environment: env)
-        DesktopIntegrationManager.shared.clearDiscordPresence()
+        print("[WineManager] Launching: cmd=\(cmd)")
+        print("[WineManager] gameDir=\(gameDir.path)")
+        print("[WineManager] WINEPREFIX=\(env["WINEPREFIX"] ?? "nil")")
+        print("[WineManager] WINEARCH=\(env["WINEARCH"] ?? "nil")")
+        print("[WineManager] D3DMETAL_LIB=\(env["D3DMETAL_LIB"] ?? "nil")")
+        print("[WineManager] DYLD_FRAMEWORK_PATH=\(env["DYLD_FRAMEWORK_PATH"] ?? "nil")")
+        print("[WineManager] DYLD_LIBRARY_PATH=\(env["DYLD_LIBRARY_PATH"] ?? "nil")")
+        print("[WineManager] WINEDLLOVERRIDES=\(env["WINEDLLOVERRIDES"] ?? "nil")")
+        print("[WineManager] CX_BOTTLE=\(env["CX_BOTTLE"] ?? "nil")")
+        let result = try await ProcessRunner.run(command: cmd, currentDirectory: gameDir, environment: env)
         return result
     }
 
@@ -1093,13 +1142,11 @@ final class WineManager: ObservableObject {
         // Der Bottle-Name ist der letzte Pfadbestandteil (Ordnername), nicht der ganze Pfad
         let crossoverBottleName = prefix.flatMap { URL(fileURLWithPath: $0.path).lastPathComponent }
 
+        let gameEnv = wineEnvironment(for: game, prefix: prefix, wineVersion: crossover)
         var env = ProcessInfo.processInfo.environment
+        env.merge(gameEnv) { _, new in new }
         if let crossoverBottleName {
             env["CX_BOTTLE"] = crossoverBottleName
-        }
-        if let prefix {
-            env["WINEPREFIX"] = prefix.path
-            env["WINEARCH"] = prefix.architecture.rawValue
         }
 
         // Steam-Spiel via CrossOver: steam.exe -applaunch {appid}

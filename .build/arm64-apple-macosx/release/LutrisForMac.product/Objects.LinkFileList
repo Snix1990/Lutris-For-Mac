@@ -22,6 +22,7 @@
 /Users/mac/Documents/Lutris-For-Mac/.build/arm64-apple-macosx/release/LutrisForMacApp.build/GameRowView.swift.o
 /Users/mac/Documents/Lutris-For-Mac/.build/arm64-apple-macosx/release/LutrisForMacApp.build/GameService.swift.o
 /Users/mac/Documents/Lutris-For-Mac/.build/arm64-apple-macosx/release/LutrisForMacApp.build/GameTileView.swift.o
+/Users/mac/Documents/Lutris-For-Mac/.build/arm64-apple-macosx/release/LutrisForMacApp.build/HoverBorderModifier.swift.o
 /Users/mac/Documents/Lutris-For-Mac/.build/arm64-apple-macosx/release/LutrisForMacApp.build/InstallerEngine.swift.o
 /Users/mac/Documents/Lutris-For-Mac/.build/arm64-apple-macosx/release/LutrisForMacApp.build/InstallerScript.swift.o
 /Users/mac/Documents/Lutris-For-Mac/.build/arm64-apple-macosx/release/LutrisForMacApp.build/InstallerView.swift.o
@@ -34,6 +35,8 @@
 /Users/mac/Documents/Lutris-For-Mac/.build/arm64-apple-macosx/release/LutrisForMacApp.build/NewPrefixSheet.swift.o
 /Users/mac/Documents/Lutris-For-Mac/.build/arm64-apple-macosx/release/LutrisForMacApp.build/ProcessError.swift.o
 /Users/mac/Documents/Lutris-For-Mac/.build/arm64-apple-macosx/release/LutrisForMacApp.build/ProcessRunner.swift.o
+/Users/mac/Documents/Lutris-For-Mac/.build/arm64-apple-macosx/release/LutrisForMacApp.build/RomFolderManager.swift.o
+/Users/mac/Documents/Lutris-For-Mac/.build/arm64-apple-macosx/release/LutrisForMacApp.build/RomFolderSettingsView.swift.o
 /Users/mac/Documents/Lutris-For-Mac/.build/arm64-apple-macosx/release/LutrisForMacApp.build/Runner.swift.o
 /Users/mac/Documents/Lutris-For-Mac/.build/arm64-apple-macosx/release/LutrisForMacApp.build/RunnerManagementView.swift.o
 /Users/mac/Documents/Lutris-For-Mac/.build/arm64-apple-macosx/release/LutrisForMacApp.build/RunnerManager.swift.o
@@ -48,6 +51,7 @@
 /Users/mac/Documents/Lutris-For-Mac/.build/arm64-apple-macosx/release/LutrisForMacApp.build/SteamLibrarySyncView.swift.o
 /Users/mac/Documents/Lutris-For-Mac/.build/arm64-apple-macosx/release/LutrisForMacApp.build/SteamLoginView.swift.o
 /Users/mac/Documents/Lutris-For-Mac/.build/arm64-apple-macosx/release/LutrisForMacApp.build/SteamModels.swift.o
+/Users/mac/Documents/Lutris-For-Mac/.build/arm64-apple-macosx/release/LutrisForMacApp.build/UpdaterService.swift.o
 /Users/mac/Documents/Lutris-For-Mac/.build/arm64-apple-macosx/release/LutrisForMacApp.build/WineConfigView.swift.o
 /Users/mac/Documents/Lutris-For-Mac/.build/arm64-apple-macosx/release/LutrisForMacApp.build/WineManager.swift.o
 /Users/mac/Documents/Lutris-For-Mac/.build/arm64-apple-macosx/release/LutrisForMacApp.build/WineMenuCommands.swift.o

@@ -87,7 +87,7 @@ struct ControllerSettingsView: View {
                             Spacer()
 
                             if let battery = controller.batteryLevel {
-                                batteryIcon(battery)
+                                batteryIcon(battery, state: controller.batteryState)
                             }
 
                             Circle()
@@ -112,7 +112,7 @@ struct ControllerSettingsView: View {
         }
     }
 
-    private func batteryIcon(_ level: Float) -> some View {
+    private func batteryIcon(_ level: Float, state: ControllerManager.ControllerInfo.BatteryState) -> some View {
         let icon: String
         let color: Color
         switch level {
@@ -132,10 +132,15 @@ struct ControllerSettingsView: View {
             icon = "battery.0"
             color = .red
         }
-        return HStack(spacing: 2) {
+        return HStack(spacing: 4) {
+            if state == .charging {
+                Image(systemName: "bolt.fill")
+                    .foregroundColor(.yellow)
+                    .font(.caption2)
+            }
             Image(systemName: icon)
                 .foregroundColor(color)
-            Text("\(Int(level * 100))%")
+            Text(verbatim: "\(Int(level * 100))%")
                 .font(.caption2)
                 .foregroundColor(.secondary)
         }

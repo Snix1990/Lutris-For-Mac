@@ -170,6 +170,13 @@
     "swift-dependencies": "/Users/mac/Documents/Lutris-For-Mac/.build/arm64-apple-macosx/debug/LutrisForMacApp.build/ProcessRunner.swiftdeps",
     "diagnostics": "/Users/mac/Documents/Lutris-For-Mac/.build/arm64-apple-macosx/debug/LutrisForMacApp.build/ProcessRunner.dia"
   },
+  "/Users/mac/Documents/Lutris-For-Mac/Sources/LutrisForMacApp/Services/RomFolderManager.swift": {
+    "dependencies": "/Users/mac/Documents/Lutris-For-Mac/.build/arm64-apple-macosx/debug/LutrisForMacApp.build/RomFolderManager.d",
+    "object": "/Users/mac/Documents/Lutris-For-Mac/.build/arm64-apple-macosx/debug/LutrisForMacApp.build/RomFolderManager.swift.o",
+    "swiftmodule": "/Users/mac/Documents/Lutris-For-Mac/.build/arm64-apple-macosx/debug/LutrisForMacApp.build/RomFolderManager~partial.swiftmodule",
+    "swift-dependencies": "/Users/mac/Documents/Lutris-For-Mac/.build/arm64-apple-macosx/debug/LutrisForMacApp.build/RomFolderManager.swiftdeps",
+    "diagnostics": "/Users/mac/Documents/Lutris-For-Mac/.build/arm64-apple-macosx/debug/LutrisForMacApp.build/RomFolderManager.dia"
+  },
   "/Users/mac/Documents/Lutris-For-Mac/Sources/LutrisForMacApp/Services/RunnerManager.swift": {
     "dependencies": "/Users/mac/Documents/Lutris-For-Mac/.build/arm64-apple-macosx/debug/LutrisForMacApp.build/RunnerManager.d",
     "object": "/Users/mac/Documents/Lutris-For-Mac/.build/arm64-apple-macosx/debug/LutrisForMacApp.build/RunnerManager.swift.o",
@@ -232,6 +239,13 @@
     "swiftmodule": "/Users/mac/Documents/Lutris-For-Mac/.build/arm64-apple-macosx/debug/LutrisForMacApp.build/GameLibraryViewModel~partial.swiftmodule",
     "swift-dependencies": "/Users/mac/Documents/Lutris-For-Mac/.build/arm64-apple-macosx/debug/LutrisForMacApp.build/GameLibraryViewModel.swiftdeps",
     "diagnostics": "/Users/mac/Documents/Lutris-For-Mac/.build/arm64-apple-macosx/debug/LutrisForMacApp.build/GameLibraryViewModel.dia"
+  },
+  "/Users/mac/Documents/Lutris-For-Mac/Sources/LutrisForMacApp/Views/Components/HoverBorderModifier.swift": {
+    "dependencies": "/Users/mac/Documents/Lutris-For-Mac/.build/arm64-apple-macosx/debug/LutrisForMacApp.build/HoverBorderModifier.d",
+    "object": "/Users/mac/Documents/Lutris-For-Mac/.build/arm64-apple-macosx/debug/LutrisForMacApp.build/HoverBorderModifier.swift.o",
+    "swiftmodule": "/Users/mac/Documents/Lutris-For-Mac/.build/arm64-apple-macosx/debug/LutrisForMacApp.build/HoverBorderModifier~partial.swiftmodule",
+    "swift-dependencies": "/Users/mac/Documents/Lutris-For-Mac/.build/arm64-apple-macosx/debug/LutrisForMacApp.build/HoverBorderModifier.swiftdeps",
+    "diagnostics": "/Users/mac/Documents/Lutris-For-Mac/.build/arm64-apple-macosx/debug/LutrisForMacApp.build/HoverBorderModifier.dia"
   },
   "/Users/mac/Documents/Lutris-For-Mac/Sources/LutrisForMacApp/Views/Game/CoverSearchView.swift": {
     "dependencies": "/Users/mac/Documents/Lutris-For-Mac/.build/arm64-apple-macosx/debug/LutrisForMacApp.build/CoverSearchView.d",
@@ -337,6 +351,13 @@
     "swiftmodule": "/Users/mac/Documents/Lutris-For-Mac/.build/arm64-apple-macosx/debug/LutrisForMacApp.build/EmulatorSetupView~partial.swiftmodule",
     "swift-dependencies": "/Users/mac/Documents/Lutris-For-Mac/.build/arm64-apple-macosx/debug/LutrisForMacApp.build/EmulatorSetupView.swiftdeps",
     "diagnostics": "/Users/mac/Documents/Lutris-For-Mac/.build/arm64-apple-macosx/debug/LutrisForMacApp.build/EmulatorSetupView.dia"
+  },
+  "/Users/mac/Documents/Lutris-For-Mac/Sources/LutrisForMacApp/Views/Settings/RomFolderSettingsView.swift": {
+    "dependencies": "/Users/mac/Documents/Lutris-For-Mac/.build/arm64-apple-macosx/debug/LutrisForMacApp.build/RomFolderSettingsView.d",
+    "object": "/Users/mac/Documents/Lutris-For-Mac/.build/arm64-apple-macosx/debug/LutrisForMacApp.build/RomFolderSettingsView.swift.o",
+    "swiftmodule": "/Users/mac/Documents/Lutris-For-Mac/.build/arm64-apple-macosx/debug/LutrisForMacApp.build/RomFolderSettingsView~partial.swiftmodule",
+    "swift-dependencies": "/Users/mac/Documents/Lutris-For-Mac/.build/arm64-apple-macosx/debug/LutrisForMacApp.build/RomFolderSettingsView.swiftdeps",
+    "diagnostics": "/Users/mac/Documents/Lutris-For-Mac/.build/arm64-apple-macosx/debug/LutrisForMacApp.build/RomFolderSettingsView.dia"
   },
   "/Users/mac/Documents/Lutris-For-Mac/Sources/LutrisForMacApp/Views/Settings/RunnerManagementView.swift": {
     "dependencies": "/Users/mac/Documents/Lutris-For-Mac/.build/arm64-apple-macosx/debug/LutrisForMacApp.build/RunnerManagementView.d",

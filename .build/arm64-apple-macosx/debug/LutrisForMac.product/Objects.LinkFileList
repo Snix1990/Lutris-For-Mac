@@ -22,6 +22,7 @@
 /Users/mac/Documents/Lutris-For-Mac/.build/arm64-apple-macosx/debug/LutrisForMacApp.build/GameRowView.swift.o
 /Users/mac/Documents/Lutris-For-Mac/.build/arm64-apple-macosx/debug/LutrisForMacApp.build/GameService.swift.o
 /Users/mac/Documents/Lutris-For-Mac/.build/arm64-apple-macosx/debug/LutrisForMacApp.build/GameTileView.swift.o
+/Users/mac/Documents/Lutris-For-Mac/.build/arm64-apple-macosx/debug/LutrisForMacApp.build/HoverBorderModifier.swift.o
 /Users/mac/Documents/Lutris-For-Mac/.build/arm64-apple-macosx/debug/LutrisForMacApp.build/InstallerEngine.swift.o
 /Users/mac/Documents/Lutris-For-Mac/.build/arm64-apple-macosx/debug/LutrisForMacApp.build/InstallerScript.swift.o
 /Users/mac/Documents/Lutris-For-Mac/.build/arm64-apple-macosx/debug/LutrisForMacApp.build/InstallerView.swift.o
@@ -34,6 +35,8 @@
 /Users/mac/Documents/Lutris-For-Mac/.build/arm64-apple-macosx/debug/LutrisForMacApp.build/NewPrefixSheet.swift.o
 /Users/mac/Documents/Lutris-For-Mac/.build/arm64-apple-macosx/debug/LutrisForMacApp.build/ProcessError.swift.o
 /Users/mac/Documents/Lutris-For-Mac/.build/arm64-apple-macosx/debug/LutrisForMacApp.build/ProcessRunner.swift.o
+/Users/mac/Documents/Lutris-For-Mac/.build/arm64-apple-macosx/debug/LutrisForMacApp.build/RomFolderManager.swift.o
+/Users/mac/Documents/Lutris-For-Mac/.build/arm64-apple-macosx/debug/LutrisForMacApp.build/RomFolderSettingsView.swift.o
 /Users/mac/Documents/Lutris-For-Mac/.build/arm64-apple-macosx/debug/LutrisForMacApp.build/Runner.swift.o
 /Users/mac/Documents/Lutris-For-Mac/.build/arm64-apple-macosx/debug/LutrisForMacApp.build/RunnerManagementView.swift.o
 /Users/mac/Documents/Lutris-For-Mac/.build/arm64-apple-macosx/debug/LutrisForMacApp.build/RunnerManager.swift.o

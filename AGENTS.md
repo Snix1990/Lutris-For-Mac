@@ -135,6 +135,7 @@ Build a SwiftUI macOS game library manager (LutrisForMac) with fully integrated 
 
 ### Known / Blocked
 - Some download URLs reference Gcenx/wine-on-mac releases; actual builds may need arch verification
+- **Session Management (Pause/Resume/Savestate)** nicht umsetzbar – macOS hat kein CRIU-Äquivalent, Wine-Prozesse + GPU-Contexts lassen sich nicht serialisieren. VM-Lösung wäre mit 40-50% Overhead nicht spielbar. Nur Spielzeit-Tracking + Exit-Hooks bleiben.
 
 ## Key Decisions
 - **2-column NavigationSplitView** – detail column entfernt, GameDetailView als Overlay-Panel im ZStack. Verhindert Column-Resizing beim Ein-/Ausblenden.
