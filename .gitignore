@@ -1,6 +1,12 @@
-.swiftpm/xcode/package.xcworkspace/xcuserdata/
+.swiftpm/xcode/
 .DS_Store
 *.xcuserstate
 
 # In-Progress features – nicht committen
 WorkInProgress/
+
+# Build artifacts
+build/
+
+# Persönliche TODO-Notizen
+TODO_*.md
