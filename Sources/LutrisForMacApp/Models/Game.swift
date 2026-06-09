@@ -35,6 +35,9 @@ struct Game: Identifiable, Hashable, Codable {
     var wineFSync: Bool
     var wineMSync: Bool?
     var wineShaderCache: Bool
+    var wineDebugString: String
+    var wineDxvkHud: Bool
+    var wineDLSS: Bool
 
     // Media / Artwork
     var coverURL: String
@@ -52,6 +55,14 @@ struct Game: Identifiable, Hashable, Codable {
 
     // Runner-Konfiguration (pro Runner-ID -> Wert)
     var runnerConfig: [String: String]
+
+    // Scripting
+    var preLaunchScript: String
+    var postExitScript: String
+
+    // Runtime-Optionen
+    var customSavePath: String
+    var runtimeSettings: RuntimeSettings
 
     var playTimeFormatted: String {
         let hours = Int(playTime) / 3600
@@ -91,6 +102,9 @@ struct Game: Identifiable, Hashable, Codable {
         wineFSync: Bool = false,
         wineMSync: Bool? = nil,
         wineShaderCache: Bool = true,
+        wineDebugString: String = "",
+        wineDxvkHud: Bool = false,
+        wineDLSS: Bool = false,
         coverURL: String = "",
         coverPath: String = "",
         bannerURL: String = "",
@@ -99,7 +113,11 @@ struct Game: Identifiable, Hashable, Codable {
         launchViaSteam: Bool? = nil,
         steamEmulatorEnabled: Bool? = nil,
         serviceName: String? = nil,
-        runnerConfig: [String: String] = [:]
+        runnerConfig: [String: String] = [:],
+        preLaunchScript: String = "",
+        postExitScript: String = "",
+        customSavePath: String = "",
+        runtimeSettings: RuntimeSettings = RuntimeSettings()
     ) {
         self.id = id
         self.name = name
@@ -138,7 +156,14 @@ struct Game: Identifiable, Hashable, Codable {
         self.wineFSync = wineFSync
         self.wineMSync = wineMSync
         self.wineShaderCache = wineShaderCache
+        self.wineDebugString = wineDebugString
+        self.wineDxvkHud = wineDxvkHud
+        self.wineDLSS = wineDLSS
         self.serviceName = serviceName
+        self.preLaunchScript = preLaunchScript
+        self.postExitScript = postExitScript
+        self.customSavePath = customSavePath
+        self.runtimeSettings = runtimeSettings
         self.runnerConfig = runnerConfig
     }
 
@@ -149,8 +174,10 @@ struct Game: Identifiable, Hashable, Codable {
         case wineBinaryPath, winePrefixPath
         case wineDesktopMode, wineDesktopResolution, wineDXMT, wineAudioDriver
         case wineLaunchArguments, wineRenderMode, wineESync, wineFSync, wineMSync, wineShaderCache
+        case wineDebugString, wineDxvkHud, wineDLSS
         case coverURL, coverPath, bannerURL, iconURL
         case steamAppID, launchViaSteam, steamEmulatorEnabled, serviceName, runnerConfig
+        case preLaunchScript, postExitScript, customSavePath, runtimeSettings
     }
 
     init(from decoder: Decoder) throws {
@@ -185,6 +212,9 @@ struct Game: Identifiable, Hashable, Codable {
         wineFSync = try c.decodeIfPresent(Bool.self, forKey: .wineFSync) ?? false
         wineMSync = try c.decodeIfPresent(Bool.self, forKey: .wineMSync)
         wineShaderCache = try c.decodeIfPresent(Bool.self, forKey: .wineShaderCache) ?? true
+        wineDebugString = try c.decodeIfPresent(String.self, forKey: .wineDebugString) ?? ""
+        wineDxvkHud = try c.decodeIfPresent(Bool.self, forKey: .wineDxvkHud) ?? false
+        wineDLSS = try c.decodeIfPresent(Bool.self, forKey: .wineDLSS) ?? false
         coverURL = try c.decodeIfPresent(String.self, forKey: .coverURL) ?? ""
         coverPath = try c.decodeIfPresent(String.self, forKey: .coverPath) ?? ""
         bannerURL = try c.decodeIfPresent(String.self, forKey: .bannerURL) ?? ""
@@ -194,5 +224,9 @@ struct Game: Identifiable, Hashable, Codable {
         steamEmulatorEnabled = try c.decodeIfPresent(Bool.self, forKey: .steamEmulatorEnabled)
         serviceName = try c.decodeIfPresent(String.self, forKey: .serviceName)
         runnerConfig = try c.decodeIfPresent([String: String].self, forKey: .runnerConfig) ?? [:]
+        preLaunchScript = try c.decodeIfPresent(String.self, forKey: .preLaunchScript) ?? ""
+        postExitScript = try c.decodeIfPresent(String.self, forKey: .postExitScript) ?? ""
+        customSavePath = try c.decodeIfPresent(String.self, forKey: .customSavePath) ?? ""
+        runtimeSettings = try c.decodeIfPresent(RuntimeSettings.self, forKey: .runtimeSettings) ?? RuntimeSettings()
     }
 }

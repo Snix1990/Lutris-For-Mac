@@ -59,11 +59,7 @@ final class ServiceManager: ObservableObject {
     }
 
     private func countImportedGames(for serviceName: String) -> Int {
-        guard let data = try? Data(contentsOf: importedGamesFile),
-              let imported = try? JSONDecoder().decode([String: [String]].self, from: data) else {
-            return 0
-        }
-        return imported[serviceName]?.count ?? 0
+        importedTracker[serviceName]?.count ?? 0
     }
 
     // MARK: - Scanning
@@ -519,10 +515,21 @@ final class ServiceManager: ObservableObject {
         return folder.appendingPathComponent("imported_games.json")
     }()
 
+    private var _importedTracker: [String: [String]]?
     private var importedTracker: [String: [String]] {
-        get { ((try? JSONDecoder().decode([String: [String]].self, from: Data(contentsOf: importedGamesFile))) ??
-               [:]) }
-        set { if let data = try? JSONEncoder().encode(newValue) { try? data.write(to: importedGamesFile, options: .atomic) } }
+        get {
+            if let cached = _importedTracker { return cached }
+            let loaded = (try? JSONDecoder().decode([String: [String]].self,
+                from: Data(contentsOf: importedGamesFile))) ?? [:]
+            _importedTracker = loaded
+            return loaded
+        }
+        set {
+            _importedTracker = newValue
+            if let data = try? JSONEncoder().encode(newValue) {
+                try? data.write(to: importedGamesFile, options: .atomic)
+            }
+        }
     }
 
     func importGames(_ games: [ScannedGame], into library: inout [Game]) -> Int {

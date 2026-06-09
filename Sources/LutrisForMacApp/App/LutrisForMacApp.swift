@@ -18,66 +18,87 @@ struct LutrisForMacApp: App {
                 }
         }
         .windowResizability(.contentMinSize)
-        .commands {
-            CommandMenu("Library") {
-                Button("Refresh Library") {
-                    viewModel.refreshLibrary()
-                }
-                .keyboardShortcut("r", modifiers: [.command])
+            .commands {
+                CommandMenu("Library") {
+                    Button("Refresh Library") {
+                        viewModel.refreshLibrary()
+                    }
+                    .keyboardShortcut(Keybinds.shortcut(for: .refreshLibrary).key, modifiers: Keybinds.shortcut(for: .refreshLibrary).modifiers)
 
-                Divider()
+                    Divider()
 
-                Button("Alle scannen") {
-                    Task {
-                        let folders = RomFolderManager.shared.folders
-                        guard !folders.isEmpty else { return }
-                        let results = RomFolderManager.shared.scanROMs()
-                        let total = results.values.reduce(0) { $0 + $1.count }
+                    Button("Alle scannen") {
+                        Task {
+                            let folders = RomFolderManager.shared.folders
+                            guard !folders.isEmpty else { return }
+                            let results = RomFolderManager.shared.scanROMs()
+                            let total = results.values.reduce(0) { $0 + $1.count }
 
-                        let alert = NSAlert()
-                        if total == 0 {
-                            alert.messageText = tr("Keine ROMs gefunden")
-                            alert.informativeText = tr("In den konfigurierten Ordnern wurden keine ROM-Dateien gefunden.")
-                            alert.addButton(withTitle: tr("OK"))
-                            alert.runModal()
-                        } else {
-                            let platforms = results.keys.sorted().joined(separator: ", ")
-                            alert.messageText = tr("Scan abgeschlossen")
-                            alert.informativeText = "\(total) ROMs gefunden in: \(platforms)"
-                            alert.addButton(withTitle: tr("Importieren"))
-                            alert.addButton(withTitle: tr("Abbrechen"))
+                            let alert = NSAlert()
+                            if total == 0 {
+                                alert.messageText = tr("Keine ROMs gefunden")
+                                alert.informativeText = tr("In den konfigurierten Ordnern wurden keine ROM-Dateien gefunden.")
+                                alert.addButton(withTitle: tr("OK"))
+                                alert.runModal()
+                            } else {
+                                let platforms = results.keys.sorted().joined(separator: ", ")
+                                alert.messageText = tr("Scan abgeschlossen")
+                                alert.informativeText = "\(total) ROMs gefunden"
+                                if !platforms.isEmpty {
+                                    let scrollView = NSScrollView(frame: NSRect(x: 0, y: 0, width: 380, height: 120))
+                                    let textView = NSTextView(frame: NSRect(x: 0, y: 0, width: 380, height: 120))
+                                    textView.isEditable = false
+                                    textView.string = platforms
+                                    scrollView.documentView = textView
+                                    scrollView.hasVerticalScroller = true
+                                    alert.accessoryView = scrollView
+                                }
+                                alert.addButton(withTitle: tr("Importieren"))
+                                alert.addButton(withTitle: tr("Abbrechen"))
 
-                            let response = alert.runModal()
-                            guard response == .alertFirstButtonReturn else { return }
+                                let response = alert.runModal()
+                                guard response == .alertFirstButtonReturn else { return }
 
-                            var imported = 0
-                            for (platform, files) in results {
-                                for url in files {
-                                    let name = url.deletingPathExtension().lastPathComponent
-                                    let game = Game(
-                                        name: name,
-                                        platform: platform,
-                                        installPath: url.path,
-                                        runner: "RetroArch"
-                                    )
-                                    if !viewModel.games.contains(where: { $0.installPath == url.path }) {
-                                        viewModel.games.append(game)
-                                        imported += 1
+                                var imported = 0
+                                for (platform, files) in results {
+                                    for url in files {
+                                        let name = url.deletingPathExtension().lastPathComponent
+                                        let game = Game(
+                                            name: name,
+                                            platform: platform,
+                                            installPath: url.path,
+                                            runner: "RetroArch"
+                                        )
+                                        if !viewModel.games.contains(where: { $0.installPath == url.path }) {
+                                            viewModel.games.append(game)
+                                            imported += 1
+                                        }
                                     }
                                 }
-                            }
-                            if imported > 0 {
-                                viewModel.saveLibrary()
+                                if imported > 0 {
+                                    viewModel.saveLibrary()
+                                }
                             }
                         }
                     }
-                }
-                .keyboardShortcut("s", modifiers: [.command, .shift])
-                .disabled(RomFolderManager.shared.folders.isEmpty)
-            }
+                    .keyboardShortcut(Keybinds.shortcut(for: .scanROMs).key, modifiers: Keybinds.shortcut(for: .scanROMs).modifiers)
+                    .disabled(RomFolderManager.shared.folders.isEmpty)
 
-            WineMenuCommands(wineManager: wineManager)
-        }
+                    Divider()
+
+                    Button("OSD") {
+                        OSDManager.shared.toggle()
+                    }
+                    .keyboardShortcut(Keybinds.shortcut(for: .toggleOSD).key, modifiers: Keybinds.shortcut(for: .toggleOSD).modifiers)
+
+                    Button("Maus freigeben") {
+                        OSDManager.shared.requestInteraction()
+                    }
+                    .keyboardShortcut(Keybinds.shortcut(for: .releaseMouse).key, modifiers: Keybinds.shortcut(for: .releaseMouse).modifiers)
+                }
+
+                WineMenuCommands(wineManager: wineManager)
+            }
 
         Settings {
             SettingsView()
@@ -107,9 +128,151 @@ struct LutrisForMacApp: App {
 }
 
 final class AppDelegate: NSObject, NSApplicationDelegate {
+    private var idleTimer: Timer?
+    private var observationTokens: [NSObjectProtocol] = []
+
+    func applicationWillFinishLaunching(_ notification: Notification) {
+        if CommandLine.arguments.contains("--runtime") {
+            NSApp.setActivationPolicy(.prohibited)
+        }
+    }
+
     func applicationDidFinishLaunching(_ notification: Notification) {
+        if CommandLine.arguments.contains("--runtime") {
+            // Fenster schließen falls SwiftUI trotz .prohibited eines erstellt hat
+            NSApp.windows.forEach { $0.close() }
+            let logURL = URL(fileURLWithPath: "/tmp/lutris_runtime_app.log")
+            try? "\(Date()) Runtime gestartet\n".write(to: logURL, atomically: true, encoding: .utf8)
+            Task { @MainActor in
+                startRuntimeSession()
+            }
+            OSDManager.installCarbonHandler()
+            OSDManager.shared.registerGlobalHotkey()
+            OSDManager.shared.touch()
+            RuntimeManager.shared.startAll()
+            startIdleTimer()
+            #if DEBUG
+            print("[Runtime] LutrisForMac läuft im Runtime-Modus (OSD + Hotkeys + Session)")
+            #endif
+            return
+        }
+
+        killOtherInstances(excluding: NSRunningApplication.current.processIdentifier)
+
         NSApplication.shared.setActivationPolicy(.regular)
         Task { await checkForUpdate() }
+        OSDManager.installCarbonHandler()
+        OSDManager.shared.registerGlobalHotkey()
+    }
+
+    @MainActor
+    private func startRuntimeSession() {
+        let gameInfoURL = RuntimeGameInfo.tempFileURL
+        guard let data = try? Data(contentsOf: gameInfoURL),
+              let info = try? JSONDecoder().decode(RuntimeGameInfo.self, from: data) else {
+            return
+        }
+        try? FileManager.default.removeItem(at: gameInfoURL)
+
+        let gameID = UUID(uuidString: info.gameID) ?? UUID()
+        let exeName = (info.installPath as NSString).lastPathComponent
+        let installLower = info.installPath.lowercased()
+
+        let names: [String] = {
+            let isWine = info.runner == "Wine" || info.runner == "CrossOver" || info.runner == "Whisky" || info.runner == "Kegworks"
+            if isWine {
+                return [exeName, "wine", "wine64", "wine32on64"]
+            }
+            if installLower.hasSuffix(".app") {
+                var result = [info.installPath]
+                let appURL = URL(fileURLWithPath: info.installPath)
+                let plistURLs = [
+                    appURL.appendingPathComponent("Contents/Info.plist"),
+                    appURL.appendingPathComponent("Info.plist")
+                ]
+                for plistURL in plistURLs {
+                    if let plistData = try? Data(contentsOf: plistURL),
+                       let plist = try? PropertyListSerialization.propertyList(from: plistData, options: [], format: nil) as? [String: Any],
+                       let bundleExe = plist["CFBundleExecutable"] as? String {
+                        result.append(bundleExe)
+                        break
+                    }
+                }
+                return result
+            }
+            if installLower.hasPrefix("steam://") {
+                return ["steam", "Steam Helper"]
+            }
+            if installLower.contains("://") {
+                return [exeName]
+            }
+            var result = [exeName]
+            switch info.runner {
+            case "Ryujinx": result.append("Ryujinx")
+            case "Dolphin": result.append("Dolphin")
+            case "PCSX2": result.append("PCSX2")
+            case "RPCS3": result.append("RPCS3")
+            case "Citra": result.append("Citra")
+            case "MelonDS": result.append("melonDS")
+            case "DuckStation": result.append("DuckStation")
+            case "Flycast": result.append("Flycast")
+            case "PPSSPP": result.append("PPSSPP")
+            case "RetroArch": result.append("RetroArch")
+            case "MAME": result.append("MAME")
+            case "DOSBox", "DOSBox-X": result.append("DOSBox")
+            default: break
+            }
+            return result
+        }()
+
+        let sid = GameSessionManager.shared.startSession(
+            gameID: gameID,
+            gameName: info.gameName,
+            coverURL: info.coverURL,
+            names: names
+        )
+        _ = sid
+
+        observationTokens.append(
+            NotificationCenter.default.addObserver(
+                forName: .gameSessionEnded,
+                object: nil,
+                queue: .main
+            ) { note in
+                guard let userInfo = note.userInfo,
+                      let endedGameID = userInfo["gameID"] as? UUID,
+                      endedGameID == gameID else { return }
+                let playTime = userInfo["playTime"] as? TimeInterval ?? 0
+                if playTime > 10 {
+                    GameLibraryViewModel.shared.recordPlaySession(gameID: gameID, duration: playTime)
+                }
+                NSApplication.shared.terminate(nil)
+            }
+        )
+    }
+
+    private func startIdleTimer() {
+        // Runtime läuft nur bis Session-Ende, kein Idle-Timeout
+    }
+
+    private func killOtherInstances(excluding currentPID: pid_t) {
+        let exeName = Bundle.main.executableURL?.lastPathComponent ?? "LutrisForMac"
+        let task = Process()
+        task.launchPath = "/usr/bin/pgrep"
+        task.arguments = ["-f", "\(exeName).*--runtime"]
+        let pipe = Pipe()
+        task.standardOutput = pipe
+        try? task.run()
+        task.waitUntilExit()
+        let data = pipe.fileHandleForReading.readDataToEndOfFile()
+        let pids = String(data: data, encoding: .utf8)?
+            .split(separator: "\n")
+            .compactMap { pid_t($0) }
+            .filter { $0 != currentPID } ?? []
+
+        for pid in pids {
+            kill(pid, SIGTERM)
+        }
     }
 
     private func checkForUpdate() async {
@@ -171,6 +334,10 @@ final class AppDelegate: NSObject, NSApplicationDelegate {
 
     @objc func showSettingsWindow() {
         NSApp.sendAction(Selector(("showSettingsWindow:")), to: nil, from: nil)
+    }
+
+    func applicationWillTerminate(_ notification: Notification) {
+        idleTimer?.invalidate()
     }
 }
 

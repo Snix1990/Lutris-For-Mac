@@ -76,6 +76,41 @@ final class DesktopIntegrationManager: ObservableObject {
         return fm.fileExists(atPath: bundlePath)
     }
 
+    private var runtimeBinaryPath: String {
+        Bundle.main.executableURL?.path ?? ""
+    }
+
+    @MainActor
+    private func runtimeScriptBlock(for game: Game) -> String {
+        let info = RuntimeGameInfo(
+            gameID: game.id.uuidString,
+            gameName: game.name,
+            coverURL: game.coverURL,
+            installPath: game.installPath,
+            runner: game.runner,
+            runtimeSettings: game.runtimeSettings
+        )
+        let jsonData = (try? JSONEncoder().encode(info)).flatMap { String(data: $0, encoding: .utf8) } ?? "{}"
+        return """
+        # Starte LutrisForMac Runtime (OSD + Hotkeys)
+        LOG=/tmp/lutris_runtime_debug.log
+        echo "[$(date)] Starte Runtime" >> "$LOG"
+        echo "[$(date)] Binary: \(runtimeBinaryPath)" >> "$LOG"
+        if [ ! -x "\(runtimeBinaryPath)" ]; then
+            echo "[$(date)] FEHLER: Binary nicht gefunden: \(runtimeBinaryPath)" >> "$LOG"
+        fi
+        cat > /tmp/lutris_runtime_game.json << 'LUTRIS_GAME_EOF'
+        \(jsonData)
+        LUTRIS_GAME_EOF
+        nohup "\(runtimeBinaryPath)" --runtime >> "$LOG" 2>&1 &
+        RUNTIME_PID=$!
+        echo "[$(date)] Runtime PID: $RUNTIME_PID" >> "$LOG"
+        disown $RUNTIME_PID 2>/dev/null
+        sleep 0.3
+
+        """
+    }
+
     @MainActor
     private func buildLauncherScript(for game: Game) -> String {
         let isWine = game.runner == "Wine" || game.runner == "CrossOver" || game.runner == "Whisky" || game.runner == "Kegworks"
@@ -86,7 +121,7 @@ final class DesktopIntegrationManager: ObservableObject {
         if isNative || game.installPath.hasSuffix(".app") {
             return """
             #!/bin/bash
-            open "\(game.installPath)"
+            \(runtimeScriptBlock(for: game))open "\(game.installPath)"
             """
         }
 
@@ -96,7 +131,7 @@ final class DesktopIntegrationManager: ObservableObject {
             let cmd = emulatorLaunchCommand(for: game, runner: runner)
             return """
             #!/bin/bash
-            \(cmd)
+            \(runtimeScriptBlock(for: game))\(cmd)
             """
         }
 
@@ -104,7 +139,7 @@ final class DesktopIntegrationManager: ObservableObject {
         if game.installPath.contains("://") {
             return """
             #!/bin/bash
-            open "\(game.installPath)"
+            \(runtimeScriptBlock(for: game))open "\(game.installPath)"
             """
         }
 
@@ -174,7 +209,7 @@ final class DesktopIntegrationManager: ObservableObject {
             return """
             #!/bin/bash
             # === LutrisForMac Launcher: '\(game.name)' ===
-            \(envBlock)
+            \(runtimeScriptBlock(for: game))\(envBlock)
 
             exec \(launcherCommand)
             """
@@ -198,7 +233,7 @@ final class DesktopIntegrationManager: ObservableObject {
             return """
             #!/bin/bash
             # === LutrisForMac Launcher: '\(game.name)' ===
-            \(envBlock)
+            \(runtimeScriptBlock(for: game))\(envBlock)
             \(steamBlock)
             """
         }
@@ -222,7 +257,7 @@ final class DesktopIntegrationManager: ObservableObject {
         return """
         #!/bin/bash
         # === LutrisForMac Launcher: '\(game.name)' ===
-        INSTALL_PATH="\(installPath)"
+        \(runtimeScriptBlock(for: game))INSTALL_PATH="\(installPath)"
         \(envBlock)
         \(exeFallback)
         if [ ! -f "$INSTALL_PATH" ]; then
@@ -381,43 +416,53 @@ final class DesktopIntegrationManager: ObservableObject {
             state: state,
             coverURL: coverURL
         )
+        NotificationManager.info(
+            title: "Discord RPC",
+            message: "Now playing: \(gameName)",
+            duration: 3
+        )
     }
 
     func clearDiscordPresence() {
+        guard discordEnabled, discordRPC != nil else { return }
         discordRPC?.clearActivity()
+        NotificationManager.info(
+            title: "Discord RPC",
+            message: "Stopped playing",
+            duration: 3
+        )
     }
 
-    // MARK: - Game Process Monitoring
+    // MARK: - Game Process Monitoring (deprecated – use GameSessionManager instead)
 
-    /// Wartet auf Beendigung eines Spielprozesses via pgrep (erkennt .exe unter Wine/CrossOver am vollständigen Kommandozeilen-Pfad).
+    /// Old-style single-process wait (kept for backward compat). Redirects to GameSessionManager.
+    /// For new code use `launchSession()` from the GameSessionManager extension.
     static func waitForGameProcess(exePath: String) async {
         let exeName = (exePath as NSString).lastPathComponent
-        guard !exeName.isEmpty, exeName.contains(".") else { return }
-        // Warte bis zu 15s auf Prozessstart, dann bis zu 60s nachdem er weg ist
-        let start = Date()
-        var started = false
-        while Date().timeIntervalSince(start) < 120 {
-            let process = Process()
-            process.executableURL = URL(fileURLWithPath: "/usr/bin/pgrep")
-            process.arguments = ["-fi", exeName]
-            let pipe = Pipe()
-            process.standardOutput = pipe
-            process.standardError = Pipe()
-            try? process.run()
-            process.waitUntilExit()
-            let running = process.terminationStatus == 0
-            if !started {
-                if running {
-                    started = true
-                } else if Date().timeIntervalSince(start) > 15 {
-                    break // Prozess ist nie gestartet
-                }
-            } else if !running {
-                break // Prozess beendet
+        guard !exeName.isEmpty else { return }
+
+        await MainActor.run {
+            _ = GameSessionManager.shared.startSession(
+                gameID: UUID(),
+                gameName: exeName,
+                coverURL: "",
+                names: [exeName]
+            )
+        }
+
+        // Block until session ends (polling every 2s, max 2 hours)
+        let deadline = Date().addingTimeInterval(7200)
+        while Date() < deadline {
+            let active = await MainActor.run {
+                GameSessionManager.shared.activeSessions.contains(where: {
+                    $0.watchedNames.contains(exeName) || $0.watchedPIDs.contains(where: { kill($0, 0) == 0 })
+                })
             }
-            try? await Task.sleep(nanoseconds: 1_000_000_000)
+            guard active else { break }
+            try? await Task.sleep(nanoseconds: 2_000_000_000)
         }
         await MainActor.run {
+            GameSessionManager.shared.endAllSessions()
             DesktopIntegrationManager.shared.clearDiscordPresence()
         }
     }

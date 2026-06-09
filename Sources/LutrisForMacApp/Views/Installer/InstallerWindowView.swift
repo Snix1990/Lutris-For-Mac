@@ -30,6 +30,9 @@ struct InstallerWindowView: View {
 
     @ObservedObject private var emuManager = EmulatorManager.shared
     @State private var showWineManager = false
+    @State private var detectedExes: [String] = []
+    @State private var selectedExe: String = ""
+    @State private var showExePicker = true
 
     enum SourceType: String, CaseIterable {
         case url = "URL"
@@ -54,7 +57,7 @@ struct InstallerWindowView: View {
                 wizardView
             }
         }
-        .frame(minWidth: 560, minHeight: 480)
+        .frame(minWidth: 560, minHeight: 600, maxHeight: 600)
         .sheet(isPresented: $showWineManager) {
             WineSettingsView()
         }
@@ -747,12 +750,56 @@ struct InstallerWindowView: View {
                         viewModel.games.append(game)
                         viewModel.saveLibrary()
                         installSuccess = true
+                        detectExeAfterInstall()
                     }
                 }
             }
         } catch {
             jsonError = "Konnte Script nicht erzeugen: \(error.localizedDescription)"
         }
+    }
+
+    private func detectExeAfterInstall() {
+        guard let prefixPath = engine.variables["winePrefixPath"], !prefixPath.isEmpty else { return }
+        let driveC = "\(prefixPath)/drive_c"
+        var exes: [String] = []
+        let skipPatterns = ["unins", "setup", "redist", "dotnet", "vc_redist", "dxsetup", "oalinst", "vcredist"]
+        let driveCURL = URL(fileURLWithPath: driveC).standardized
+        let excludedDirPrefixes: [String] = [
+            "windows",
+            "Program Files/Internet Explorer",
+            "Program Files/Windows Media Player",
+            "Program Files/Windows NT",
+            "Program Files (x86)/Internet Explorer",
+            "Program Files (x86)/Windows Media Player",
+            "Program Files (x86)/Windows NT",
+        ].map { driveCURL.appendingPathComponent($0).standardized.path.lowercased() }
+
+        guard let enumerator = FileManager.default.enumerator(at: driveCURL, includingPropertiesForKeys: [.fileSizeKey, .isDirectoryKey]) else { return }
+        for case let file as URL in enumerator {
+            let stdPath = file.standardized.path.lowercased()
+            if excludedDirPrefixes.contains(where: { stdPath == $0 || stdPath.hasPrefix($0 + "/") }) {
+                if let values = try? file.resourceValues(forKeys: [.isDirectoryKey]), values.isDirectory == true {
+                    enumerator.skipDescendants()
+                }
+                continue
+            }
+            guard file.pathExtension.lowercased() == "exe" else { continue }
+            let name = file.lastPathComponent.lowercased()
+            if skipPatterns.contains(where: { name.contains($0) }) { continue }
+            exes.append(file.path)
+        }
+
+        // Sort by file size descending (largest = most likely game)
+        exes.sort { lhs, rhs in
+            let lSize = (try? FileManager.default.attributesOfItem(atPath: lhs)[.size] as? UInt64) ?? 0
+            let rSize = (try? FileManager.default.attributesOfItem(atPath: rhs)[.size] as? UInt64) ?? 0
+            return lSize > rSize
+        }
+
+        detectedExes = exes
+        selectedExe = exes.first ?? ""
+        showExePicker = true
     }
 
     // MARK: - JSON-Fallback
@@ -829,24 +876,25 @@ struct InstallerWindowView: View {
         }
         Task {
             let success = await engine.run(script: script, gamePath: installPath, gameName: gameName)
-            if success {
-                var game = Game(
-                    name: gameName,
-                    platform: script.platform,
-                    installPath: installPath,
-                    runner: script.runner,
-                    notes: "Installiert via JSON-Skript"
-                )
-                if let wineBin = engine.variables["wineBin"] {
-                    game.wineBinaryPath = wineBin
-                }
-                if let prefixPath = engine.variables["winePrefixPath"] {
-                    game.winePrefixPath = prefixPath
-                }
-                await MainActor.run {
-                    viewModel.games.append(game)
-                    viewModel.saveLibrary()
-                    installSuccess = true
+                if success {
+                    var game = Game(
+                        name: gameName,
+                        platform: script.platform,
+                        installPath: installPath,
+                        runner: script.runner,
+                        notes: "Installiert via JSON-Skript"
+                    )
+                    if let wineBin = engine.variables["wineBin"] {
+                        game.wineBinaryPath = wineBin
+                    }
+                    if let prefixPath = engine.variables["winePrefixPath"] {
+                        game.winePrefixPath = prefixPath
+                    }
+                    await MainActor.run {
+                        viewModel.games.append(game)
+                        viewModel.saveLibrary()
+                        installSuccess = true
+                        detectExeAfterInstall()
                 }
             }
         }
@@ -903,6 +951,48 @@ struct InstallerWindowView: View {
             LText("Das Spiel wurde zur Bibliothek hinzugefügt.")
                 .foregroundColor(.secondary)
 
+            if !detectedExes.isEmpty && showExePicker {
+                GroupBox {
+                    VStack(alignment: .leading, spacing: 8) {
+                        LText("Installierte Programme")
+                            .font(.subheadline).bold()
+                        LText("Wähle die ausführbare Datei des Spiels aus:")
+                            .font(.caption).foregroundColor(.secondary)
+
+                        ScrollView(.vertical) {
+                            Picker(selection: $selectedExe) {
+                                ForEach(detectedExes, id: \.self) { exe in
+                                    HStack {
+                                        Image(systemName: "doc.binary")
+                                            .foregroundColor(.accentColor)
+                                        Text(verbatim: exe.replacingOccurrences(of: "\(engine.variables["winePrefixPath"] ?? "")/drive_c/", with: "C:\\"))
+                                            .font(.caption)
+                                    }
+                                    .tag(exe)
+                                }
+                            } label: {}
+                            .pickerStyle(.radioGroup)
+                        }
+                        .frame(maxHeight: 250)
+
+                        HStack(spacing: 12) {
+                            Button {
+                                updateInstalledGamePath(selectedExe)
+                                showExePicker = false
+                            } label: { LText("OK") }
+                            .buttonStyle(.borderedProminent)
+                            .controlSize(.small)
+
+                            Button {
+                                showExePicker = false
+                            } label: { LText("Überspringen") }
+                            .buttonStyle(.plain)
+                            .font(.caption)
+                        }
+                    }
+                }
+            }
+
             ScrollView(.vertical, showsIndicators: true) {
                 VStack(alignment: .leading, spacing: 2) {
                     ForEach(Array(engine.log.enumerated()), id: \.offset) { _, line in
@@ -912,7 +1002,7 @@ struct InstallerWindowView: View {
                 }
                 .padding(.vertical, 4)
             }
-            .frame(maxHeight: 170)
+            .frame(maxHeight: showExePicker ? 120 : 170)
             .padding(8)
             .background(Color(nsColor: .textBackgroundColor))
             .clipShape(RoundedRectangle(cornerRadius: 6))
@@ -922,6 +1012,12 @@ struct InstallerWindowView: View {
                 .keyboardShortcut(.defaultAction)
         }
         .padding()
+    }
+
+    private func updateInstalledGamePath(_ exePath: String) {
+        guard let idx = viewModel.games.firstIndex(where: { $0.name == gameName && $0.notes == "Installiert via Assistent" }) else { return }
+        viewModel.games[idx].installPath = exePath
+        viewModel.saveLibrary()
     }
 
     // MARK: - Helpers

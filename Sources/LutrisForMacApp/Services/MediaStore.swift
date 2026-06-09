@@ -12,6 +12,8 @@ private let knownExts = ["jpg", "jpeg", "png", "ico", "gif", "bmp", "tiff", "web
 final class MediaStore: ObservableObject {
     static let shared = MediaStore()
 
+    @Published public private(set) var changeCounter = 0
+
     private let mediaDir: URL
     private let oldCoverDir: URL
     private let indexURL: URL
@@ -79,8 +81,17 @@ final class MediaStore: ObservableObject {
 
     private func saveIndex() {
         let dict = index.mapValues { $0.mapValues { $0 } }
-        try? JSONEncoder().encode(dict).write(to: indexURL)
+        let data = try? JSONEncoder().encode(dict)
+        guard let data else { return }
+        // Debounce: nur alle 500ms auf Platte schreiben
+        saveIndexWorkItem?.cancel()
+        saveIndexWorkItem = DispatchWorkItem { [indexURL] in
+            try? data.write(to: indexURL)
+        }
+        DispatchQueue.main.asyncAfter(deadline: .now() + 0.5, execute: saveIndexWorkItem!)
     }
+
+    private var saveIndexWorkItem: DispatchWorkItem?
 
     private func setIndexEntry(gameID: String, type: MediaType, ext: String) {
         index[gameID, default: [:]][type] = ext
@@ -111,19 +122,15 @@ final class MediaStore: ObservableObject {
             return rep.pixelsWide * rep.pixelsHigh * 4
         }
 
-        if let ext = index[gameID]?[type] {
-            let url = path(for: gameID, type: type, ext: ext)
-            if FileManager.default.fileExists(atPath: url.path),
-               let img = NSImage(contentsOf: url) {
-                caches[type]?.setObject(img, forKey: gameID as NSString, cost: cost(img))
-                return img
-            }
+        if let ext = index[gameID]?[type],
+           let img = NSImage(contentsOf: path(for: gameID, type: type, ext: ext)) {
+            caches[type]?.setObject(img, forKey: gameID as NSString, cost: cost(img))
+            return img
         }
 
         for ext in knownExts {
             let url = path(for: gameID, type: type, ext: ext)
-            if FileManager.default.fileExists(atPath: url.path),
-               let img = NSImage(contentsOf: url) {
+            if let img = NSImage(contentsOf: url) {
                 caches[type]?.setObject(img, forKey: gameID as NSString, cost: cost(img))
                 setIndexEntry(gameID: gameID, type: type, ext: ext)
                 return img
@@ -132,8 +139,7 @@ final class MediaStore: ObservableObject {
 
         if type == .cover {
             let oldURL = oldCoverPath(for: gameID)
-            if FileManager.default.fileExists(atPath: oldURL.path),
-               let img = NSImage(contentsOf: oldURL) {
+            if let img = NSImage(contentsOf: oldURL) {
                 let dest = path(for: gameID, type: type, ext: "jpg")
                 try? FileManager.default.copyItem(at: oldURL, to: dest)
                 try? FileManager.default.removeItem(at: oldURL)
@@ -156,6 +162,7 @@ final class MediaStore: ObservableObject {
             try data.write(to: path(for: gameID, type: type, ext: ext))
             caches[type]?.setObject(image, forKey: gameID as NSString, cost: data.count)
             setIndexEntry(gameID: gameID, type: type, ext: ext)
+            changeCounter += 1
             return image
         } catch {
             return nil
@@ -171,6 +178,7 @@ final class MediaStore: ObservableObject {
         let cost = image.representations.first.map { $0.pixelsWide * $0.pixelsHigh * 4 } ?? 0
         caches[type]?.setObject(image, forKey: gameID as NSString, cost: cost)
         setIndexEntry(gameID: gameID, type: type, ext: ext)
+        changeCounter += 1
         return image
     }
 
@@ -184,6 +192,7 @@ final class MediaStore: ObservableObject {
             }
         }
         removeIndexEntry(gameID: gameID, type: type)
+        changeCounter += 1
     }
 
     func removeAllMedia(for gameID: String) {

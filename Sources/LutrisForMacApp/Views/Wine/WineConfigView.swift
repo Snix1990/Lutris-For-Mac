@@ -228,18 +228,16 @@ struct WineConfigView: View {
         // Performance-Optionen
         GroupBox {
             VStack(alignment: .leading, spacing: 8) {
-                if isCrossOver24OrNewer {
-                    Toggle(isOn: Binding(
-                        get: { game.wineMSync ?? false },
-                        set: { game.wineMSync = $0 }
-                    )) { LText("MSync (MSync-Synchronisation, ab CrossOver 24)") }
-                    .helpLText("WINE_MSYNC_DISABLE=0 – Ersetzt ESync/FSync auf macOS. Standard in CrossOver 24+. Deutlich stabiler als ESync/FSync.")
+                Toggle(isOn: Binding(
+                    get: { game.wineMSync ?? false },
+                    set: { game.wineMSync = $0 }
+                )) { LText("MSync (Apple-Synchronisation für Wine)") }
+                .helpLText("WINE_MSYNC_DISABLE=0 – Ersetzt ESync/FSync auf macOS. Verfügbar in Wine 9.x+ und CrossOver 24+. Deutlich stabiler als ESync/FSync.")
 
-                    if game.wineMSync ?? false {
-                        LText("ESync und FSync werden ignoriert, da MSync aktiv ist.")
-                            .font(.caption)
-                            .foregroundColor(.secondary)
-                    }
+                if game.wineMSync ?? false {
+                    LText("ESync und FSync werden ignoriert, da MSync aktiv ist.")
+                        .font(.caption)
+                        .foregroundColor(.secondary)
                 } else {
                     Toggle(isOn: $game.wineESync) { LText("ESync (ereignisbasierte Synchronisation)") }
                         .helpLText("WINEESYNC=1 – Reduziert CPU-Overhead bei Thread-Sync. Empfohlen für moderne Spiele.")
@@ -250,11 +248,34 @@ struct WineConfigView: View {
 
                 Toggle(isOn: $game.wineShaderCache) { LText("Shader-Cache aktivieren") }
                     .helpLText("D3DMETAL_SHADER_CACHE=1 – Reduziert Stottern durch gecachte Shader.")
+
+                if game.wineRenderMode == .dxvkMoltenVK {
+                    Toggle(isOn: $game.wineDxvkHud) { LText("DXVK HUD (FPS, Frametimes, API)") }
+                        .helpLText("DXVK_HUD=fps,frametimes,devinfo,api,version – Zeigt Overlay im Spiel an.")
+                }
+
+                if d3dMetalAvailable {
+                    Toggle(isOn: Binding(
+                        get: { game.wineDLSS },
+                        set: { newValue in
+                            game.wineDLSS = newValue
+                            if newValue {
+                                try? wineManager.deployDLSSDLLs(for: game)
+                            } else {
+                                wineManager.removeDLSSDLLs(for: game)
+                            }
+                        }
+                    )) { LText("DLSS (MetalFX-Upscaling)") }
+                    .helpLText("D3DM_ENABLE_METALFX=1 – Ersetzt NVIDIA DLSS durch MetalFX. Erfordert GPTK 3.0+ und D3DMetal-Render-Modus. Nur für Spiele mit DLSS-Unterstützung.")
+                }
             }
             .padding(.vertical, 4)
         } label: {
             LText("Leistungsoptionen").font(.system(size: 16)).frame(maxWidth: .infinity)
         }
+
+        // Debug
+        debugSection
 
         Picker(selection: $game.wineAudioDriver) {
             LText("CoreAudio").tag("coreaudio")
@@ -460,6 +481,72 @@ struct WineConfigView: View {
             .padding(.vertical, 4)
         } label: {
             LText("CrossOver-Installation").font(.system(size: 16)).frame(maxWidth: .infinity)
+        }
+    }
+
+    // MARK: - Debug
+
+    @ViewBuilder
+    private var debugSection: some View {
+        GroupBox {
+            VStack(alignment: .leading, spacing: 8) {
+                Picker(selection: Binding(
+                    get: { WineDebugManager.shared.preset },
+                    set: { newPreset in
+                        WineDebugManager.shared.setPreset(newPreset)
+                        if newPreset != .custom {
+                            game.wineDebugString = newPreset.wineDebugValue
+                        }
+                    }
+                )) {
+                    ForEach(DebugPreset.allCases, id: \.rawValue) { preset in
+                        Text(preset.displayName).tag(preset)
+                    }
+                } label: {
+                    LText("Debug-Preset")
+                }
+
+                if WineDebugManager.shared.preset == .custom {
+                    TextField(tr("WINEDEBUG (z.B. +err,+fixme,-all)"), text: Binding(
+                        get: { game.wineDebugString },
+                        set: { game.wineDebugString = $0 }
+                    ))
+                    .font(.system(.caption, design: .monospaced))
+                }
+
+                if !WineDebugManager.shared.enabledChannelIDs.isEmpty {
+                    LText("Einzelne Kanäle").font(.caption)
+                    LazyVGrid(columns: [GridItem(.adaptive(minimum: 110))], spacing: 4) {
+                        ForEach(wineDebugChannels) { channel in
+                            let isOn = WineDebugManager.shared.enabledChannelIDs.contains(channel.id)
+                            Button {
+                                WineDebugManager.shared.toggleChannel(channel.id)
+                                game.wineDebugString = WineDebugManager.shared.resolvedDebugString()
+                            } label: {
+                                HStack(spacing: 2) {
+                                    Image(systemName: isOn ? "checkmark.circle.fill" : "circle")
+                                        .foregroundColor(isOn ? .accentColor : .secondary)
+                                        .imageScale(.small)
+                                    Text(channel.displayName)
+                                        .font(.caption2)
+                                }
+                            }
+                            .buttonStyle(.plain)
+                        }
+                    }
+                }
+
+                Divider()
+
+                Toggle(isOn: Binding(
+                    get: { WineDebugManager.shared.filterDebugLog },
+                    set: { WineDebugManager.shared.filterDebugLog = $0 }
+                )) { LText("Debug-Logs im Log-Viewer filtern") }
+                    .helpLText("Wenn aktiv, werden WINEDEBUG-Zeilen ausgeblendet, die keine relevanten Kanäle enthalten.")
+            }
+            .padding(.vertical, 4)
+        } label: {
+            LText("Debug-Kanäle (WINEDEBUG)").font(.system(size: 16)).frame(maxWidth: .infinity)
         }
     }
 

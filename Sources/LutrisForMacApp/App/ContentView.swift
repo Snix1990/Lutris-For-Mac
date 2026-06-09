@@ -133,6 +133,7 @@ struct ContentView: View {
                     } label: {
                         Label { LText("Spiel hinzufügen") } icon: { Image(systemName: "plus") }
                     }
+                    .keyboardShortcut(Keybinds.shortcut(for: .newGame).key, modifiers: Keybinds.shortcut(for: .newGame).modifiers)
                 }
                 ToolbarItem(placement: .automatic) {
                     Menu {
@@ -176,6 +177,26 @@ struct ContentView: View {
                     }
                     .helpLText("Wine-Einstellungen")
                 }
+                ToolbarItem(placement: .automatic) {
+                    Button {
+                        Task {
+                            let games = viewModel.games
+                            try? await CloudSaveManager.shared.syncAll(games: games)
+                        }
+                    } label: {
+                        Label {
+                            HStack(spacing: 4) {
+                                if CloudSaveManager.shared.isSyncing {
+                                    ProgressView().controlSize(.small).scaleEffect(0.6)
+                                }
+                                LText("Cloud")
+                            }
+                        } icon: { Image(systemName: CloudSaveManager.shared.isSyncing
+                            ? "icloud.and.arrow.up" : "icloud") }
+                    }
+                    .helpLText("Cloud-Speicherstände synchronisieren")
+                    .disabled(CloudSaveManager.shared.isSyncing)
+                }
             }
         }
         .task {
@@ -188,10 +209,35 @@ struct ContentView: View {
         }
         .id(lang.refreshID)
         .environment(\.locale, lang.locale)
-        .alert(Text(verbatim: tr("Fehler beim Starten")), isPresented: .init(get: { launchError != nil }, set: { if !$0 { launchError = nil } }), presenting: launchError) { _ in
-            Button { launchError = nil } label: { LText("OK") }
-        } message: { error in
-            Text(error)
+        .sheet(isPresented: .init(get: { launchError != nil }, set: { if !$0 { launchError = nil } })) {
+            VStack(spacing: 16) {
+                HStack {
+                    Image(systemName: "xmark.octagon.fill")
+                        .foregroundColor(.red)
+                        .font(.title2)
+                    Text(verbatim: tr("Fehler beim Starten"))
+                        .font(.title2).bold()
+                }
+                .padding(.top)
+
+                ScrollView(.vertical) {
+                    if let error = launchError {
+                        Text(error)
+                            .font(.body)
+                            .textSelection(.enabled)
+                            .frame(maxWidth: .infinity, alignment: .leading)
+                    }
+                }
+                .frame(maxHeight: 300)
+
+                Button(tr("Schliessen")) {
+                    launchError = nil
+                }
+                .buttonStyle(.borderedProminent)
+                .keyboardShortcut(.defaultAction)
+            }
+            .padding()
+            .frame(width: 480, height: 400)
         }
     }
 
@@ -251,22 +297,46 @@ struct ContentView: View {
     }
 
     private func launch(game: Game) {
+        guard !GameSessionManager.shared.isGameRunning(game.id) else {
+            launchError = "\(game.name) läuft bereits"
+            return
+        }
         let isWineRunner = game.runner == "Wine" || game.runner == "CrossOver" || game.runner == "Whisky" || game.runner == "Kegworks"
         let isNative = game.runner == "Native" || game.platform == "macOS"
         let startTime = Date()
 
         Task {
             do {
+                // --- Steam Emulator path (sets RPC + launches via wine/runner) ---
                 if game.installPath.hasPrefix("steam://"), game.steamEmulatorEnabled == true {
-                    _ = try await launchViaSteamEmulator(game: game, startTime: startTime)
+                    let sid = GameSessionManager.shared.startSession(
+                        gameID: game.id,
+                        gameName: game.name,
+                        coverURL: game.coverURL,
+                        names: [(game.installPath as NSString).lastPathComponent]
+                    )
+                    _ = try await launchViaSteamEmulator(game: game, startTime: startTime, sessionID: sid)
+                    let duration = Date().timeIntervalSince(startTime)
+                    if duration > 10 { viewModel.recordPlaySession(gameID: game.id, duration: duration) }
                     return
                 }
 
+                // --- Wine / CrossOver ---
                 if isWineRunner {
-                    DesktopIntegrationManager.shared.updateDiscordPresence(gameName: game.name, coverURL: game.coverURL)
+                    let exeName = (game.installPath as NSString).lastPathComponent
+                    let sid = GameSessionManager.shared.startSession(
+                        gameID: game.id,
+                        gameName: game.name,
+                        coverURL: game.coverURL,
+                        names: exeName.contains(".") ? [exeName] : []
+                    )
                     let wineVersion = wineManager.resolveWineVersion(for: game.wineVersionName)
                     if wineVersion != nil || game.wineBinaryPath?.isEmpty == false {
                         _ = try await wineManager.launchGame(game: game)
+                        // For CrossOver shortcuts (.app), watch the running app
+                        if game.runner == "CrossOver", game.installPath.hasSuffix(".app") {
+                            GameSessionManager.shared.monitorApp(named: exeName, sessionID: sid)
+                        }
                         let duration = Date().timeIntervalSince(startTime)
                         if duration > 10 { viewModel.recordPlaySession(gameID: game.id, duration: duration) }
                     } else {
@@ -275,11 +345,13 @@ struct ContentView: View {
                     return
                 }
 
+                // --- URL schemes (steam://, etc.) — no process tracking possible ---
                 if game.installPath.contains("://") {
                     if game.installPath.hasPrefix("steam://"), game.launchViaSteam != true {
                         throw LaunchError.steamLaunchDisabled
                     }
                     if let url = URL(string: game.installPath) {
+                        _ = GameSessionManager.shared.startSession(gameID: game.id, gameName: game.name, coverURL: game.coverURL)
                         NSWorkspace.shared.open(url)
                         let duration = Date().timeIntervalSince(startTime)
                         if duration > 10 { viewModel.recordPlaySession(gameID: game.id, duration: duration) }
@@ -293,6 +365,7 @@ struct ContentView: View {
                 let env = ProcessRunner.parseEnvironmentVariables(from: game.environmentVariables)
                 let config = game.runnerConfig
 
+                // --- Native macOS .app ---
                 if isNative || !runnerManager.runners.contains(where: { $0.name == game.runner }) {
                     let url = URL(fileURLWithPath: game.installPath)
                     guard FileManager.default.fileExists(atPath: url.path) else {
@@ -300,13 +373,19 @@ struct ContentView: View {
                         return
                     }
                     if url.pathExtension == "app" {
-                        DesktopIntegrationManager.shared.updateDiscordPresence(gameName: game.name, coverURL: game.coverURL)
-                        let config = NSWorkspace.OpenConfiguration()
-                        config.activates = true
-                        config.createsNewApplicationInstance = false
-                        _ = try await NSWorkspace.shared.openApplication(at: url, configuration: config)
-                        await DesktopIntegrationManager.waitForGameProcess(exePath: url.lastPathComponent)
+                        let sid = GameSessionManager.shared.startSession(gameID: game.id, gameName: game.name, coverURL: game.coverURL)
+                        let openConfig = NSWorkspace.OpenConfiguration()
+                        openConfig.activates = true
+                        openConfig.createsNewApplicationInstance = false
+                        let runningApp = try await NSWorkspace.shared.openApplication(at: url, configuration: openConfig)
+                        let pid = runningApp.processIdentifier
+                        if pid > 0 {
+                            GameSessionManager.shared.addPID(pid, sessionID: sid)
+                        } else {
+                            GameSessionManager.shared.addName(url.lastPathComponent, sessionID: sid)
+                        }
                     } else {
+                        _ = GameSessionManager.shared.startSession(gameID: game.id, gameName: game.name, coverURL: game.coverURL)
                         NSWorkspace.shared.open(url)
                     }
                     let duration = Date().timeIntervalSince(startTime)
@@ -314,7 +393,17 @@ struct ContentView: View {
                     return
                 }
 
-                DesktopIntegrationManager.shared.updateDiscordPresence(gameName: game.name, coverURL: game.coverURL)
+                // --- Emulator / other runners ---
+                let sid = GameSessionManager.shared.startSession(
+                    gameID: game.id,
+                    gameName: game.name,
+                    coverURL: game.coverURL
+                )
+                // Watch the runner binary for process monitoring
+                if let runner = runnerManager.runners.first(where: { $0.name == game.runner }) {
+                    let runnerExe = runner.binaryPath.isEmpty ? runner.name : (runner.binaryPath as NSString).lastPathComponent
+                    GameSessionManager.shared.addName(runnerExe, sessionID: sid)
+                }
                 try await runnerManager.launchGame(
                     installPath: game.installPath,
                     runnerName: game.runner,
@@ -329,7 +418,7 @@ struct ContentView: View {
         }
     }
 
-    private func launchViaSteamEmulator(game: Game, startTime: Date) async throws -> String {
+    private func launchViaSteamEmulator(game: Game, startTime: Date, sessionID: UUID) async throws -> String {
         guard let steamID = game.steamAppID, !steamID.isEmpty else {
             throw LaunchError.steamLaunchDisabled
         }
@@ -369,6 +458,7 @@ struct ContentView: View {
         let isWine = game.runner == "CrossOver" || game.runner == "Wine" || game.runner == "Whisky" || game.runner == "Kegworks"
         if isWine {
             let output = try await wineManager.launchGame(game: modifiedGame)
+            GameSessionManager.shared.addName((exePath as NSString).lastPathComponent, sessionID: sessionID)
             return output
         } else {
             try await runnerManager.launchGame(
@@ -377,6 +467,7 @@ struct ContentView: View {
                 runnerConfig: game.runnerConfig,
                 environment: ProcessRunner.parseEnvironmentVariables(from: game.environmentVariables)
             )
+            GameSessionManager.shared.addName((exePath as NSString).lastPathComponent, sessionID: sessionID)
             return "Emulator: \(exePath)"
         }
     }

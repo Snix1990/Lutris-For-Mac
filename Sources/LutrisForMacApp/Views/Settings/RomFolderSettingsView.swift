@@ -113,7 +113,10 @@ struct RomFolderSettingsView: View {
             } else {
                 let total = scanResults.values.reduce(0) { $0 + $1.count }
                 let platforms = scanResults.keys.sorted().joined(separator: ", ")
-                Text(verbatim: "\(total) ROMs gefunden in: \(platforms)")
+                let text = platforms.count > 200
+                    ? "\(total) ROMs gefunden in: \(platforms.prefix(200))…"
+                    : "\(total) ROMs gefunden in: \(platforms)"
+                Text(verbatim: text)
             }
         }
     }

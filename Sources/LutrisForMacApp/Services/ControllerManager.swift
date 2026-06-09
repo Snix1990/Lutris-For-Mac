@@ -11,6 +11,8 @@ final class ControllerManager: ObservableObject {
 
     private var observationTokens: [NSObjectProtocol] = []
     private var batteryPollTimer: Timer?
+    private var lowBatteryNotifiedIDs: Set<String> = []
+    private var remappingHandlers: [String: Any] = [:]
 
     struct ControllerInfo: Identifiable {
         let id = UUID()
@@ -41,6 +43,19 @@ final class ControllerManager: ObservableObject {
         startObserving()
         scanControllers()
         startBatteryPolling()
+
+        // Re-apply remappings when RemappingManager changes
+        observationTokens.append(
+            NotificationCenter.default.addObserver(
+                forName: .remappingChanged,
+                object: nil,
+                queue: .main
+            ) { [weak self] _ in
+                Task { @MainActor [weak self] in
+                    self?.refreshRemappings()
+                }
+            }
+        )
     }
 
     deinit {
@@ -57,10 +72,13 @@ final class ControllerManager: ObservableObject {
     private func startObserving() {
         let center = NotificationCenter.default
         observationTokens.append(
-            center.addObserver(forName: .GCControllerDidConnect, object: nil, queue: .main) { [weak self] _ in
+            center.addObserver(forName: .GCControllerDidConnect, object: nil, queue: .main) { [weak self] note in
                 Task { @MainActor [weak self] in
                     self?.scanControllers()
                     self?.lastActivity = "Controller verbunden"
+                    if let ctrl = note.object as? GCController {
+                        self?.applyRemappings(for: ctrl)
+                    }
                 }
             }
         )
@@ -86,17 +104,44 @@ final class ControllerManager: ObservableObject {
     }
 
     private func pollBatteryLevels() {
-        let controllers = GCController.controllers()
-        for controller in controllers {
+        for controller in GCController.controllers() {
             updateBattery(for: controller)
+            checkLowBattery(controller)
         }
+    }
+
+    private func checkLowBattery(_ controller: GCController) {
+        guard let battery = controller.battery,
+              battery.batteryState != .charging,
+              battery.batteryState != .full,
+              battery.batteryLevel < 0.2 else {
+            if let id = controller.vendorName {
+                lowBatteryNotifiedIDs.remove(id)
+            }
+            return
+        }
+
+        let name = controller.vendorName ?? "Controller"
+        guard !lowBatteryNotifiedIDs.contains(name) else { return }
+        lowBatteryNotifiedIDs.insert(name)
+
+        NotificationManager.warning(
+            title: "\(name) – Akku schwach",
+            message: "Noch \(Int(battery.batteryLevel * 100))% – Bald aufladen.",
+            duration: 6
+        )
+
+        NotificationCenter.default.post(
+            name: .controllerBatteryLow,
+            object: nil,
+            userInfo: ["name": name, "level": battery.batteryLevel]
+        )
     }
 
     // MARK: - Scanning
 
     private func scanControllers() {
-        let controllers = GCController.controllers()
-        connectedControllers = controllers.map { controller in
+        connectedControllers = GCController.controllers().map { controller in
             makeControllerInfo(controller)
         }
     }
@@ -125,10 +170,6 @@ final class ControllerManager: ObservableObject {
 
     private func updateBattery(for controller: GCController) {
         guard let battery = controller.battery else { return }
-        updateBattery(for: controller, battery: battery)
-    }
-
-    private func updateBattery(for controller: GCController, battery: GCDeviceBattery) {
         let id = controller.vendorName ?? UUID().uuidString
         guard let idx = connectedControllers.firstIndex(where: { $0.uniqueID == id }) else { return }
         connectedControllers[idx].batteryLevel = battery.batteryLevel
@@ -145,9 +186,109 @@ final class ControllerManager: ObservableObject {
         }
     }
 
+    // MARK: - Button Remapping
+
+    func applyRemappings(for controller: GCController) {
+        guard let gamepad = controller.extendedGamepad else { return }
+        let mappings = RemappingManager.shared.activeMappings()
+        guard !mappings.isEmpty else { return }
+
+        let originalHandler = gamepad.valueChangedHandler
+
+        gamepad.valueChangedHandler = { [weak self] gp, element in
+            originalHandler?(gp, element)
+
+            guard let self = self else { return }
+            let elID = self.buttonID(for: element, on: gp)
+            guard let mapping = mappings.first(where: { $0.sourceID == elID }),
+                  let targetEl = self.element(for: mapping.targetID, on: gp),
+                  let btn = targetEl as? GCControllerButtonInput,
+                  let sourceBtn = element as? GCControllerButtonInput else { return }
+
+            btn.pressedChangedHandler?(btn, sourceBtn.value, sourceBtn.isPressed)
+
+            self.lastActivity = "Remap: \(mapping.sourceID) → \(mapping.targetID)"
+        }
+
+        let key = controller.vendorName ?? controller.productCategory
+        var dict = remappingHandlers[key] as? [String: Any] ?? [:]
+        dict["valueChangedHandler"] = gamepad.valueChangedHandler
+        remappingHandlers[key] = dict
+    }
+
+    func removeRemappings(for controller: GCController) {
+        guard let gamepad = controller.extendedGamepad else { return }
+        let key = controller.vendorName ?? controller.productCategory
+        if let dict = remappingHandlers[key] as? [String: Any],
+           let handler = dict["valueChangedHandler"] as? (GCExtendedGamepad, GCControllerElement) -> Void {
+            if gamepad.valueChangedHandler as AnyObject === handler as AnyObject {
+                gamepad.valueChangedHandler = nil
+            }
+        }
+        remappingHandlers[key] = nil
+    }
+
+    /// Reset and re-apply remappings to all connected controllers.
+    func refreshRemappings() {
+        for ctrl in GCController.controllers() {
+            removeRemappings(for: ctrl)
+            applyRemappings(for: ctrl)
+        }
+    }
+
+    // MARK: - Button ID Helpers
+
+    private func buttonID(for element: GCControllerElement, on gp: GCExtendedGamepad) -> String {
+        switch element {
+        case gp.buttonA: return "buttonA"
+        case gp.buttonB: return "buttonB"
+        case gp.buttonX: return "buttonX"
+        case gp.buttonY: return "buttonY"
+        case gp.leftShoulder: return "leftShoulder"
+        case gp.rightShoulder: return "rightShoulder"
+        case gp.leftTrigger: return "leftTrigger"
+        case gp.rightTrigger: return "rightTrigger"
+        case gp.dpad.up: return "dpadUp"
+        case gp.dpad.down: return "dpadDown"
+        case gp.dpad.left: return "dpadLeft"
+        case gp.dpad.right: return "dpadRight"
+        case gp.leftThumbstickButton: return "leftThumbstickButton"
+        case gp.rightThumbstickButton: return "rightThumbstickButton"
+        case gp.buttonMenu: return "buttonMenu"
+        case gp.buttonOptions: return "buttonOptions"
+        default: return element.localizedName ?? ""
+        }
+    }
+
+    private func element(for buttonID: String, on gamepad: GCExtendedGamepad) -> GCControllerElement? {
+        switch buttonID {
+        case "buttonA": return gamepad.buttonA
+        case "buttonB": return gamepad.buttonB
+        case "buttonX": return gamepad.buttonX
+        case "buttonY": return gamepad.buttonY
+        case "leftShoulder": return gamepad.leftShoulder
+        case "rightShoulder": return gamepad.rightShoulder
+        case "leftTrigger": return gamepad.leftTrigger
+        case "rightTrigger": return gamepad.rightTrigger
+        case "dpadUp": return gamepad.dpad.up
+        case "dpadDown": return gamepad.dpad.down
+        case "dpadLeft": return gamepad.dpad.left
+        case "dpadRight": return gamepad.dpad.right
+        case "leftThumbstickButton": return gamepad.leftThumbstickButton
+        case "rightThumbstickButton": return gamepad.rightThumbstickButton
+        case "buttonMenu": return gamepad.buttonMenu
+        case "buttonOptions": return gamepad.buttonOptions
+        default: return nil
+        }
+    }
+
     // MARK: - Testing
 
     func startSimulatedActivity() {
         lastActivity = "\(Date().formatted(date: .omitted, time: .standard)) – Eingabe erkannt"
     }
+}
+
+extension Notification.Name {
+    static let controllerBatteryLow = Notification.Name("controllerBatteryLow")
 }

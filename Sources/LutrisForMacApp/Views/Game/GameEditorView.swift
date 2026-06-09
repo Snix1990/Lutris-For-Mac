@@ -349,6 +349,8 @@ struct GameEditorView: View {
             } label: {
                 LText("Umgebungsvariablen").font(.system(size: 16)).frame(maxWidth: .infinity)
             }
+
+            runtimeSection
         }
         .padding(.top, 6)
         .onAppear {
@@ -560,6 +562,75 @@ struct GameEditorView: View {
         if panel.runModal() == .OK, let url = panel.url {
             editInstallPath = url.path
             commitInstallPath()
+        }
+    }
+
+    // MARK: - Runtime Options
+
+    @ViewBuilder
+    private var runtimeSection: some View {
+        GroupBox {
+            VStack(alignment: .leading, spacing: 10) {
+                // Gruppe 1: Fertig gebaut
+                LText("Allgemein").font(.caption).foregroundColor(.secondary).padding(.top, 2)
+                Toggle(isOn: $game.runtimeSettings.discordRPC) { LText("Discord-RPC (Spielpräsenz)") }
+                Toggle(isOn: $game.runtimeSettings.cloudSync) { LText("Cloud-Sync (Speicherstände)") }
+                if game.runtimeSettings.cloudSync {
+                    HStack(spacing: 6) {
+                        TextField(tr("Speicherpfad"), text: $game.customSavePath)
+                            .font(.caption)
+                            .helpLText("Absoluter Pfad zum Save-Ordner (z.B. ~/Library/Application Support/MeinSpiel/Saves)")
+                        Button {
+                            let panel = NSOpenPanel()
+                            panel.canChooseFiles = false
+                            panel.canChooseDirectories = true
+                            panel.prompt = tr("Auswählen")
+                            if panel.runModal() == .OK, let url = panel.url {
+                                game.customSavePath = url.path
+                            }
+                        } label: { LText("Wählen") }
+                        .controlSize(.small)
+                    }
+                }
+                Toggle(isOn: $game.runtimeSettings.webhook) { LText("Webhook bei Spiel-Ende") }
+                    .helpLText("POST-JSON an konfigurierte Webhook-URL (siehe API-Einstellungen)")
+                Toggle(isOn: $game.runtimeSettings.healthCheck) { LText("Health-Check vor Launch") }
+                    .helpLText("Prüft Wine-Binary, Prefix-Integrität und Installationspfad")
+
+                Divider()
+
+                // Logging
+                LText("Logging & Monitoring").font(.caption).foregroundColor(.secondary)
+                Toggle(isOn: $game.runtimeSettings.processLogging) { LText("Prozess-Logging (stdout/stderr)") }
+                    .helpLText("Erfasst die Ausgabe des gestarteten Prozesses im Log-Viewer")
+                Toggle(isOn: $game.runtimeSettings.statsMonitoring) { LText("Ressourcen-Überwachung (CPU/RAM)") }
+                    .helpLText("Sammelt CPU- und Speicherstatistiken während der Laufzeit")
+                Toggle(isOn: $game.runtimeSettings.logFileRotation) { LText("Log-Datei auf Festplatte schreiben") }
+                    .helpLText("Rotierende Logdatei in ~/Library/Application Support/LutrisForMac/runtime-logs/")
+                Toggle(isOn: $game.runtimeSettings.wineDebugLogging) { LText("Wine-Debug-Logs (WINEDEBUG)") }
+                    .helpLText("Setzt WINEDEBUG gemäß Wine-Debug-Kanälen (siehe Wine-Konfiguration)")
+
+                Divider()
+
+                // Scripting
+                LText("Scripting").font(.caption).foregroundColor(.secondary)
+                VStack(alignment: .leading, spacing: 4) {
+                    LText("Pre-Launch-Skript").font(.caption).foregroundColor(.secondary)
+                    TextEditor(text: $game.preLaunchScript)
+                        .frame(height: 50)
+                        .font(.system(.caption, design: .monospaced))
+                        .overlay(RoundedRectangle(cornerRadius: 6).stroke(Color.secondary.opacity(0.25)))
+                }
+                VStack(alignment: .leading, spacing: 4) {
+                    LText("Post-Exit-Skript").font(.caption).foregroundColor(.secondary)
+                    TextEditor(text: $game.postExitScript)
+                        .frame(height: 50)
+                        .font(.system(.caption, design: .monospaced))
+                        .overlay(RoundedRectangle(cornerRadius: 6).stroke(Color.secondary.opacity(0.25)))
+                }
+            }
+        } label: {
+            LText("Runtime-Optionen").font(.system(size: 16)).frame(maxWidth: .infinity)
         }
     }
 }

@@ -375,35 +375,36 @@ final class RunnerManager: ObservableObject {
                 .replacingOccurrences(of: "{runnerPath}", with: runner.binaryPath)
                 .replacingOccurrences(of: "{runnerDir}", with: runner.installPath)
             _ = try await ProcessRunner.run(command: cmd, currentDirectory: nil, environment: environment)
-            DesktopIntegrationManager.shared.clearDiscordPresence()
 
         case .wine(let binary):
             let wineBinary = FileManager.default.isExecutableFile(atPath: runner.binaryPath) ? runner.binaryPath : binary
             let env = environment.merging(["WINEDLLOVERRIDES": "winemenubuilder.exe=d"]) { _, new in new }
             let cmd = "\(wineBinary) \"\(installPath)\""
             _ = try await ProcessRunner.run(command: cmd, currentDirectory: nil, environment: env)
-            DesktopIntegrationManager.shared.clearDiscordPresence()
 
         case .dosbox:
             let bin = runner.binaryPath.isEmpty ? "/Applications/DOSBox.app/Contents/MacOS/DOSBox" : runner.binaryPath
             let conf = runnerConfig["dosbox_conf"] ?? ""
             let cmd = conf.isEmpty ? "\"\(bin)\" \"\(installPath)\"" : "\"\(bin)\" -conf \"\(conf)\" \"\(installPath)\""
             _ = try await ProcessRunner.run(command: cmd, currentDirectory: nil, environment: environment)
-            DesktopIntegrationManager.shared.clearDiscordPresence()
 
         case .scummvm:
             let bin = runner.binaryPath.isEmpty ? "/Applications/ScummVM.app/Contents/MacOS/scummvm" : runner.binaryPath
             let gameID = runnerConfig["scummvm_game_id"] ?? ""
             let cmd = gameID.isEmpty ? "\"\(bin)\" \"\(installPath)\"" : "\"\(bin)\" --path=\"\(installPath)\" \"\(gameID)\""
             _ = try await ProcessRunner.run(command: cmd, currentDirectory: nil, environment: environment)
-            DesktopIntegrationManager.shared.clearDiscordPresence()
 
         case .retroarch:
             let bin = runner.binaryPath.isEmpty ? "/Applications/RetroArch.app/Contents/MacOS/RetroArch" : runner.binaryPath
             let core = runnerConfig["retroarch_core"] ?? ""
-            let cmd = core.isEmpty ? "\"\(bin)\" \"\(installPath)\"" : "\"\(bin)\" -L \"\(core)\" \"\(installPath)\""
+            var args = ""
+            if core.isEmpty {
+                args = "\"\(bin)\" --verbose \"\(installPath)\""
+            } else {
+                args = "\"\(bin)\" --verbose -L \"\(core)\" \"\(installPath)\""
+            }
+            let cmd = args
             _ = try await ProcessRunner.run(command: cmd, currentDirectory: nil, environment: environment)
-            DesktopIntegrationManager.shared.clearDiscordPresence()
 
         case .custom:
             throw RunnerError.customRunnerNoCommand

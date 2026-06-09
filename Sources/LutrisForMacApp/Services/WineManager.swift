@@ -882,7 +882,12 @@ final class WineManager: ObservableObject {
                 candidates.append(path)
             }
         }
-        // Fallback: global Spotlight-Suche (langsam, nur wenn alles andere fehlschlägt)
+        // Check ob einer der Kandidaten existiert
+        for path in candidates where FileManager.default.fileExists(atPath: path) {
+            print("[WineManager] D3DMetal found at: \(path)")
+            return path
+        }
+        // Fallback: global Spotlight-Suche
         if !candidates.contains(where: { FileManager.default.fileExists(atPath: $0) }) {
             let task = Process()
             task.executableURL = URL(fileURLWithPath: "/usr/bin/mdfind")
@@ -895,14 +900,80 @@ final class WineManager: ObservableObject {
             if let output = String(data: data, encoding: .utf8) {
                 let lines = output.components(separatedBy: .newlines).filter { !$0.isEmpty }
                 if let first = lines.first, FileManager.default.fileExists(atPath: first) {
+                    print("[WineManager] D3DMetal found via Spotlight: \(first)")
                     return first
                 }
             }
         }
-        for path in candidates where FileManager.default.fileExists(atPath: path) {
-            return path
+        print("[WineManager] D3DMetal NOT found. Candidates checked: \(candidates)")
+        return nil
+    }
+
+    func gptkDLLDirectory() -> String? {
+        let candidates: [String] = {
+            var dirs: [String] = []
+            // CrossOver
+            for co in crossOverInstallations {
+                let support = "\(co.path)/Contents/SharedSupport/CrossOver"
+                dirs.append("\(support)/lib/wine/x86_64-windows")
+                dirs.append("\(support)/lib64/wine/x86_64-windows")
+            }
+            // Heroic GPTK
+            dirs.append("\(NSHomeDirectory())/Library/Application Support/heroic/tools/game-porting-toolkit/Game-Porting-Toolkit-latest/Contents/Resources/wine/lib/wine/x86_64-windows")
+            // Whisky
+            dirs.append("\(NSHomeDirectory())/Applications/Whisky.app/Contents/Resources/lib/wine/x86_64-windows")
+            dirs.append("/Applications/Whisky.app/Contents/Resources/lib/wine/x86_64-windows")
+            // Homebrew GPTK
+            dirs.append("/opt/homebrew/lib/wine/x86_64-windows")
+            // Spotlight-Fallback
+            return dirs
+        }()
+        for dir in candidates {
+            let fm = FileManager.default
+            guard fm.fileExists(atPath: dir) else { continue }
+            let files = (try? fm.contentsOfDirectory(atPath: dir)) ?? []
+            if files.contains(where: { $0.lowercased() == "nvngx.dll" || $0.lowercased() == "nvngx-on-metalfx.dll" }) {
+                return dir
+            }
         }
         return nil
+    }
+
+    func deployDLSSDLLs(for game: Game) throws {
+        guard let srcDir = gptkDLLDirectory() else {
+            throw WineError.gptkNotFound
+        }
+        guard let prefixPath = game.winePrefixPath, !prefixPath.isEmpty else {
+            return
+        }
+        let system32 = "\(prefixPath)/drive_c/windows/system32"
+        guard FileManager.default.fileExists(atPath: system32) else { return }
+        let fm = FileManager.default
+        let files = try fm.contentsOfDirectory(atPath: srcDir)
+        let copy: (String, String) throws -> Void = { src, dst in
+            if fm.fileExists(atPath: dst) { try fm.removeItem(atPath: dst) }
+            try fm.copyItem(atPath: src, toPath: dst)
+        }
+        if let nvngx = files.first(where: { $0.lowercased() == "nvngx.dll" }) {
+            try copy("\(srcDir)/\(nvngx)", "\(system32)/nvngx.dll")
+        } else if let nvngxOnMetalFX = files.first(where: { $0.lowercased() == "nvngx-on-metalfx.dll" }) {
+            try copy("\(srcDir)/\(nvngxOnMetalFX)", "\(system32)/nvngx.dll")
+        }
+        if let nvapi = files.first(where: { $0.lowercased() == "nvapi64.dll" }) {
+            try copy("\(srcDir)/\(nvapi)", "\(system32)/nvapi64.dll")
+        }
+    }
+
+    func removeDLSSDLLs(for game: Game) {
+        guard let prefixPath = game.winePrefixPath, !prefixPath.isEmpty else { return }
+        let system32 = "\(prefixPath)/drive_c/windows/system32"
+        let fm = FileManager.default
+        for dll in ["nvngx.dll", "nvapi64.dll"] {
+            let path = "\(system32)/\(dll)"
+            if fm.fileExists(atPath: path) {
+                try? fm.removeItem(atPath: path)
+            }
+        }
     }
 
     func prefixForGame(_ game: Game) -> WinePrefix? {
@@ -997,6 +1068,26 @@ final class WineManager: ObservableObject {
             env["WINEVIRTUALDESKTOP"] = game.wineDesktopResolution
         }
 
+        // WINEDEBUG
+        let debugString: String
+        if !game.wineDebugString.isEmpty {
+            debugString = game.wineDebugString
+        } else {
+            debugString = WineDebugManager.shared.resolvedDebugString()
+        }
+        if !debugString.isEmpty {
+            env["WINEDEBUG"] = debugString
+        }
+
+        // DXVK HUD
+        if game.wineDxvkHud && game.wineRenderMode == .dxvkMoltenVK {
+            env["DXVK_HUD"] = "fps,frametimes,devinfo,api,version"
+        }
+
+        if game.wineDLSS {
+            env["D3DM_ENABLE_METALFX"] = "1"
+        }
+
         return env
     }
 
@@ -1030,15 +1121,16 @@ final class WineManager: ObservableObject {
 
         // D3DMetal-Render-Mode: bevorzugt Heroic GPTK wine64, falls verfügbar
         let wantsD3DMetal: Bool = {
-            if game.wineRenderMode == .d3dMetal { return true }
-            if game.wineRenderMode == .auto, detectD3DMetal() != nil { return true }
+            let mode = game.wineRenderMode
+            let d3d = detectD3DMetal()
+            print("[WineManager] wantsD3DMetal check: wineRenderMode=\(mode.rawValue) detectD3DMetal=\(d3d != nil ? "found" : "nil")")
+            if mode == .d3dMetal { return true }
+            if mode == .auto, d3d != nil { return true }
             return false
         }()
 
         var wine: WineVersion?
-        if let bp = game.wineBinaryPath, !bp.isEmpty, FileManager.default.isExecutableFile(atPath: bp) {
-            wine = WineVersion(name: "custom", path: bp, wineBinaryPath: bp, type: .custom)
-        } else if wantsD3DMetal {
+        if wantsD3DMetal {
             // Direkte Prüfung auf Heroic GPTK wine64
             let heroicPath = "\(NSHomeDirectory())/Library/Application Support/heroic/tools/game-porting-toolkit/Game-Porting-Toolkit-latest/Contents/Resources/wine/bin/wine64"
             if FileManager.default.isExecutableFile(atPath: heroicPath) {
@@ -1059,6 +1151,12 @@ final class WineManager: ObservableObject {
         var env = ProcessInfo.processInfo.environment
         let gameEnv = wineEnvironment(for: game, prefix: prefix, wineVersion: wine)
         env.merge(gameEnv) { _, new in new }
+
+        // CrossOver wine binary braucht CX_BOTTLE, auch wenn runner="Wine" ist
+        if wine.type == .crossover, let p = prefix {
+            let bottleName = URL(fileURLWithPath: p.path).lastPathComponent
+            env["CX_BOTTLE"] = bottleName
+        }
 
         if !game.wineLaunchArguments.isEmpty {
             for arg in game.wineLaunchArguments.components(separatedBy: .whitespaces).filter({ !$0.isEmpty }) {
@@ -1159,7 +1257,6 @@ final class WineManager: ObservableObject {
                 } catch let error as ProcessError {
                     steamResult = error.output
                 }
-                await DesktopIntegrationManager.waitForGameProcess(exePath: steamID)
                 return steamResult
             }
         }
@@ -1178,7 +1275,6 @@ final class WineManager: ObservableObject {
                     let appName = app.replacingOccurrences(of: ".app", with: "")
                     if appName.lowercased() == game.name.lowercased() {
                         NSWorkspace.shared.open(URL(fileURLWithPath: "\(crossoverShortcutsDir)/\(app)"))
-                        await DesktopIntegrationManager.waitForGameProcess(exePath: game.installPath)
                         return "CrossOver-Shortcut: \(app)"
                     }
                 }
@@ -1211,12 +1307,10 @@ final class WineManager: ObservableObject {
         do {
             result = try await ProcessRunner.run(command: cmd, currentDirectory: nil, environment: env)
         } catch let error as ProcessError {
-            // Wine/CrossOver beendet sich oft mit Exit-Code 1, obwohl das Spiel läuft
             result = error.output
         } catch {
             throw error
         }
-        await DesktopIntegrationManager.waitForGameProcess(exePath: installPath)
         return result
     }
 
@@ -1262,6 +1356,7 @@ enum WineError: LocalizedError {
     case installPathNotFound(String)
     case crossOverNotFound
     case crossOverLaunchFailed(String)
+    case gptkNotFound
 
     var errorDescription: String? {
         switch self {
@@ -1279,6 +1374,8 @@ enum WineError: LocalizedError {
             return "CrossOver.app nicht gefunden. Stelle sicher, dass CrossOver installiert ist."
         case .crossOverLaunchFailed(let detail):
             return "Fehler beim Starten über CrossOver.app: \(detail)"
+        case .gptkNotFound:
+            return "GPTK/D3DMetal nicht gefunden – DLSS (MetalFX) benötigt eine CrossOver- oder GPTK-Installation."
         }
     }
 }

@@ -7,6 +7,7 @@ struct LibraryView: View {
     let onLaunch: ((Game) -> Void)?
     @State private var showSortMenu = false
     @State private var dropTarget = false
+    @FocusState private var searchFocused: Bool
 
     init(viewModel: GameLibraryViewModel, selectedGameID: Binding<UUID?>, viewMode: Binding<ViewMode>, onLaunch: ((Game) -> Void)? = nil) {
         self.viewModel = viewModel
@@ -28,6 +29,7 @@ struct LibraryView: View {
                         .foregroundColor(.secondary)
                     TextField(tr("Suchen..."), text: $viewModel.searchText)
                         .textFieldStyle(.plain)
+                        .focused($searchFocused)
                     if !viewModel.searchText.isEmpty {
                         Button { viewModel.searchText = "" } label: {
                             Image(systemName: "xmark.circle.fill")
@@ -80,6 +82,11 @@ struct LibraryView: View {
         }
         .navigationTitle(Text(verbatim: tr("Meine Bibliothek")))
         .navigationSplitViewColumnWidth(min: 400, ideal: 700, max: .infinity)
+        .background(
+            Button("") { searchFocused = true }
+                .keyboardShortcut(Keybinds.shortcut(for: .search).key, modifiers: Keybinds.shortcut(for: .search).modifiers)
+                .hidden()
+        )
     }
 
     private var sortButton: some View {

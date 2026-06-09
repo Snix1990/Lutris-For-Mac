@@ -81,5 +81,11 @@ struct GameTileView: View {
                 Task { coverImage = await mediaStore.loadImage(from: game.coverURL, gameID: game.id.uuidString, type: .cover) }
             }
         }
+        .onReceive(mediaStore.$changeCounter.dropFirst()) { _ in
+            coverImage = mediaStore.cachedImage(for: game.id.uuidString, type: .cover)
+            if coverImage == nil && !game.coverURL.isEmpty {
+                Task { coverImage = await mediaStore.loadImage(from: game.coverURL, gameID: game.id.uuidString, type: .cover) }
+            }
+        }
     }
 }

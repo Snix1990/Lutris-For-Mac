@@ -36,10 +36,13 @@ struct GameRowView: View {
             VStack(alignment: .leading, spacing: 2) {
                 Text(game.name)
                     .font(.body)
+                    .lineLimit(1)
+                    .truncationMode(.tail)
                 HStack(spacing: 6) {
                     Text(game.platform)
                         .font(.caption)
                         .foregroundColor(.secondary)
+                        .lineLimit(1)
                     if !game.category.isEmpty {
                         Text(game.category)
                             .font(.caption2)
@@ -85,6 +88,12 @@ struct GameRowView: View {
                 .stroke(Color.accentColor, lineWidth: isSelected || isHovered ? 1.5 : 0)
         )
         .onAppear {
+            coverImage = mediaStore.cachedImage(for: game.id.uuidString, type: .cover)
+            if coverImage == nil && !game.coverURL.isEmpty {
+                Task { coverImage = await mediaStore.loadImage(from: game.coverURL, gameID: game.id.uuidString, type: .cover) }
+            }
+        }
+        .onReceive(mediaStore.$changeCounter.dropFirst()) { _ in
             coverImage = mediaStore.cachedImage(for: game.id.uuidString, type: .cover)
             if coverImage == nil && !game.coverURL.isEmpty {
                 Task { coverImage = await mediaStore.loadImage(from: game.coverURL, gameID: game.id.uuidString, type: .cover) }

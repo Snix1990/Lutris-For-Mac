@@ -125,13 +125,21 @@ Build a SwiftUI macOS game library manager (LutrisForMac) with fully integrated 
 - SettingsView mit `.pickerStyle(.menu)`
 
 **Data:**
-- Game model: ~30+ Felder (name, platform, installPath, runner, coverURL, category, isFavorite, rating, playTime, lastPlayed, launcherCommand, installScriptPath, environmentVariables, notes, wine*(10), runnerConfig, steamAppID, launchViaSteam, steamEmulatorEnabled, serviceName)
+- Game model: ~30+ Felder (name, platform, installPath, runner, coverURL, category, isFavorite, rating, playTime, lastPlayed, launcherCommand, installScriptPath, environmentVariables, notes, wine*(10), runnerConfig, steamAppID, launchViaSteam, steamEmulatorEnabled, serviceName, customSavePath, wineDLSS)
 - Persistence via `games.json` in `~/Library/Application Support/LutrisForMac/`
 - Codable auto-migration, sample data on first launch
 
 **Build & Structure:**
 - `swift build` from project root – full clean build in ~3-4s (incremental ~1-2s)
 - Folder structure: `App/`, `Locals/`, `Models/`, `Services/`, `ViewModels/`, `Views/`
+- **Configurable Keybinds**: `KeybindAction` enum with 5 actions; `KeybindShortcut` struct with `Codable` + `displayString`; `Keybinds` static helper with `UserDefaults` persistence; `KeybindSettingsView` with shortcut recorder UI; "Kürzel" tab in `SettingsView`; all hardcoded shortcuts replaced with `Keybinds.shortcut(for:)`
+- **Cloud Sync**: provider picker (WebDAV/SMB), server URL, username/password via Keychain, connection test, auto-sync on launch
+- **Custom Save Path**: per-game `customSavePath` field, `CloudSaveManager.detectSaves()` checks custom path first
+- **DLSS (MetalFX) toggle**: `wineDLSS` Bool in Game model, `gptkDLLDirectory()` searches GPTK for DLLs, auto-deploy `nvngx.dll` + `nvapi64.dll` to prefix, `D3DM_ENABLE_METALFX=1` env var
+- **Performance**: `saveLibrary()` on serial background queue; all stats cached via Combine `$games.sink` → `@Published cached*`; MediaStore redundant `fileExists` removed + `saveIndex()` debounced; ServiceManager `importedTracker` cached in memory
+- **Post-install .exe picker**: `detectExeAfterInstall()` scans prefix with Windows directory exclusion, radio-group in ScrollView
+- **Error dialogs**: launch error `.sheet()` (480×400, ScrollView), ROM scan NSAlert with scrollable accessoryView, `.alert()` truncates at 200 chars
+- **Keyboard shortcuts**: ⌘N, ⌘F, ⌘⌫, ⌘R, ⌘⇧S (all configurable via Keybinds)
 
 ### Known / Blocked
 - Some download URLs reference Gcenx/wine-on-mac releases; actual builds may need arch verification
@@ -179,7 +187,6 @@ Build a SwiftUI macOS game library manager (LutrisForMac) with fully integrated 
 - `Package.swift`: `.copy("Locals")` resource, Info.plist linker setting
 
 ## To Do
-- **Cloud Saves** (Speicherstände sichern/wiederherstellen)
 - **Lutris.net Account-Sync** (Library/Installer-Index)
 - **Screenshots/Galerie** pro Spiel
 - **Multi-Executable** (versch. launch configs pro Spiel)

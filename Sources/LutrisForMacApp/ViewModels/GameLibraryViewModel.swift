@@ -1,6 +1,7 @@
 import Foundation
 import AppKit
 import UniformTypeIdentifiers
+import Combine
 
 // MARK: - SortOption
 
@@ -30,6 +31,26 @@ final class GameLibraryViewModel: ObservableObject {
     @Published var sortOption: SortOption = .name
     @Published var sortAscending: Bool = true
     @Published var pendingManualGameID: UUID? = nil
+
+    // Pre-computed stats, invalidated on $games change
+    @Published private(set) var cachedTotalPlayTime: TimeInterval = 0
+    @Published private(set) var cachedAverageRating: Double = 0
+    @Published private(set) var cachedFavoriteCount: Int = 0
+    @Published private(set) var cachedMostPlayedGame: Game? = nil
+    @Published private(set) var cachedLastPlayedGame: Game? = nil
+    @Published private(set) var cachedPlatformStats: [(String, Int)] = []
+    @Published private(set) var cachedCategoryStats: [(String, Int)] = []
+    @Published private(set) var cachedRunnerStats: [(String, Int)] = []
+    @Published private(set) var cachedRatingStats: [Int: Int] = [:]
+    @Published private(set) var cachedAvailableRunners: [String] = []
+    @Published private(set) var cachedAvailablePlatforms: [String] = []
+    @Published private(set) var cachedAvailableCategories: [Runner.RunnerCategory] = []
+    @Published private(set) var cachedAvailableGameCategories: [String] = []
+    @Published private(set) var cachedGamesWithCategory: Int = 0
+    @Published private(set) var cachedGamesRated: Int = 0
+    private var statsCancellable: AnyCancellable?
+
+    private let saveQueue = DispatchQueue(label: "com.lutris.saveLibrary", qos: .background)
 
     // MARK: - Filtered & Computed Properties
 
@@ -87,74 +108,21 @@ final class GameLibraryViewModel: ObservableObject {
         return result
     }
 
-    var availableRunners: [String] {
-        Array(Set(games.map(\.runner))).sorted()
-    }
-
-    var availablePlatforms: [String] {
-        Array(Set(games.map(\.platform))).sorted()
-    }
-
-    var availableCategories: [Runner.RunnerCategory] {
-        let used = Set(games.compactMap { game in
-            RunnerManager.shared.runners.first(where: { $0.name == game.runner })?.category
-        })
-        return Runner.RunnerCategory.allCases.filter { used.contains($0) }
-    }
-
-    var availableGameCategories: [String] {
-        Array(Set(games.map(\.category).filter { !$0.isEmpty })).sorted()
-    }
-
-    var favoriteCount: Int {
-        games.filter(\.isFavorite).count
-    }
-
-    var totalPlayTime: TimeInterval {
-        games.reduce(0) { $0 + $1.playTime }
-    }
-
-    var averageRating: Double {
-        let rated = games.filter { $0.rating > 0 }
-        guard !rated.isEmpty else { return 0 }
-        return Double(rated.reduce(0) { $0 + $1.rating }) / Double(rated.count)
-    }
-
-    var mostPlayedGame: Game? {
-        games.max(by: { $0.playTime < $1.playTime })
-    }
-
-    var lastPlayedGame: Game? {
-        games.compactMap { $0.lastPlayed }.max().flatMap { date in
-            games.first { $0.lastPlayed == date }
-        }
-    }
-
-    var platformStats: [(String, Int)] {
-        Dictionary(grouping: games, by: \.platform)
-            .map { ($0.key, $0.value.count) }
-            .sorted { $0.1 > $1.1 }
-    }
-
-    var categoryStats: [(String, Int)] {
-        Dictionary(grouping: games.filter { !$0.category.isEmpty }, by: \.category)
-            .map { ($0.key, $0.value.count) }
-            .sorted { $0.1 > $1.1 }
-    }
-
-    var runnerStats: [(String, Int)] {
-        Dictionary(grouping: games, by: \.runner)
-            .map { ($0.key, $0.value.count) }
-            .sorted { $0.1 > $1.1 }
-    }
-
-    var ratingStats: [Int: Int] {
-        let valid = games.filter { $0.rating > 0 }
-        return Dictionary(grouping: valid, by: \.rating).mapValues(\.count)
-    }
-
-    var gamesWithCategory: Int { games.filter { !$0.category.isEmpty }.count }
-    var gamesRated: Int { games.filter { $0.rating > 0 }.count }
+    var availableRunners: [String] { cachedAvailableRunners }
+    var availablePlatforms: [String] { cachedAvailablePlatforms }
+    var availableCategories: [Runner.RunnerCategory] { cachedAvailableCategories }
+    var availableGameCategories: [String] { cachedAvailableGameCategories }
+    var favoriteCount: Int { cachedFavoriteCount }
+    var totalPlayTime: TimeInterval { cachedTotalPlayTime }
+    var averageRating: Double { cachedAverageRating }
+    var mostPlayedGame: Game? { cachedMostPlayedGame }
+    var lastPlayedGame: Game? { cachedLastPlayedGame }
+    var platformStats: [(String, Int)] { cachedPlatformStats }
+    var categoryStats: [(String, Int)] { cachedCategoryStats }
+    var runnerStats: [(String, Int)] { cachedRunnerStats }
+    var ratingStats: [Int: Int] { cachedRatingStats }
+    var gamesWithCategory: Int { cachedGamesWithCategory }
+    var gamesRated: Int { cachedGamesRated }
 
     // MARK: - Persistence
 
@@ -167,6 +135,59 @@ final class GameLibraryViewModel: ObservableObject {
 
     init() {
         loadLibrary()
+        setupCombine()
+    }
+
+    private func setupCombine() {
+        statsCancellable = $games
+            .receive(on: RunLoop.main)
+            .sink { [weak self] games in
+                self?.recomputeStats(games: games)
+            }
+    }
+
+    private func recomputeStats(games: [Game]) {
+        cachedTotalPlayTime = games.reduce(0) { $0 + $1.playTime }
+
+        let rated = games.filter { $0.rating > 0 }
+        cachedAverageRating = rated.isEmpty ? 0 : Double(rated.reduce(0) { $0 + $1.rating }) / Double(rated.count)
+
+        cachedFavoriteCount = games.filter(\.isFavorite).count
+
+        cachedMostPlayedGame = games.max(by: { $0.playTime < $1.playTime })
+
+        let lastDate = games.compactMap(\.lastPlayed).max()
+        cachedLastPlayedGame = lastDate.flatMap { date in games.first { $0.lastPlayed == date } }
+
+        cachedPlatformStats = Dictionary(grouping: games, by: \.platform)
+            .map { ($0.key, $0.value.count) }
+            .sorted { $0.1 > $1.1 }
+
+        let catFiltered = games.filter { !$0.category.isEmpty }
+        cachedCategoryStats = Dictionary(grouping: catFiltered, by: \.category)
+            .map { ($0.key, $0.value.count) }
+            .sorted { $0.1 > $1.1 }
+
+        cachedRunnerStats = Dictionary(grouping: games, by: \.runner)
+            .map { ($0.key, $0.value.count) }
+            .sorted { $0.1 > $1.1 }
+
+        let valid = games.filter { $0.rating > 0 }
+        cachedRatingStats = Dictionary(grouping: valid, by: \.rating).mapValues(\.count)
+
+        cachedAvailableRunners = Array(Set(games.map(\.runner))).sorted()
+
+        cachedAvailablePlatforms = Array(Set(games.map(\.platform))).sorted()
+
+        let used = Set(games.compactMap { game in
+            RunnerManager.shared.runners.first(where: { $0.name == game.runner })?.category
+        })
+        cachedAvailableCategories = Runner.RunnerCategory.allCases.filter { used.contains($0) }
+
+        cachedAvailableGameCategories = Array(Set(games.map(\.category).filter { !$0.isEmpty })).sorted()
+
+        cachedGamesWithCategory = catFiltered.count
+        cachedGamesRated = rated.count
     }
 
     func refreshLibrary() {
@@ -193,10 +214,12 @@ final class GameLibraryViewModel: ObservableObject {
     func saveLibrary() {
         do {
             let data = try JSONEncoder().encode(games)
-            try data.write(to: storageURL, options: [.atomic])
+            saveQueue.async { [storageURL] in
+                try? data.write(to: storageURL, options: [.atomic])
+            }
         } catch {
             #if DEBUG
-            print("Fehler beim Speichern der Bibliothek: \(error)")
+            print("Fehler beim Kodieren der Bibliothek: \(error)")
             #endif
         }
     }

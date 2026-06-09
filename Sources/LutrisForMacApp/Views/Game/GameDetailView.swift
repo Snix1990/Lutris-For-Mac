@@ -89,6 +89,9 @@ struct GameDetailView: View {
                     .onChange(of: game.id) { _, newID in
                         loadMedia(for: newID)
                     }
+                    .onReceive(mediaStore.$changeCounter.dropFirst()) { _ in
+                        loadMedia(for: game.id)
+                    }
 
                     if let warning = emu.applyWarning {
                         HStack {
@@ -158,6 +161,9 @@ struct GameDetailView: View {
                     }
 
                     GameEditorView(game: $game, onCommitPending: onCommitPending)
+
+                    ScreenshotGalleryView(gameName: game.name)
+                        .padding(.top, 8)
                 }
                 .padding(.horizontal, 10)
             }
@@ -169,6 +175,7 @@ struct GameDetailView: View {
                     Label("", systemImage: "trash")
                 }
                 .helpLText("Spiel entfernen")
+                .keyboardShortcut(Keybinds.shortcut(for: .deleteGame).key, modifiers: Keybinds.shortcut(for: .deleteGame).modifiers)
 
                 Button {
                     if integration.shortcutExists(game: game) {
