@@ -76,7 +76,6 @@ final class OSDManager: ObservableObject {
         } else {
             settings = OSDSettings()
         }
-        startDataTimer()
     }
 
     func toggle() {
@@ -93,6 +92,7 @@ final class OSDManager: ObservableObject {
         guard overlayPanel == nil else {
             overlayPanel?.orderFront(nil)
             isVisible = true
+            startDataTimer()
             return
         }
 
@@ -121,6 +121,7 @@ final class OSDManager: ObservableObject {
         panel.orderFront(nil)
         overlayPanel = panel
         isVisible = true
+        startDataTimer()
 
         if settings.isLocked {
             showButtonPanels()
@@ -131,6 +132,7 @@ final class OSDManager: ObservableObject {
 
     func hide() {
         stopPositionTimer()
+        stopDataTimer()
         hideButtonPanels()
         overlayPanel?.orderOut(nil)
         overlayPanel = nil

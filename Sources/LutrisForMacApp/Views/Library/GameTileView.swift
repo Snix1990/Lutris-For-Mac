@@ -59,32 +59,23 @@ struct GameTileView: View {
         .padding(0)
         .clipShape(RoundedRectangle(cornerRadius: 10))
         .contentShape(RoundedRectangle(cornerRadius: 10))
-        .background(
-            Color.clear
-                .contentShape(RoundedRectangle(cornerRadius: 10))
-                .onTapGesture(count: 2) {
-                    onLaunch?()
-                }
-        )
-        .onHover { hovering in
-            withAnimation(.easeInOut(duration: 0.15)) {
-                isHovered = hovering
-            }
-        }
         .overlay(
             RoundedRectangle(cornerRadius: 10)
                 .stroke(Color.accentColor, lineWidth: isSelected || isHovered ? 2 : 0)
         )
+        .onHover { isHovered = $0 }
         .onAppear {
-            coverImage = mediaStore.cachedImage(for: game.id.uuidString, type: .cover)
-            if coverImage == nil && !game.coverURL.isEmpty {
-                Task { coverImage = await mediaStore.loadImage(from: game.coverURL, gameID: game.id.uuidString, type: .cover) }
-            }
+            loadCover()
         }
-        .onReceive(mediaStore.$changeCounter.dropFirst()) { _ in
-            coverImage = mediaStore.cachedImage(for: game.id.uuidString, type: .cover)
-            if coverImage == nil && !game.coverURL.isEmpty {
-                Task { coverImage = await mediaStore.loadImage(from: game.coverURL, gameID: game.id.uuidString, type: .cover) }
+    }
+
+    private func loadCover() {
+        guard coverImage == nil else { return }
+        coverImage = mediaStore.cachedImage(for: game.id.uuidString, type: .cover)
+        if coverImage == nil, !game.coverURL.isEmpty {
+            Task {
+                let img = await mediaStore.loadImage(from: game.coverURL, gameID: game.id.uuidString, type: .cover)
+                if img != nil { coverImage = img }
             }
         }
     }

@@ -112,6 +112,45 @@ final class MediaStore: ObservableObject {
         index[gameID]?[type]
     }
 
+    // MARK: - Downsampling
+
+    private func downsample(_ image: NSImage, type: MediaType) -> NSImage {
+        let maxSize: CGSize
+        switch type {
+        case .cover:  maxSize = CGSize(width: 300, height: 450)
+        case .banner: maxSize = CGSize(width: 1000, height: 400)
+        case .icon:   maxSize = CGSize(width: 128, height: 128)
+        }
+        guard let rep = image.representations.first else { return image }
+        let w = CGFloat(rep.pixelsWide)
+        let h = CGFloat(rep.pixelsHigh)
+        guard w > maxSize.width || h > maxSize.height else { return image }
+
+        let scale = min(maxSize.width / w, maxSize.height / h, 1)
+        let newW = Int(w * scale)
+        let newH = Int(h * scale)
+        guard let cgImage = image.cgImage(forProposedRect: nil, context: nil, hints: nil) else { return image }
+        guard let ctx = CGContext(data: nil, width: newW, height: newH, bitsPerComponent: 8, bytesPerRow: 0, space: CGColorSpaceCreateDeviceRGB(), bitmapInfo: CGImageAlphaInfo.premultipliedFirst.rawValue) else { return image }
+        ctx.interpolationQuality = .high
+        ctx.draw(cgImage, in: CGRect(x: 0, y: 0, width: newW, height: newH))
+        guard let resultCG = ctx.makeImage() else { return image }
+        return NSImage(cgImage: resultCG, size: NSSize(width: newW, height: newH))
+    }
+
+    private func storeResized(_ image: NSImage, gameID: String, type: MediaType, ext: String) {
+        let resized = downsample(image, type: type)
+        let dest = path(for: gameID, type: type, ext: ext)
+        if let tiffData = resized.tiffRepresentation,
+           let bitmap = NSBitmapImageRep(data: tiffData),
+           let jpeg = bitmap.representation(using: .jpeg, properties: [.compressionFactor: 0.85]) {
+            try? jpeg.write(to: dest, options: .atomic)
+        }
+        let cost = (resized.representations.first?.pixelsWide ?? 0) * (resized.representations.first?.pixelsHigh ?? 0) * 4
+        caches[type]?.setObject(resized, forKey: gameID as NSString, cost: cost)
+        setIndexEntry(gameID: gameID, type: type, ext: "jpg")
+        changeCounter += 1
+    }
+
     // MARK: - Cache
 
     func cachedImage(for gameID: String, type: MediaType) -> NSImage? {
@@ -140,12 +179,10 @@ final class MediaStore: ObservableObject {
         if type == .cover {
             let oldURL = oldCoverPath(for: gameID)
             if let img = NSImage(contentsOf: oldURL) {
-                let dest = path(for: gameID, type: type, ext: "jpg")
-                try? FileManager.default.copyItem(at: oldURL, to: dest)
+                let resized = downsample(img, type: .cover)
+                storeResized(resized, gameID: gameID, type: .cover, ext: "jpg")
                 try? FileManager.default.removeItem(at: oldURL)
-                caches[type]?.setObject(img, forKey: gameID as NSString, cost: cost(img))
-                setIndexEntry(gameID: gameID, type: type, ext: "jpg")
-                return img
+                return resized
             }
         }
 
@@ -159,11 +196,8 @@ final class MediaStore: ObservableObject {
             let (data, _) = try await URLSession.shared.data(from: url)
             guard let image = NSImage(data: data) else { return nil }
             let ext = url.pathExtension.isEmpty ? "jpg" : url.pathExtension
-            try data.write(to: path(for: gameID, type: type, ext: ext))
-            caches[type]?.setObject(image, forKey: gameID as NSString, cost: data.count)
-            setIndexEntry(gameID: gameID, type: type, ext: ext)
-            changeCounter += 1
-            return image
+            storeResized(image, gameID: gameID, type: type, ext: ext)
+            return downsample(image, type: type)
         } catch {
             return nil
         }
@@ -172,14 +206,8 @@ final class MediaStore: ObservableObject {
     func setLocalImage(at sourceURL: URL, gameID: String, type: MediaType) -> NSImage? {
         guard let image = NSImage(contentsOf: sourceURL) else { return nil }
         let ext = sourceURL.pathExtension.isEmpty ? "jpg" : sourceURL.pathExtension
-        let dest = path(for: gameID, type: type, ext: ext)
-        try? FileManager.default.removeItem(at: dest)
-        try? FileManager.default.copyItem(at: sourceURL, to: dest)
-        let cost = image.representations.first.map { $0.pixelsWide * $0.pixelsHigh * 4 } ?? 0
-        caches[type]?.setObject(image, forKey: gameID as NSString, cost: cost)
-        setIndexEntry(gameID: gameID, type: type, ext: ext)
-        changeCounter += 1
-        return image
+        storeResized(image, gameID: gameID, type: type, ext: ext)
+        return downsample(image, type: type)
     }
 
     func removeMedia(for gameID: String, type: MediaType) {

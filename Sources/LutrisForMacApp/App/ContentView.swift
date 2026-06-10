@@ -301,6 +301,7 @@ struct ContentView: View {
             launchError = "\(game.name) läuft bereits"
             return
         }
+        RuntimeManager.shared.startGameRuntime()
         let isWineRunner = game.runner == "Wine" || game.runner == "CrossOver" || game.runner == "Whisky" || game.runner == "Kegworks"
         let isNative = game.runner == "Native" || game.platform == "macOS"
         let startTime = Date()

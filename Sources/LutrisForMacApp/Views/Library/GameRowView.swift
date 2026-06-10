@@ -55,13 +55,7 @@ struct GameRowView: View {
             }
             Spacer()
             if game.rating > 0 {
-                HStack(spacing: 1) {
-                    ForEach(1...5, id: \.self) { i in
-                        Image(systemName: i <= game.rating ? "star.fill" : "star")
-                            .font(.system(size: 8))
-                            .foregroundColor(.yellow)
-                    }
-                }
+                ratingBadge
             }
             if game.playTime > 0 {
                 Text(game.playTimeFormatted)
@@ -71,32 +65,34 @@ struct GameRowView: View {
         }
         .padding(.vertical, 4)
         .contentShape(Rectangle())
-        .background(
-            Color.clear
-                .contentShape(Rectangle())
-                .onTapGesture(count: 2) {
-                    onLaunch?()
-                }
-        )
-        .onHover { hovering in
-            withAnimation(.easeInOut(duration: 0.15)) {
-                isHovered = hovering
-            }
-        }
         .overlay(
             RoundedRectangle(cornerRadius: 6)
                 .stroke(Color.accentColor, lineWidth: isSelected || isHovered ? 1.5 : 0)
         )
+        .onHover { isHovered = $0 }
         .onAppear {
-            coverImage = mediaStore.cachedImage(for: game.id.uuidString, type: .cover)
-            if coverImage == nil && !game.coverURL.isEmpty {
-                Task { coverImage = await mediaStore.loadImage(from: game.coverURL, gameID: game.id.uuidString, type: .cover) }
-            }
+            loadCover()
         }
-        .onReceive(mediaStore.$changeCounter.dropFirst()) { _ in
-            coverImage = mediaStore.cachedImage(for: game.id.uuidString, type: .cover)
-            if coverImage == nil && !game.coverURL.isEmpty {
-                Task { coverImage = await mediaStore.loadImage(from: game.coverURL, gameID: game.id.uuidString, type: .cover) }
+    }
+
+    private var ratingBadge: some View {
+        HStack(spacing: 1) {
+            Image(systemName: "star.fill")
+                .font(.system(size: 8))
+                .foregroundColor(.yellow)
+            Text("\(game.rating)")
+                .font(.caption2)
+                .foregroundColor(.secondary)
+        }
+    }
+
+    private func loadCover() {
+        guard coverImage == nil else { return }
+        coverImage = mediaStore.cachedImage(for: game.id.uuidString, type: .cover)
+        if coverImage == nil, !game.coverURL.isEmpty {
+            Task {
+                let img = await mediaStore.loadImage(from: game.coverURL, gameID: game.id.uuidString, type: .cover)
+                if img != nil { coverImage = img }
             }
         }
     }

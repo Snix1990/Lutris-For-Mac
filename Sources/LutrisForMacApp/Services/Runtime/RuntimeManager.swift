@@ -30,10 +30,6 @@ final class RuntimeManager: ObservableObject {
         guard !hasStarted else { return }
         hasStarted = true
 
-        // Start API server
-        RuntimeAPI.shared.port = apiPort
-        RuntimeAPI.shared.start()
-
         // Observe session ends for webhook + scripting
         observationTokens.append(
             NotificationCenter.default.addObserver(
@@ -41,6 +37,7 @@ final class RuntimeManager: ObservableObject {
                 object: nil,
                 queue: .main
             ) { [weak self] note in
+                self?.stopGameRuntime()
                 guard let userInfo = note.userInfo,
                       let gameName = userInfo["gameName"] as? String,
                       let playTime = userInfo["playTime"] as? TimeInterval,
@@ -76,6 +73,29 @@ final class RuntimeManager: ObservableObject {
         )
     }
 
+    func startGameRuntime() {
+        if OSDManager.shared.settings.enabled {
+            OSDManager.shared.show()
+        }
+    }
+
+    func stopGameRuntime() {
+        OSDManager.shared.hide()
+        RuntimeAPI.shared.stop()
+    }
+
+    func ensureAPIServer() {
+        guard !RuntimeAPI.shared.isRunning else { return }
+        RuntimeAPI.shared.port = apiPort
+        RuntimeAPI.shared.start()
+    }
+
+    func runPreLaunch(game: Game) {
+        guard !game.preLaunchScript.isEmpty else { return }
+        ensureAPIServer()
+        RuntimeAPI.shared.runPreLaunchScript(game.preLaunchScript, gameName: game.name)
+    }
+
     func stopAll() {
         hasStarted = false
         RuntimeAPI.shared.stop()
@@ -105,10 +125,6 @@ final class RuntimeManager: ObservableObject {
         }
     }
 
-    func runPreLaunch(game: Game) {
-        guard !game.preLaunchScript.isEmpty else { return }
-        RuntimeAPI.shared.runPreLaunchScript(game.preLaunchScript, gameName: game.name)
-    }
 }
 
 extension Notification.Name {
