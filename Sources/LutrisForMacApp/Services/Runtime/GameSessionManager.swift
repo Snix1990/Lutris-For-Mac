@@ -86,7 +86,6 @@ final class GameSessionManager: ObservableObject {
 
         let sid = session.id
         activeSessions.append(session)
-        ScreenshotManager.shared.register()
 
         // Set Discord presence
         DesktopIntegrationManager.shared.updateDiscordPresence(
@@ -129,7 +128,6 @@ final class GameSessionManager: ObservableObject {
 
         if activeSessions.isEmpty {
             DesktopIntegrationManager.shared.clearDiscordPresence()
-            ScreenshotManager.shared.unregister()
         }
 
         // Notify for webhook + scripting
@@ -160,7 +158,6 @@ final class GameSessionManager: ObservableObject {
         }
         activeSessions.removeAll()
         DesktopIntegrationManager.shared.clearDiscordPresence()
-        ScreenshotManager.shared.unregister()
     }
 
     /// Alle aktiven PIDs aus allen Sessions (für OSD-Fenstererkennung).
