@@ -148,6 +148,13 @@ final class GameSessionManager: ObservableObject {
 
     // MARK: - Singleton Check
 
+    /// End the session for a specific game (e.g. on launch failure).
+    func endSession(for gameID: UUID) {
+        if let session = activeSessions.first(where: { $0.gameID == gameID }) {
+            endSession(session.id)
+        }
+    }
+
     /// Returns true if a session for this gameID is already active.
     func isGameRunning(_ gameID: UUID) -> Bool {
         guard let idx = activeSessions.firstIndex(where: { $0.gameID == gameID }) else { return false }

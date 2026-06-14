@@ -356,7 +356,7 @@ struct ContentView: View {
                         throw LaunchError.steamLaunchDisabled
                     }
                     if let url = URL(string: game.installPath) {
-                        _ = GameSessionManager.shared.startSession(gameID: game.id, gameName: game.name, coverURL: game.coverURL)
+                        _ = GameSessionManager.shared.startSession(gameID: game.id, gameName: game.name, coverURL: game.coverURL, names: [url.host ?? url.scheme ?? ""])
                         NSWorkspace.shared.open(url)
                         let duration = Date().timeIntervalSince(startTime)
                         if duration > 10 { viewModel.recordPlaySession(gameID: game.id, duration: duration) }
@@ -390,7 +390,7 @@ struct ContentView: View {
                             GameSessionManager.shared.addName(url.lastPathComponent, sessionID: sid)
                         }
                     } else {
-                        _ = GameSessionManager.shared.startSession(gameID: game.id, gameName: game.name, coverURL: game.coverURL)
+                        _ = GameSessionManager.shared.startSession(gameID: game.id, gameName: game.name, coverURL: game.coverURL, names: [url.lastPathComponent])
                         NSWorkspace.shared.open(url)
                     }
                     let duration = Date().timeIntervalSince(startTime)
@@ -399,10 +399,13 @@ struct ContentView: View {
                 }
 
                 // --- Emulator / other runners ---
+                let runnerInfo = runnerManager.runners.first(where: { $0.name == game.runner })
+                let isCLIRunner = runnerInfo?.launchTemplate.isCLI ?? true
                 let sid = GameSessionManager.shared.startSession(
                     gameID: game.id,
                     gameName: game.name,
-                    coverURL: game.coverURL
+                    coverURL: game.coverURL,
+                    names: isCLIRunner ? [(game.installPath as NSString).lastPathComponent] : []
                 )
                 let pid = try await runnerManager.launchGame(
                     installPath: game.installPath,
@@ -411,21 +414,21 @@ struct ContentView: View {
                     environment: env,
                     captureOutput: game.runtimeSettings.processLogging
                 )
-                let isBlocking: Bool
                 if let pid {
                     GameSessionManager.shared.addPID(pid, sessionID: sid)
-                    isBlocking = false
-                } else {
-                    isBlocking = true
-                }
-                if isBlocking {
-                    // CLI runner blockierte → Spiel bereits beendet
+                } else if isCLIRunner {
+                    // CLI blockierte → Spiel bereits beendet
                     GameSessionManager.shared.endSession(sid)
+                } else {
+                    // nativeApp – kein PID (app schon offen o.ä.) → Name überwachen
+                    GameSessionManager.shared.addName((game.installPath as NSString).lastPathComponent, sessionID: sid)
                 }
                 let duration = Date().timeIntervalSince(startTime)
                 if duration > 10 { viewModel.recordPlaySession(gameID: game.id, duration: duration) }
             } catch {
                 launchError = error.localizedDescription
+                // Session beenden falls ein Launch fehlschlägt, damit RPC nicht hängen bleibt
+                GameSessionManager.shared.endSession(for: game.id)
             }
         }
     }

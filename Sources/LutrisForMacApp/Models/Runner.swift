@@ -51,6 +51,11 @@ struct Runner: Identifiable, Hashable, Codable {
         case scummvm             // ScummVM
         case custom              // user-defined command
 
+        var isCLI: Bool {
+            if case .nativeApp = self { return false }
+            return true
+        }
+
         var displayDescription: String {
             switch self {
             case .nativeApp: return "Öffnet die .app mit NSWorkspace"
