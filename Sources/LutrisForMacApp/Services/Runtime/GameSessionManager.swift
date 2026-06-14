@@ -150,7 +150,15 @@ final class GameSessionManager: ObservableObject {
 
     /// Returns true if a session for this gameID is already active.
     func isGameRunning(_ gameID: UUID) -> Bool {
-        activeSessions.contains(where: { $0.gameID == gameID })
+        guard let idx = activeSessions.firstIndex(where: { $0.gameID == gameID }) else { return false }
+        let session = activeSessions[idx]
+        // Alle PIDs checken — wenn keine mehr lebt, Session aufräumen
+        let alivePIDs = session.watchedPIDs.filter { kill($0, 0) == 0 && !session.exitedPIDs.contains($0) }
+        if alivePIDs.isEmpty {
+            endSession(session.id)
+            return false
+        }
+        return true
     }
 
     /// End all active sessions and clear Discord RPC.

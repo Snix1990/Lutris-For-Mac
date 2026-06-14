@@ -180,7 +180,7 @@ struct ContentView: View {
                 ToolbarItem(placement: .automatic) {
                     Button {
                         Task {
-                            let games = viewModel.games
+                            let games = viewModel.games.filter { $0.runtimeSettings.cloudSync }
                             try? await CloudSaveManager.shared.syncAll(games: games)
                         }
                     } label: {
@@ -301,7 +301,11 @@ struct ContentView: View {
             launchError = "\(game.name) läuft bereits"
             return
         }
-        RuntimeManager.shared.startGameRuntime()
+        RuntimeManager.shared.startGameRuntime(osdEnabled: game.runtimeSettings.osdEnabled)
+        guard !game.runtimeSettings.healthCheck || RuntimeManager.shared.checkHealth(game: game) else {
+            launchError = "Health-Check fehlgeschlagen für \(game.name)"
+            return
+        }
         let isWineRunner = game.runner == "Wine" || game.runner == "CrossOver" || game.runner == "Whisky" || game.runner == "Kegworks"
         let isNative = game.runner == "Native" || game.platform == "macOS"
         let startTime = Date()
@@ -404,7 +408,8 @@ struct ContentView: View {
                     installPath: game.installPath,
                     runnerName: game.runner,
                     runnerConfig: config,
-                    environment: env
+                    environment: env,
+                    captureOutput: game.runtimeSettings.processLogging
                 )
                 let isBlocking: Bool
                 if let pid {
@@ -472,7 +477,8 @@ struct ContentView: View {
                 installPath: exePath,
                 runnerName: game.runner,
                 runnerConfig: game.runnerConfig,
-                environment: ProcessRunner.parseEnvironmentVariables(from: game.environmentVariables)
+                environment: ProcessRunner.parseEnvironmentVariables(from: game.environmentVariables),
+                captureOutput: game.runtimeSettings.processLogging
             )
             if let pid {
                 GameSessionManager.shared.addPID(pid, sessionID: sessionID)

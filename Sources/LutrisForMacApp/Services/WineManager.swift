@@ -1200,6 +1200,8 @@ final class WineManager: ObservableObject {
             cmd += " \"\(installPath)\""
         }
 
+        let capture = game.runtimeSettings.processLogging
+        let logFile = game.runtimeSettings.logFileRotation
         print("[WineManager] Launching: cmd=\(cmd)")
         print("[WineManager] gameDir=\(gameDir.path)")
         print("[WineManager] WINEPREFIX=\(env["WINEPREFIX"] ?? "nil")")
@@ -1209,7 +1211,10 @@ final class WineManager: ObservableObject {
         print("[WineManager] DYLD_LIBRARY_PATH=\(env["DYLD_LIBRARY_PATH"] ?? "nil")")
         print("[WineManager] WINEDLLOVERRIDES=\(env["WINEDLLOVERRIDES"] ?? "nil")")
         print("[WineManager] CX_BOTTLE=\(env["CX_BOTTLE"] ?? "nil")")
-        let result = try await ProcessRunner.run(command: cmd, currentDirectory: gameDir, environment: env)
+        let result = try await ProcessRunner.run(command: cmd, currentDirectory: gameDir, environment: env, captureOutput: capture)
+        if logFile, !result.isEmpty {
+            ProcessRunner.writeOutputToLogFile(gameID: game.id, gameName: game.name, output: result)
+        }
         return result
     }
 
@@ -1255,9 +1260,12 @@ final class WineManager: ObservableObject {
                 let cmd = "\"\(crossover.wineBinaryPath)\" \"\(steamExe)\" -applaunch \(steamID)"
                 let steamResult: String
                 do {
-                    steamResult = try await ProcessRunner.run(command: cmd, currentDirectory: nil, environment: env)
+                    steamResult = try await ProcessRunner.run(command: cmd, currentDirectory: nil, environment: env, captureOutput: game.runtimeSettings.processLogging)
                 } catch let error as ProcessError {
                     steamResult = error.output
+                }
+                if game.runtimeSettings.logFileRotation, !steamResult.isEmpty {
+                    ProcessRunner.writeOutputToLogFile(gameID: game.id, gameName: game.name, output: steamResult)
                 }
                 return steamResult
             }
@@ -1307,18 +1315,21 @@ final class WineManager: ObservableObject {
 
         let result: String
         do {
-            result = try await ProcessRunner.run(command: cmd, currentDirectory: nil, environment: env)
+            result = try await ProcessRunner.run(command: cmd, currentDirectory: nil, environment: env, captureOutput: game.runtimeSettings.processLogging)
         } catch let error as ProcessError {
             result = error.output
         } catch {
             throw error
+        }
+        if game.runtimeSettings.logFileRotation, !result.isEmpty {
+            ProcessRunner.writeOutputToLogFile(gameID: game.id, gameName: game.name, output: result)
         }
         return result
     }
 
     // MARK: - Alte runGame (für InstallerEngine etc.)
 
-    func runGame(installPath: String, arguments: String = "", prefix: WinePrefix? = nil, wineVersion: WineVersion? = nil, environment: [String: String] = [:]) async throws -> String {
+    func runGame(installPath: String, arguments: String = "", prefix: WinePrefix? = nil, wineVersion: WineVersion? = nil, environment: [String: String] = [:], captureOutput: Bool = true) async throws -> String {
         let wine = wineVersion ?? installedVersions.first ?? installedVersions.first(where: { $0.wineBinaryPath != "" })
         guard let wine, FileManager.default.isExecutableFile(atPath: wine.wineBinaryPath) else {
             throw WineError.noWineVersion
@@ -1337,7 +1348,7 @@ final class WineManager: ObservableObject {
         }
         cmd += " " + installPath
 
-        return try await ProcessRunner.run(command: cmd, currentDirectory: nil, environment: env)
+        return try await ProcessRunner.run(command: cmd, currentDirectory: nil, environment: env, captureOutput: captureOutput)
     }
 
     // MARK: - Version für Game

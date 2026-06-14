@@ -75,8 +75,8 @@ final class RuntimeManager: ObservableObject {
         )
     }
 
-    func startGameRuntime() {
-        if OSDManager.shared.settings.enabled {
+    func startGameRuntime(osdEnabled: Bool = true) {
+        if OSDManager.shared.settings.enabled && osdEnabled {
             OSDManager.shared.show()
         }
     }

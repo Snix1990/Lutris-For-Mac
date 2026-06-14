@@ -233,6 +233,17 @@ final class AppDelegate: NSObject, NSApplicationDelegate {
         )
         _ = sid
 
+        // RuntimeSettings aus dem JSON respektieren
+        let settings = info.runtimeSettings
+        if settings.osdEnabled {
+            OSDManager.shared.show()
+        }
+        // Health-Check (via Library-Lookup, weil checkHealth Game-Objekt braucht)
+        if settings.healthCheck,
+           let game = GameLibraryViewModel.shared.games.first(where: { $0.id == gameID }) {
+            _ = RuntimeManager.shared.checkHealth(game: game)
+        }
+
         observationTokens.append(
             NotificationCenter.default.addObserver(
                 forName: .gameSessionEnded,

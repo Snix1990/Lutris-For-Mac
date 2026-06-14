@@ -9,7 +9,6 @@ let package = Package(
     ],
     products: [
         .executable(name: "LutrisForMac", targets: ["LutrisForMacApp"]),
-        .executable(name: "LutrisForMacWIP", targets: ["LutrisForMacWIP"]),
     ],
     dependencies: [],
     targets: [
@@ -21,16 +20,6 @@ let package = Package(
             resources: [.copy("Locals")],
             linkerSettings: [
                 .unsafeFlags(["-Xlinker", "-sectcreate", "-Xlinker", "__TEXT", "-Xlinker", "__info_plist", "-Xlinker", "Sources/LutrisForMacApp/Info.plist"])
-            ]
-        ),
-        .executableTarget(
-            name: "LutrisForMacWIP",
-            dependencies: [],
-            path: "WorkInProgress/LutrisForMacWIP",
-            exclude: ["Info.plist"],
-            resources: [.copy("Locals")],
-            linkerSettings: [
-                .unsafeFlags(["-Xlinker", "-sectcreate", "-Xlinker", "__TEXT", "-Xlinker", "__info_plist", "-Xlinker", "WorkInProgress/LutrisForMacWIP/Info.plist"])
             ]
         ),
     ]

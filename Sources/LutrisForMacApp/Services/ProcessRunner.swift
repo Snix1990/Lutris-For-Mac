@@ -1,9 +1,25 @@
 import Foundation
 
 enum ProcessRunner {
+    private static let logDir: URL = {
+        let support = FileManager.default.urls(for: .applicationSupportDirectory, in: .userDomainMask).first!
+            .appendingPathComponent("LutrisForMac", isDirectory: true)
+            .appendingPathComponent("runtime-logs", isDirectory: true)
+        try? FileManager.default.createDirectory(at: support, withIntermediateDirectories: true)
+        return support
+    }()
+
+    static func writeOutputToLogFile(gameID: UUID, gameName: String, output: String) {
+        let dateStr = ISO8601DateFormatter().string(from: Date())
+        let sanitized = gameName.replacingOccurrences(of: "/", with: "_")
+        let fileName = "\(gameID.uuidString.prefix(8))_\(sanitized)_\(dateStr).log"
+        let url = logDir.appendingPathComponent(fileName)
+        try? output.write(to: url, atomically: true, encoding: .utf8)
+    }
 
     /// Run a command and wait for completion (blocking).
-    static func run(command: String, currentDirectory: URL?, environment: [String: String]) async throws -> String {
+    /// - Parameter captureOutput: If false, stdout/stderr pipes are not set up (saves memory).
+    static func run(command: String, currentDirectory: URL?, environment: [String: String], captureOutput: Bool = true) async throws -> String {
         try await withCheckedThrowingContinuation { continuation in
             let task = Process()
             task.launchPath = "/bin/bash"
@@ -11,17 +27,26 @@ enum ProcessRunner {
             task.environment = ProcessInfo.processInfo.environment.merging(environment) { _, new in new }
             task.currentDirectoryURL = currentDirectory
 
-            let outputPipe = Pipe()
-            task.standardOutput = outputPipe
-            task.standardError = outputPipe
-
-            task.terminationHandler = { process in
-                let data = outputPipe.fileHandleForReading.readDataToEndOfFile()
-                let output = String(data: data, encoding: .utf8) ?? ""
-                if process.terminationStatus == 0 {
-                    continuation.resume(returning: output)
-                } else {
-                    continuation.resume(throwing: ProcessError.exitStatus(process.terminationStatus, output))
+            if captureOutput {
+                let outputPipe = Pipe()
+                task.standardOutput = outputPipe
+                task.standardError = outputPipe
+                task.terminationHandler = { process in
+                    let data = outputPipe.fileHandleForReading.readDataToEndOfFile()
+                    let output = String(data: data, encoding: .utf8) ?? ""
+                    if process.terminationStatus == 0 {
+                        continuation.resume(returning: output)
+                    } else {
+                        continuation.resume(throwing: ProcessError.exitStatus(process.terminationStatus, output))
+                    }
+                }
+            } else {
+                task.terminationHandler = { process in
+                    if process.terminationStatus == 0 {
+                        continuation.resume(returning: "")
+                    } else {
+                        continuation.resume(throwing: ProcessError.exitStatus(process.terminationStatus, ""))
+                    }
                 }
             }
 
