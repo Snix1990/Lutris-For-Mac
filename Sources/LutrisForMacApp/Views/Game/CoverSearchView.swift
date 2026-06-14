@@ -1,12 +1,12 @@
 import SwiftUI
 
 struct CoverSearchView: View {
-    @Binding var selectedURL: String
     let gameName: String
     let gameID: String
+    let onSelect: ((String) -> Void)?
     @Environment(\.dismiss) private var dismiss
-    @StateObject private var mediaStore = MediaStore.shared
     @StateObject private var searcher = SteamGridDBSearcher()
+    @State private var selectedURL: String = ""
     @State private var searchText: String = ""
     @State private var previewImage: NSImage?
     @State private var isLoadingPreview = false
@@ -91,7 +91,7 @@ struct CoverSearchView: View {
                         LText("Ausgewählt")
                             .font(.headline)
                         Button {
-                            Task { _ = await mediaStore.loadImage(from: selectedURL, gameID: gameID, type: .cover) }
+                            onSelect?(selectedURL)
                             dismiss()
                         } label: { LText("Übernehmen") }
                             .buttonStyle(.borderedProminent)

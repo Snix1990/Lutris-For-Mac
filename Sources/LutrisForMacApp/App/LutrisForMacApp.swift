@@ -165,14 +165,39 @@ final class AppDelegate: NSObject, NSApplicationDelegate {
         OSDManager.shared.registerGlobalHotkey()
     }
 
+    private func runtimeLog(_ message: String) {
+        let logURL = URL(fileURLWithPath: "/tmp/lutris_runtime_app.log")
+        if let handle = try? FileHandle(forWritingTo: logURL) {
+            handle.seekToEndOfFile()
+            handle.write("[\(Date())] \(message)\n".data(using: .utf8)!)
+            try? handle.close()
+        } else {
+            try? "[\(Date())] \(message)\n".write(to: logURL, atomically: true, encoding: .utf8)
+        }
+    }
+
     @MainActor
     private func startRuntimeSession() {
+        runtimeLog("startRuntimeSession() begin")
         let gameInfoURL = RuntimeGameInfo.tempFileURL
         guard let data = try? Data(contentsOf: gameInfoURL),
               let info = try? JSONDecoder().decode(RuntimeGameInfo.self, from: data) else {
+            runtimeLog("FEHLER: Konnte RuntimeGameInfo nicht lesen/decoden")
             return
         }
+        runtimeLog("Spiel: \(info.gameName), discordEnabled: \(info.discordEnabled)")
         try? FileManager.default.removeItem(at: gameInfoURL)
+
+        // Discord RPC aus dem JSON aktivieren (UserDefaults des Hauptprozesses könnte noch stale sein)
+        if info.discordEnabled && !DesktopIntegrationManager.shared.discordEnabled {
+            runtimeLog("Setze discordEnabled=true vom JSON")
+            DesktopIntegrationManager.shared.discordEnabled = true
+        } else if !info.discordEnabled && DesktopIntegrationManager.shared.discordEnabled {
+            runtimeLog("Setze discordEnabled=false vom JSON")
+            DesktopIntegrationManager.shared.discordEnabled = false
+        } else {
+            runtimeLog("discordEnabled bereits korrekt: \(DesktopIntegrationManager.shared.discordEnabled)")
+        }
 
         let gameID = UUID(uuidString: info.gameID) ?? UUID()
         let exeName = (info.installPath as NSString).lastPathComponent
@@ -225,13 +250,19 @@ final class AppDelegate: NSObject, NSApplicationDelegate {
             return result
         }()
 
+        runtimeLog("starte Session fuer '\(info.gameName)'...")
         let sid = GameSessionManager.shared.startSession(
             gameID: gameID,
             gameName: info.gameName,
             coverURL: info.coverURL,
             names: names
         )
-        _ = sid
+        runtimeLog("Session gestartet: \(sid)")
+        // Kurz warten, dann RPC-Status loggen
+        DispatchQueue.main.asyncAfter(deadline: .now() + 0.5) { [weak self] in
+            let dim = DesktopIntegrationManager.shared
+            self?.runtimeLog("RPC-Check – discordEnabled: \(dim.discordEnabled), discordRPC: \(dim.discordRPC != nil)")
+        }
 
         // RuntimeSettings aus dem JSON respektieren
         let settings = info.runtimeSettings

@@ -269,15 +269,21 @@ struct ContentView: View {
 
     private func commitPendingChanges(id: UUID, pending: PendingGameChanges) {
         if let idx = viewModel.games.firstIndex(where: { $0.id == id }) {
-            if viewModel.games[idx].name != pending.name { viewModel.games[idx].name = pending.name }
-            if viewModel.games[idx].installPath != pending.installPath { viewModel.games[idx].installPath = pending.installPath }
-            if viewModel.games[idx].launcherCommand != pending.launcherCommand { viewModel.games[idx].launcherCommand = pending.launcherCommand }
-            if viewModel.games[idx].steamAppID != pending.steamAppID { viewModel.games[idx].steamAppID = pending.steamAppID }
-            if viewModel.games[idx].coverURL != pending.coverURL { viewModel.games[idx].coverURL = pending.coverURL }
-            if viewModel.games[idx].bannerURL != pending.bannerURL { viewModel.games[idx].bannerURL = pending.bannerURL }
-            if viewModel.games[idx].iconURL != pending.iconURL { viewModel.games[idx].iconURL = pending.iconURL }
-            if viewModel.games[idx].category != pending.category { viewModel.games[idx].category = pending.category }
-            viewModel.saveLibrary()
+            var changed = false
+            if viewModel.games[idx].coverURL != pending.coverURL {
+                if !pending.coverURL.isEmpty || viewModel.games[idx].coverURL.isEmpty {
+                    viewModel.games[idx].coverURL = pending.coverURL
+                    changed = true
+                }
+            }
+            if viewModel.games[idx].name != pending.name { viewModel.games[idx].name = pending.name; changed = true }
+            if viewModel.games[idx].installPath != pending.installPath { viewModel.games[idx].installPath = pending.installPath; changed = true }
+            if viewModel.games[idx].launcherCommand != pending.launcherCommand { viewModel.games[idx].launcherCommand = pending.launcherCommand; changed = true }
+            if viewModel.games[idx].steamAppID != pending.steamAppID { viewModel.games[idx].steamAppID = pending.steamAppID; changed = true }
+            if viewModel.games[idx].bannerURL != pending.bannerURL { viewModel.games[idx].bannerURL = pending.bannerURL; changed = true }
+            if viewModel.games[idx].iconURL != pending.iconURL { viewModel.games[idx].iconURL = pending.iconURL; changed = true }
+            if viewModel.games[idx].category != pending.category { viewModel.games[idx].category = pending.category; changed = true }
+            if changed { viewModel.saveLibrary() }
         }
     }
 

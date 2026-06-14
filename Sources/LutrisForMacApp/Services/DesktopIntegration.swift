@@ -19,10 +19,23 @@ final class DesktopIntegrationManager: ObservableObject {
         didSet { updateLoginItem() }
     }
 
-    private var discordRPC: DiscordRPC?
+    private(set) var discordRPC: DiscordRPC?
 
     private init() {
-        discordEnabled = UserDefaults.standard.bool(forKey: "discordRPCEnabled")
+        // Migrate from old bundle IDs if current domain hasn't been set yet
+        var value = false
+        if UserDefaults.standard.object(forKey: "discordRPCEnabled") == nil {
+            for oldID in ["LutrisForMac", "LutrisForMacWIP"] {
+                if let domain = UserDefaults.standard.persistentDomain(forName: oldID),
+                   let val = domain["discordRPCEnabled"] as? Bool, val {
+                    value = true
+                    break
+                }
+            }
+        } else {
+            value = UserDefaults.standard.bool(forKey: "discordRPCEnabled")
+        }
+        discordEnabled = value
         launchAtLogin = SMAppService.mainApp.status == .enabled
         if discordEnabled {
             startDiscordRPC()
@@ -88,7 +101,8 @@ final class DesktopIntegrationManager: ObservableObject {
             coverURL: game.coverURL,
             installPath: game.installPath,
             runner: game.runner,
-            runtimeSettings: game.runtimeSettings
+            runtimeSettings: game.runtimeSettings,
+            discordEnabled: discordEnabled
         )
         let jsonData = (try? JSONEncoder().encode(info)).flatMap { String(data: $0, encoding: .utf8) } ?? "{}"
         return """
@@ -401,7 +415,17 @@ final class DesktopIntegrationManager: ObservableObject {
     func startDiscordRPC() {
         guard discordEnabled else { return }
         discordRPC = DiscordRPC()
-        discordRPC?.connect()
+        if discordRPC?.connect() != true {
+            // Retry once after a short delay (Discord might not be ready)
+            let rpc = discordRPC
+            DispatchQueue.main.asyncAfter(deadline: .now() + 2.0) { [weak self] in
+                guard let self, self.discordEnabled else { return }
+                if rpc?.connect() == true { return }
+                // Second attempt – fresh instance
+                self.discordRPC = DiscordRPC()
+                _ = self.discordRPC?.connect()
+            }
+        }
     }
 
     func stopDiscordRPC() {
@@ -410,8 +434,17 @@ final class DesktopIntegrationManager: ObservableObject {
     }
 
     func updateDiscordPresence(gameName: String, state: String = "Spielt", coverURL: String = "") {
-        guard discordEnabled, let rpc = discordRPC else { return }
-        rpc.setActivity(
+        guard discordEnabled else { return }
+        if discordRPC == nil || !discordRPC!.connected {
+            if discordRPC == nil { discordRPC = DiscordRPC() }
+            guard discordRPC!.connect() else {
+                #if DEBUG
+                print("updateDiscordPresence: connect fehlgeschlagen")
+                #endif
+                return
+            }
+        }
+        discordRPC?.setActivity(
             details: gameName,
             state: state,
             coverURL: coverURL
@@ -424,7 +457,11 @@ final class DesktopIntegrationManager: ObservableObject {
     }
 
     func clearDiscordPresence() {
-        guard discordEnabled, discordRPC != nil else { return }
+        guard discordEnabled else { return }
+        if discordRPC == nil || !discordRPC!.connected {
+            if discordRPC == nil { discordRPC = DiscordRPC() }
+            guard discordRPC!.connect() else { return }
+        }
         discordRPC?.clearActivity()
         NotificationManager.info(
             title: "Discord RPC",
@@ -472,22 +509,23 @@ final class DesktopIntegrationManager: ObservableObject {
 
 final class DiscordRPC {
     private var socket: Int32 = -1
-    private var connected = false
+    private(set) var connected = false
     private let clientID = "1510094522833703003"
     private let queue = DispatchQueue(label: "discord-rpc")
 
-    func connect() {
+    @discardableResult
+    func connect() -> Bool {
         let possiblePaths = possibleSocketPaths()
         guard let socketPath = possiblePaths.first(where: { FileManager.default.fileExists(atPath: $0) }) else {
             #if DEBUG
             print("Discord RPC-Socket nicht gefunden. Geprüft: \(possiblePaths)")
             #endif
-            return
+            return false
         }
 
-        socketPath.withCString { path in
+        return socketPath.withCString { path -> Bool in
             socket = Darwin.socket(AF_UNIX, SOCK_STREAM, 0)
-            guard socket >= 0 else { return }
+            guard socket >= 0 else { return false }
 
             var addr = sockaddr_un()
             addr.sun_family = sa_family_t(AF_UNIX)
@@ -514,36 +552,37 @@ final class DiscordRPC {
                 send(frame: .handshake, json: handshake)
                 // Read loop
                 queue.async { [weak self] in self?.readLoop() }
+                return true
             } else {
                 #if DEBUG
                 print("Discord RPC connect fehlgeschlagen: \(String(cString: strerror(errno)))")
                 #endif
+                return false
             }
         }
     }
 
     private func possibleSocketPaths() -> [String] {
         var paths: [String] = []
-        let candidates = [
-            ProcessInfo.processInfo.environment["XDG_RUNTIME_DIR"],
-            ProcessInfo.processInfo.environment["TMPDIR"],
-            ProcessInfo.processInfo.environment["TMP"],
-            ProcessInfo.processInfo.environment["TEMP"],
-        ]
-        for candidate in candidates {
-            if let dir = candidate {
-                for i in 0..<10 {
-                    paths.append("\(dir)/discord-ipc-\(i)")
-                }
+        // Env‑var basierte Pfade
+        for key in ["XDG_RUNTIME_DIR", "TMPDIR", "TMP", "TEMP"] {
+            if let dir = ProcessInfo.processInfo.environment[key] {
+                for i in 0..<10 { paths.append("\(dir)/discord-ipc-\(i)") }
             }
         }
-        for i in 0..<10 {
-            paths.append("/tmp/discord-ipc-\(i)")
-        }
-        // Legacy path
-        for i in 0..<10 {
-            paths.append("\(NSHomeDirectory())/Library/Application Support/discord/rpc/discord-ipc-\(i)")
-        }
+        // /tmp
+        for i in 0..<10 { paths.append("/tmp/discord-ipc-\(i)") }
+        let home = NSHomeDirectory()
+        // Standard Discord
+        for i in 0..<10 { paths.append("\(home)/Library/Application Support/discord/rpc/discord-ipc-\(i)") }
+        // Discord Canary
+        for i in 0..<10 { paths.append("\(home)/Library/Application Support/discordcanary/rpc/discord-ipc-\(i)") }
+        // Discord PTB
+        for i in 0..<10 { paths.append("\(home)/Library/Application Support/discordptb/rpc/discord-ipc-\(i)") }
+        // Discord Development
+        for i in 0..<10 { paths.append("\(home)/Library/Application Support/discorddevelopment/rpc/discord-ipc-\(i)") }
+        // Mac App Store‑Version
+        for i in 0..<10 { paths.append("\(home)/Library/Containers/com.hnc.Discord/Data/Library/Application Support/discord/rpc/discord-ipc-\(i)") }
         return paths
     }
 

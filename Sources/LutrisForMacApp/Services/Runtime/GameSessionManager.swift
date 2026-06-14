@@ -90,6 +90,7 @@ final class GameSessionManager: ObservableObject {
         // Set Discord presence (per game runtimeSettings)
         let gameInLibrary = GameLibraryViewModel.shared.games.first(where: { $0.id == gameID })
         if gameInLibrary?.runtimeSettings.discordRPC != false {
+            // Discord RPC benötigt öffentliche HTTPS-URLs – coverURL (remote) verwenden
             DesktopIntegrationManager.shared.updateDiscordPresence(
                 gameName: gameName,
                 coverURL: coverURL

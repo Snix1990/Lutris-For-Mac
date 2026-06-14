@@ -183,13 +183,12 @@ struct GameEditorView: View {
                                 .onSubmit { commitCoverURL() }
                                 .font(.caption)
                             Button {
-                                commitCoverURL()
                                 Task {
                                     mediaStore.removeMedia(for: game.id.uuidString, type: .cover)
                                     coverImage = await mediaStore.loadImage(from: game.coverURL, gameID: game.id.uuidString, type: .cover)
                                 }
                             } label: { LText("Laden") }
-                            .disabled(editCoverURL.isEmpty)
+                            .disabled(game.coverURL.isEmpty)
                             .controlSize(.small)
                         }
                     }
@@ -212,6 +211,7 @@ struct GameEditorView: View {
 
                         if !game.coverURL.isEmpty || coverImage != nil {
                             Button { 
+                                editCoverURL = ""
                                 mediaStore.removeMedia(for: game.id.uuidString, type: .cover)
                                 coverImage = nil
                                 game.coverURL = ""
@@ -361,16 +361,15 @@ struct GameEditorView: View {
         }
         .sheet(isPresented: $showCoverSearch) {
             CoverSearchView(
-                selectedURL: $game.coverURL,
                 gameName: game.name,
-                gameID: game.id.uuidString
+                gameID: game.id.uuidString,
+                onSelect: { url in
+                    game.coverURL = url
+                }
             )
         }
         .onChange(of: game.coverURL) { _, newURL in
             editCoverURL = newURL
-            guard !newURL.isEmpty else { return }
-            mediaStore.removeMedia(for: game.id.uuidString, type: .cover)
-            Task { coverImage = await mediaStore.loadImage(from: newURL, gameID: game.id.uuidString, type: .cover) }
         }
         .onAppear {
             editName = game.name
