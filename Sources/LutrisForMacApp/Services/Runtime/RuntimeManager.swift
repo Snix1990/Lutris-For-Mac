@@ -44,20 +44,22 @@ final class RuntimeManager: ObservableObject {
                       let gameID = userInfo["gameID"] as? UUID else { return }
                 let exitCode = userInfo["exitCode"] as? Int32 ?? 0
 
-                RuntimeAPI.shared.fireWebhook(
-                    gameName: gameName,
-                    playTime: playTime,
-                    exitCode: exitCode
-                )
-
                 let games = GameLibraryViewModel.shared.games
-                if let game = games.first(where: { $0.id == gameID }),
-                   !game.postExitScript.isEmpty {
-                    RuntimeAPI.shared.runPostExitScript(
-                        game.postExitScript,
-                        gameName: gameName,
-                        playTime: playTime
-                    )
+                if let game = games.first(where: { $0.id == gameID }) {
+                    if game.runtimeSettings.webhook {
+                        RuntimeAPI.shared.fireWebhook(
+                            gameName: gameName,
+                            playTime: playTime,
+                            exitCode: exitCode
+                        )
+                    }
+                    if !game.postExitScript.isEmpty {
+                        RuntimeAPI.shared.runPostExitScript(
+                            game.postExitScript,
+                            gameName: gameName,
+                            playTime: playTime
+                        )
+                    }
                 }
             }
         )
@@ -106,6 +108,7 @@ final class RuntimeManager: ObservableObject {
     // MARK: - Health-Check
 
     func checkHealth(game: Game) -> Bool {
+        guard game.runtimeSettings.healthCheck else { return true }
         let result = UpdateManager.shared.healthCheck(game: game)
         switch result {
         case .success:

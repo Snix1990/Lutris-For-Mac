@@ -400,17 +400,23 @@ struct ContentView: View {
                     gameName: game.name,
                     coverURL: game.coverURL
                 )
-                // Watch the runner binary for process monitoring
-                if let runner = runnerManager.runners.first(where: { $0.name == game.runner }) {
-                    let runnerExe = runner.binaryPath.isEmpty ? runner.name : (runner.binaryPath as NSString).lastPathComponent
-                    GameSessionManager.shared.addName(runnerExe, sessionID: sid)
-                }
-                try await runnerManager.launchGame(
+                let pid = try await runnerManager.launchGame(
                     installPath: game.installPath,
                     runnerName: game.runner,
                     runnerConfig: config,
                     environment: env
                 )
+                let isBlocking: Bool
+                if let pid {
+                    GameSessionManager.shared.addPID(pid, sessionID: sid)
+                    isBlocking = false
+                } else {
+                    isBlocking = true
+                }
+                if isBlocking {
+                    // CLI runner blockierte → Spiel bereits beendet
+                    GameSessionManager.shared.endSession(sid)
+                }
                 let duration = Date().timeIntervalSince(startTime)
                 if duration > 10 { viewModel.recordPlaySession(gameID: game.id, duration: duration) }
             } catch {
@@ -462,13 +468,17 @@ struct ContentView: View {
             GameSessionManager.shared.addName((exePath as NSString).lastPathComponent, sessionID: sessionID)
             return output
         } else {
-            try await runnerManager.launchGame(
+            let pid = try await runnerManager.launchGame(
                 installPath: exePath,
                 runnerName: game.runner,
                 runnerConfig: game.runnerConfig,
                 environment: ProcessRunner.parseEnvironmentVariables(from: game.environmentVariables)
             )
-            GameSessionManager.shared.addName((exePath as NSString).lastPathComponent, sessionID: sessionID)
+            if let pid {
+                GameSessionManager.shared.addPID(pid, sessionID: sessionID)
+            } else {
+                GameSessionManager.shared.addName((exePath as NSString).lastPathComponent, sessionID: sessionID)
+            }
             return "Emulator: \(exePath)"
         }
     }

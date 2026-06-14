@@ -353,7 +353,9 @@ final class RunnerManager: ObservableObject {
 
     // MARK: - Launch
 
-    func launchGame(installPath: String, runnerName: String, runnerConfig: [String: String] = [:], environment: [String: String] = [:]) async throws {
+    /// Launch a game. Returns the PID of the launched process if available (for nativeApp only; CLI runners block until exit).
+    @discardableResult
+    func launchGame(installPath: String, runnerName: String, runnerConfig: [String: String] = [:], environment: [String: String] = [:]) async throws -> Int32? {
         guard let runner = runners.first(where: { $0.name == runnerName }) else {
             throw RunnerError.runnerNotFound(runnerName)
         }
@@ -367,7 +369,14 @@ final class RunnerManager: ObservableObject {
             guard FileManager.default.fileExists(atPath: url.path) else {
                 throw RunnerError.pathNotFound(installPath)
             }
+            let runnerURL = URL(fileURLWithPath: runner.installPath)
+            let config = NSWorkspace.OpenConfiguration()
+            config.activates = true
+            if let app = try? await NSWorkspace.shared.openApplication(at: runnerURL, configuration: config) {
+                return app.processIdentifier
+            }
             NSWorkspace.shared.open(url)
+            return nil
 
         case .cli(let template):
             let cmd = template
@@ -375,24 +384,28 @@ final class RunnerManager: ObservableObject {
                 .replacingOccurrences(of: "{runnerPath}", with: runner.binaryPath)
                 .replacingOccurrences(of: "{runnerDir}", with: runner.installPath)
             _ = try await ProcessRunner.run(command: cmd, currentDirectory: nil, environment: environment)
+            return nil
 
         case .wine(let binary):
             let wineBinary = FileManager.default.isExecutableFile(atPath: runner.binaryPath) ? runner.binaryPath : binary
             let env = environment.merging(["WINEDLLOVERRIDES": "winemenubuilder.exe=d"]) { _, new in new }
             let cmd = "\(wineBinary) \"\(installPath)\""
             _ = try await ProcessRunner.run(command: cmd, currentDirectory: nil, environment: env)
+            return nil
 
         case .dosbox:
             let bin = runner.binaryPath.isEmpty ? "/Applications/DOSBox.app/Contents/MacOS/DOSBox" : runner.binaryPath
             let conf = runnerConfig["dosbox_conf"] ?? ""
             let cmd = conf.isEmpty ? "\"\(bin)\" \"\(installPath)\"" : "\"\(bin)\" -conf \"\(conf)\" \"\(installPath)\""
             _ = try await ProcessRunner.run(command: cmd, currentDirectory: nil, environment: environment)
+            return nil
 
         case .scummvm:
             let bin = runner.binaryPath.isEmpty ? "/Applications/ScummVM.app/Contents/MacOS/scummvm" : runner.binaryPath
             let gameID = runnerConfig["scummvm_game_id"] ?? ""
             let cmd = gameID.isEmpty ? "\"\(bin)\" \"\(installPath)\"" : "\"\(bin)\" --path=\"\(installPath)\" \"\(gameID)\""
             _ = try await ProcessRunner.run(command: cmd, currentDirectory: nil, environment: environment)
+            return nil
 
         case .retroarch:
             let bin = runner.binaryPath.isEmpty ? "/Applications/RetroArch.app/Contents/MacOS/RetroArch" : runner.binaryPath
@@ -405,6 +418,7 @@ final class RunnerManager: ObservableObject {
             }
             let cmd = args
             _ = try await ProcessRunner.run(command: cmd, currentDirectory: nil, environment: environment)
+            return nil
 
         case .custom:
             throw RunnerError.customRunnerNoCommand
@@ -412,6 +426,7 @@ final class RunnerManager: ObservableObject {
         default:
             break
         }
+        return nil
     }
 }
 

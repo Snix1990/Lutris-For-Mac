@@ -1068,15 +1068,17 @@ final class WineManager: ObservableObject {
             env["WINEVIRTUALDESKTOP"] = game.wineDesktopResolution
         }
 
-        // WINEDEBUG
-        let debugString: String
-        if !game.wineDebugString.isEmpty {
-            debugString = game.wineDebugString
-        } else {
-            debugString = WineDebugManager.shared.resolvedDebugString()
-        }
-        if !debugString.isEmpty {
-            env["WINEDEBUG"] = debugString
+        // WINEDEBUG (per game runtimeSettings)
+        if game.runtimeSettings.wineDebugLogging {
+            let debugString: String
+            if !game.wineDebugString.isEmpty {
+                debugString = game.wineDebugString
+            } else {
+                debugString = WineDebugManager.shared.resolvedDebugString()
+            }
+            if !debugString.isEmpty {
+                env["WINEDEBUG"] = debugString
+            }
         }
 
         // DXVK HUD

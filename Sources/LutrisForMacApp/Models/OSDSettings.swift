@@ -375,8 +375,17 @@ final class OSDManager: ObservableObject {
         let pm = PerformanceMonitor.shared
         fps = pm.fps
         frameTime = pm.frameTime
-        ramUsage = sampleRAM()
-        cpuUsage = sampleCPU()
+        // Nur CPU/RAM samplen wenn statsMonitoring aktiv ist
+        let shouldSample: Bool = {
+            guard let session = GameSessionManager.shared.activeSessions.first,
+                  let game = GameLibraryViewModel.shared.games.first(where: { $0.id == session.gameID })
+            else { return true }
+            return game.runtimeSettings.statsMonitoring
+        }()
+        if shouldSample {
+            ramUsage = sampleRAM()
+            cpuUsage = sampleCPU()
+        }
         mediaTitle = nowPlayingTitle()
     }
 

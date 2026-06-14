@@ -87,11 +87,14 @@ final class GameSessionManager: ObservableObject {
         let sid = session.id
         activeSessions.append(session)
 
-        // Set Discord presence
-        DesktopIntegrationManager.shared.updateDiscordPresence(
-            gameName: gameName,
-            coverURL: coverURL
-        )
+        // Set Discord presence (per game runtimeSettings)
+        let gameInLibrary = GameLibraryViewModel.shared.games.first(where: { $0.id == gameID })
+        if gameInLibrary?.runtimeSettings.discordRPC != false {
+            DesktopIntegrationManager.shared.updateDiscordPresence(
+                gameName: gameName,
+                coverURL: coverURL
+            )
+        }
 
         // Start monitoring loop
         let task = Task { [weak self] in
