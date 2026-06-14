@@ -145,6 +145,10 @@ Build a SwiftUI macOS game library manager (LutrisForMac) with fully integrated 
 - Some download URLs reference Gcenx/wine-on-mac releases; actual builds may need arch verification
 - **Session Management (Pause/Resume/Savestate)** nicht umsetzbar – macOS hat kein CRIU-Äquivalent, Wine-Prozesse + GPU-Contexts lassen sich nicht serialisieren. VM-Lösung wäre mit 40-50% Overhead nicht spielbar. Nur Spielzeit-Tracking + Exit-Hooks bleiben.
 
+### Fixed (post-docs)
+- **Discord RPC**: Bundle-ID-Migration (`LutrisForMac`, `LutrisForMacWIP` → `net.lutrisformac`); `updateDiscordPresence`/`clearDiscordPresence` connect auto wenn Socket disconnected; Socket-Paths für Canary/PTB/Development/AppStore-Varianten; `clearDiscordPresence` auch ohne DiscordPreferencesGame (entfernt totes RPC beim Launch)
+- **Cover-URL-Clearing (SwiftUI Sheet Binding Reset)**: `CoverSearchView` verwendet `@State` + `onSelect`-Closure statt `@Binding` – SwiftUI setzt Binding-Wert beim Sheet-Dismiss zurück → `game.coverURL = ""`. Zusätzlich: `commitPendingChanges` überschreibt `coverURL` nur wenn pending nicht-leer ist ODER game bereits leer hat → Defense-in-Depth
+
 ## Key Decisions
 - **2-column NavigationSplitView** – detail column entfernt, GameDetailView als Overlay-Panel im ZStack. Verhindert Column-Resizing beim Ein-/Ausblenden.
 - **Panel immer im ZStack** – nicht per `if let` conditional. `.offset(x:)` statt `.transition(.move(edge:))` → kein Hinter-die-Icons-Rutschen beim Raussliden.
