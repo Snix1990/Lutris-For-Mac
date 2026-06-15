@@ -3,6 +3,7 @@ import CoreVideo
 import CoreGraphics
 import AppKit
 import IOKit
+import ScreenCaptureKit
 
 @MainActor
 final class PerformanceMonitor: ObservableObject {
@@ -187,29 +188,17 @@ final class PerformanceMonitor: ObservableObject {
     }
 
     private func sampleWindowContent() {
-        // OSD-Frame getrennt updaten (kein frontmostApp)
         gameWindowFrame = resolveOSDWindowFrame()
+        guard let windowID = resolveFPSWindow() else { windowFPS = 0; return }
+        Task { await sampleWindowPixels(windowID: windowID) }
+    }
 
-        // FPS-Sampling mit eigenem Resolver (darf frontmostApp nutzen)
-        guard let windowID = resolveFPSWindow(),
-              let windows = CGWindowListCopyWindowInfo(.optionIncludingWindow, windowID) as? [[String: Any]],
-              let info = windows.first,
-              let bounds = info[kCGWindowBounds as String] as? [String: CGFloat],
-              let w = bounds["Width"], let h = bounds["Height"]
-        else { windowFPS = 0; return }
-
-        // Sample 8x1 pixel row near center
-        let rect = CGRect(x: 0, y: h * 0.5, width: min(w, 8), height: 1)
-        guard let image = CGWindowListCreateImage(rect, .optionIncludingWindow, windowID, .boundsIgnoreFraming),
-              let provider = image.dataProvider,
-              let data = provider.data,
-              let pixels = CFDataGetBytePtr(data)
-        else { windowFPS = 0; return }
-
-        let count = Int(rect.width) * 4
-        var row = [UInt8](repeating: 0, count: count)
-        for i in 0..<count { row[i] = pixels[i] }
-
+    private func sampleWindowPixels(windowID: CGWindowID) async {
+        guard let row = await captureWindowRow(windowID: windowID) else {
+            await MainActor.run { windowFPS = 0 }
+            return
+        }
+        let count = row.count
         if let last = lastRowPixels, last.count == count {
             var changed = false
             for i in 0..<count {
@@ -218,12 +207,39 @@ final class PerformanceMonitor: ObservableObject {
             if changed { windowChangeCount += 1 }
         }
         lastRowPixels = row
-
         windowAccumulator += 0.1
         if windowAccumulator >= 1.0 {
-            windowFPS = Double(windowChangeCount)
-            windowChangeCount = 0
-            windowAccumulator = 0
+            await MainActor.run {
+                windowFPS = Double(windowChangeCount)
+                windowChangeCount = 0
+                windowAccumulator = 0
+            }
+        }
+    }
+
+    private func captureWindowRow(windowID: CGWindowID) async -> [UInt8]? {
+        do {
+            let content = try await SCShareableContent.current
+            guard let scWindow = content.windows.first(where: { $0.windowID == windowID }) else { return nil }
+            let bw = scWindow.frame.width
+            let bh = scWindow.frame.height
+            let rect = CGRect(x: 0, y: bh * 0.5, width: min(bw, 8), height: 1)
+            let display = content.displays.first!
+            let filter = SCContentFilter(display: display, including: [scWindow])
+            let config = SCStreamConfiguration()
+            config.width = Int(rect.width)
+            config.height = Int(rect.height)
+            config.capturesAudio = false
+            let image = try await SCScreenshotManager.captureImage(contentFilter: filter, configuration: config)
+            guard let provider = image.dataProvider,
+                  let data = provider.data,
+                  let pixels = CFDataGetBytePtr(data) else { return nil }
+            let count = Int(rect.width) * 4
+            var row = [UInt8](repeating: 0, count: count)
+            for i in 0..<count { row[i] = pixels[i] }
+            return row
+        } catch {
+            return nil
         }
     }
 
