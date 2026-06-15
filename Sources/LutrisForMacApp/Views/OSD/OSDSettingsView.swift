@@ -68,13 +68,13 @@ struct OSDSettingsView: View {
         .padding()
         .onAppear { osd.isShowingSettings = true }
         .onDisappear { osd.isShowingSettings = false }
-        .onChange(of: osd.settings.position) { _ in
+        .onChange(of: osd.settings.position) { _, _ in
             osd.updatePosition()
         }
-        .onChange(of: osd.settings.attachToWindow) { _ in
+        .onChange(of: osd.settings.attachToWindow) { _, _ in
             osd.updatePosition()
         }
-        .onChange(of: osd.settings.verticalOffset) { _ in
+        .onChange(of: osd.settings.verticalOffset) { _, _ in
             osd.updatePosition()
         }
     }

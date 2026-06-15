@@ -86,7 +86,7 @@ struct OSDOverlayView: View {
             }
         }
         .onAppear { osd.resizeToFit() }
-        .onChange(of: osd.fps) { _ in } // keep alive
+        .onChange(of: osd.fps) { _, _ in } // keep alive
     }
 
     // MARK: - Inline settings

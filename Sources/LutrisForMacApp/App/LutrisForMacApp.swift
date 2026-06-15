@@ -281,14 +281,16 @@ final class AppDelegate: NSObject, NSApplicationDelegate {
                 object: nil,
                 queue: .main
             ) { note in
-                guard let userInfo = note.userInfo,
-                      let endedGameID = userInfo["gameID"] as? UUID,
-                      endedGameID == gameID else { return }
-                let playTime = userInfo["playTime"] as? TimeInterval ?? 0
-                if playTime > 10 {
-                    GameLibraryViewModel.shared.recordPlaySession(gameID: gameID, duration: playTime)
+                Task { @MainActor in
+                    guard let userInfo = note.userInfo,
+                          let endedGameID = userInfo["gameID"] as? UUID,
+                          endedGameID == gameID else { return }
+                    let playTime = userInfo["playTime"] as? TimeInterval ?? 0
+                    if playTime > 10 {
+                        GameLibraryViewModel.shared.recordPlaySession(gameID: gameID, duration: playTime)
+                    }
+                    NSApplication.shared.terminate(nil)
                 }
-                NSApplication.shared.terminate(nil)
             }
         )
     }

@@ -81,7 +81,7 @@ enum Keybinds {
     }
 
     static func setShortcut(_ shortcut: KeybindShortcut, for action: KeybindAction) {
-        var data = UserDefaults.standard.data(forKey: defaultsKey)
+        let data = UserDefaults.standard.data(forKey: defaultsKey)
         var dict = data.flatMap { try? JSONDecoder().decode([String: KeybindShortcut].self, from: $0) } ?? [:]
         dict[action.rawValue] = shortcut
         if let encoded = try? JSONEncoder().encode(dict) {
@@ -107,7 +107,7 @@ enum Keybinds {
 
 // MARK: - Codable conformance helpers
 
-extension KeyEquivalent: Codable {
+extension KeyEquivalent: @retroactive Codable {
     public init(from decoder: Decoder) throws {
         let container = try decoder.singleValueContainer()
         let str = try container.decode(String.self)
@@ -120,7 +120,7 @@ extension KeyEquivalent: Codable {
     }
 }
 
-extension EventModifiers: Codable {
+extension EventModifiers: @retroactive Codable {
     public init(from decoder: Decoder) throws {
         let container = try decoder.singleValueContainer()
         let raw = try container.decode(Int.self)

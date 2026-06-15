@@ -66,16 +66,17 @@ final class RuntimeAPI: ObservableObject {
     // MARK: - Connection Handling
 
     private func handleConnection(_ conn: NWConnection) {
-        conn.stateUpdateHandler = { state in
-            if state == .ready {
-                conn.receive(minimumIncompleteLength: 1, maximumLength: 65536) { data, _, _, error in
-                    defer { conn.cancel() }
-                    guard let data, !data.isEmpty else { return }
-                    let response = self.handleRequest(data)
-                    conn.send(content: response, completion: .contentProcessed { _ in })
+            conn.stateUpdateHandler = { state in
+                if state == .ready {
+                    conn.receive(minimumIncompleteLength: 1, maximumLength: 65536) { data, _, _, error in
+                        guard let data, !data.isEmpty else { conn.cancel(); return }
+                        Task { @MainActor [conn] in
+                            let response = self.handleRequest(data)
+                            conn.send(content: response, completion: .contentProcessed { _ in conn.cancel() })
+                        }
+                    }
                 }
             }
-        }
         conn.start(queue: queue)
     }
 
@@ -127,10 +128,10 @@ final class RuntimeAPI: ObservableObject {
             guard let gameID = parseID(from: body) else {
                 return httpResponse(status: 400, body: "{\"error\":\"missing gameID\"}")
             }
-            Task {
+            Task { @MainActor in
                 let games = GameLibraryViewModel.shared.games
                 if let game = games.first(where: { $0.id == gameID }) {
-                    try? await WineManager.shared.launchGame(game: game)
+                    _ = try? await WineManager.shared.launchGame(game: game)
                 }
             }
             return jsonResponse(["status": "launching"])
@@ -181,7 +182,7 @@ final class RuntimeAPI: ObservableObject {
         guard !script.isEmpty else { return }
         Task {
             let cmd = script.hasPrefix("#!") ? script : "/bin/bash -c '\(script.replacingOccurrences(of: "'", with: "'\\''"))'"
-            try? await ProcessRunner.run(command: cmd, currentDirectory: nil, environment: [
+            _ = try? await ProcessRunner.run(command: cmd, currentDirectory: nil, environment: [
                 "LUTRIS_GAME": gameName,
             ])
         }
@@ -191,7 +192,7 @@ final class RuntimeAPI: ObservableObject {
         guard !script.isEmpty else { return }
         Task {
             let cmd = script.hasPrefix("#!") ? script : "/bin/bash -c '\(script.replacingOccurrences(of: "'", with: "'\\''"))'"
-            try? await ProcessRunner.run(command: cmd, currentDirectory: nil, environment: [
+            _ = try? await ProcessRunner.run(command: cmd, currentDirectory: nil, environment: [
                 "LUTRIS_GAME": gameName,
                 "LUTRIS_PLAYTIME": "\(Int(playTime))",
             ])

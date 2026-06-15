@@ -37,28 +37,30 @@ final class RuntimeManager: ObservableObject {
                 object: nil,
                 queue: .main
             ) { [weak self] note in
-                self?.stopGameRuntime()
-                guard let userInfo = note.userInfo,
-                      let gameName = userInfo["gameName"] as? String,
-                      let playTime = userInfo["playTime"] as? TimeInterval,
-                      let gameID = userInfo["gameID"] as? UUID else { return }
-                let exitCode = userInfo["exitCode"] as? Int32 ?? 0
+                Task { @MainActor in
+                    self?.stopGameRuntime()
+                    guard let userInfo = note.userInfo,
+                          let gameName = userInfo["gameName"] as? String,
+                          let playTime = userInfo["playTime"] as? TimeInterval,
+                          let gameID = userInfo["gameID"] as? UUID else { return }
+                    let exitCode = userInfo["exitCode"] as? Int32 ?? 0
 
-                let games = GameLibraryViewModel.shared.games
-                if let game = games.first(where: { $0.id == gameID }) {
-                    if game.runtimeSettings.webhook {
-                        RuntimeAPI.shared.fireWebhook(
-                            gameName: gameName,
-                            playTime: playTime,
-                            exitCode: exitCode
-                        )
-                    }
-                    if !game.postExitScript.isEmpty {
-                        RuntimeAPI.shared.runPostExitScript(
-                            game.postExitScript,
-                            gameName: gameName,
-                            playTime: playTime
-                        )
+                    let games = GameLibraryViewModel.shared.games
+                    if let game = games.first(where: { $0.id == gameID }) {
+                        if game.runtimeSettings.webhook {
+                            RuntimeAPI.shared.fireWebhook(
+                                gameName: gameName,
+                                playTime: playTime,
+                                exitCode: exitCode
+                            )
+                        }
+                        if !game.postExitScript.isEmpty {
+                            RuntimeAPI.shared.runPostExitScript(
+                                game.postExitScript,
+                                gameName: gameName,
+                                playTime: playTime
+                            )
+                        }
                     }
                 }
             }
@@ -70,7 +72,9 @@ final class RuntimeManager: ObservableObject {
                 object: nil,
                 queue: .main
             ) { _ in
-                RuntimeAPI.shared.stop()
+                Task { @MainActor in
+                    RuntimeAPI.shared.stop()
+                }
             }
         )
     }
