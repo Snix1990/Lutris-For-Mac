@@ -1,0 +1,12 @@
+// XcodeDebug.xcconfig — lege die Datei in Xcode unter
+// Product → Scheme → Edit Scheme → Build → Pre-actions
+// als "Run Script" an, der diese Settings injectet:
+//
+//   cp "${SRCROOT}/XcodeDebug.xcconfig" "${BUILD_DIR}/_xcconfig"
+//   echo "// Auto-injected" >> "${BUILD_DIR}/_xcconfig"
+//
+// Oder setz es im Scheme selbst unter "Build Configuration" → "Name: XcodeDebug.xcconfig"
+//
+// Für SwiftUI-Previews wird ENABLE_DEBUG_DYLIB benötigt:
+
+ENABLE_DEBUG_DYLIB = YES

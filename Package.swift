@@ -7,6 +7,7 @@ let package = Package(
     platforms: [
         .macOS(.v14)
     ],
+
     products: [
         .executable(name: "LutrisForMac", targets: ["LutrisForMacApp"]),
     ],
