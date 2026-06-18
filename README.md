@@ -30,7 +30,3 @@ open Package.swift
 - **Apple Silicon** (M1+) , x86_64 not activly tested
 - **Swift 6.0+**
 
-## Projekt-Status
-
-Aktiv Development. Look at [AGENTS.md](AGENTS.md) for more detailed informations.
-
