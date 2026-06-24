@@ -10,17 +10,33 @@ let package = Package(
 
     products: [
         .executable(name: "LutrisForMac", targets: ["LutrisForMacApp"]),
+        .executable(name: "LutrisForMacConsole", targets: ["LutrisForMacConsole"]),
     ],
     dependencies: [],
     targets: [
+        .target(
+            name: "LutrisForMacCore",
+            dependencies: [],
+            path: "Sources/LutrisForMacCore"
+        ),
         .executableTarget(
             name: "LutrisForMacApp",
-            dependencies: [],
+            dependencies: ["LutrisForMacCore"],
             path: "Sources/LutrisForMacApp",
             exclude: ["Info.plist"],
             resources: [.copy("Locals")],
             linkerSettings: [
                 .unsafeFlags(["-Xlinker", "-sectcreate", "-Xlinker", "__TEXT", "-Xlinker", "__info_plist", "-Xlinker", "Sources/LutrisForMacApp/Info.plist"])
+            ]
+        ),
+        .executableTarget(
+            name: "LutrisForMacConsole",
+            dependencies: ["LutrisForMacCore"],
+            path: "Sources/LutrisForMacConsole",
+            exclude: ["Info.plist"],
+            resources: [.copy("Locals")],
+            linkerSettings: [
+                .unsafeFlags(["-Xlinker", "-sectcreate", "-Xlinker", "__TEXT", "-Xlinker", "__info_plist", "-Xlinker", "Sources/LutrisForMacConsole/Info.plist"])
             ]
         ),
     ]

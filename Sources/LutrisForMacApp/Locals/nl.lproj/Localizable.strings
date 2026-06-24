@@ -545,3 +545,56 @@
 "z.B. https://meinserver.de/remote.php/dav/files/benutzer" = "e.g. https://myserver.de/remote.php/dav/files/user";
 "Ziel" = "Target";
 
+// Console Mode
+"CONTINUE PLAYING" = "VERDER SPELEN";
+"Play" = "Spelen";
+"Details" = "Details";
+"ALL GAMES" = "ALLE SPELLEN";
+"ERGEBNISSE" = "RESULTATEN";
+"Spiel starten" = "Start spel";
+"BESCHREIBUNG" = "BESCHRIJVING";
+"Keine Beschreibung verfügbar. Du kannst eine Beschreibung in den Spiele-Einstellungen hinzufügen." = "Geen beschrijving beschikbaar. Je kunt een beschrijving toevoegen in de spelinstructies.";
+"SCREENSHOTS" = "SCHERMAFBEELDINGEN";
+"SORTIEREN" = "SORTEREN OP";
+"FAVORITEN" = "FAVORIETEN";
+"Keine Favoriten" = "Geen favorieten";
+"FILTER" = "FILTER";
+"Keine Filter verfügbar" = "Geen filters beschikbaar";
+"Kein Controller" = "Geen controller";
+"EINSTELLUNGEN" = "INSTELLINGEN";
+"CONTROLLER" = "CONTROLLER";
+"ABOUT" = "OVER";
+"WELCOME" = "WELKOM";
+"Press A to continue" = "Druk op A om door te gaan";
+"RECENT" = "RECENT";
+"Library" = "Bibliotheek";
+"Favorites" = "Favorieten";
+"Settings" = "Instellingen";
+"Beschreibung abrufen" = "Beschrijving ophalen";
+"CONTINUE PLAYING (no banner)" = "VERDER SPELEN (geen banner)";
+"%d aktive Zuordnungen" = "%d actieve toewijzingen";
+"Alle löschen" = "Alles wissen";
+"Animationen reduzieren und Strom sparen" = "Animaties verminderen en energie besparen";
+"Automatisch mit WebDAV/SMB synchronisieren" = "Automatisch synchroniseren met WebDAV/SMB";
+"Autostart" = "Starten bij inloggen";
+"Button-Mapping" = "Knoptoewijzing";
+"Cloud Sync" = "Cloud Sync";
+"Console-Modus beim Systemstart öffnen" = "Console-modus openen bij inloggen";
+"Controller‑Layout" = "Controller-indeling";
+"Discord RPC" = "Discord RPC";
+"Kein Profil" = "Geen profiel";
+"Low Power Mode" = "Energiebesparingsmodus";
+"LutrisForMac Console" = "LutrisForMac Console";
+"Quelle (drückst du)" = "Bron (knop die je indrukt)";
+"Standard (keine Änderungen)" = "Standaard (geen wijzigingen)";
+"Suche" = "Zoeken";
+"Suche..." = "Zoeken...";
+"Verbinde einen Controller über Bluetooth oder USB" = "Sluit een controller aan via Bluetooth of USB";
+"Version 1.0.0" = "Versie 1.0.0";
+"Wähle Quelle und Ziel-Button" = "Selecteer bron- en doelknop";
+"Zeige deinen aktuellen Spielstatus in Discord" = "Toon je huidige spelstatus in Discord";
+"Ziel (soll ausgelöst werden)" = "Doel (knop om te simuleren)";
+// Settings — Descriptions
+"Alle Beschreibungen löschen" = "Alle beschrijvingen wissen";
+"Löscht alle %d Spielbeschreibungen. Danach können sie neu abgerufen werden." = "Wist alle %d spelbeschrijvingen. Ze kunnen opnieuw worden opgehaald.";
+

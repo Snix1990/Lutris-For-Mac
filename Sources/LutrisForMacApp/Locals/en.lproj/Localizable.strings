@@ -540,3 +540,59 @@
 "Überspringen" = "Skip";
 "✅ Emulator installiert" = "✅ Emulator installed";
 
+// Console Mode
+"CONTINUE PLAYING" = "CONTINUE PLAYING";
+"Play" = "Play";
+"Details" = "Details";
+"ALL GAMES" = "ALL GAMES";
+"ERGEBNISSE" = "RESULTS";
+"Spiel starten" = "Start Game";
+"BESCHREIBUNG" = "DESCRIPTION";
+"Keine Beschreibung verfügbar. Du kannst eine Beschreibung in den Spiele-Einstellungen hinzufügen." = "No description available. You can add a description in the game settings.";
+"SCREENSHOTS" = "SCREENSHOTS";
+"SORTIEREN" = "SORT BY";
+"FAVORITEN" = "FAVORITES";
+"Keine Favoriten" = "No favorites";
+"FILTER" = "FILTER";
+"Keine Filter verfügbar" = "No filters available";
+"Kein Controller" = "No Controller";
+"EINSTELLUNGEN" = "SETTINGS";
+"CONTROLLER" = "CONTROLLER";
+"ABOUT" = "ABOUT";
+"WELCOME" = "WELCOME";
+"Press A to continue" = "Press A to continue";
+"RECENT" = "RECENT";
+"Library" = "Library";
+"Favorites" = "Favorites";
+"Settings" = "Settings";
+"Beschreibung abrufen" = "Fetch description";
+"CONTINUE PLAYING (no banner)" = "CONTINUE PLAYING";
+
+// Console Mode — Settings & UI (new)
+"%d aktive Zuordnungen" = "%d active mappings";
+"Alle löschen" = "Clear all";
+"Animationen reduzieren und Strom sparen" = "Reduce animations and save power";
+"Automatisch mit WebDAV/SMB synchronisieren" = "Auto-sync with WebDAV/SMB";
+"Autostart" = "Launch at login";
+"Button-Mapping" = "Button Mapping";
+"Cloud Sync" = "Cloud Sync";
+"Console-Modus beim Systemstart öffnen" = "Open Console Mode at login";
+"Controller‑Layout" = "Controller Layout";
+"Discord RPC" = "Discord RPC";
+"Kein Profil" = "No Profile";
+"Low Power Mode" = "Low Power Mode";
+"LutrisForMac Console" = "LutrisForMac Console";
+"Quelle (drückst du)" = "Source (button you press)";
+"Standard (keine Änderungen)" = "Default (no changes)";
+"Suche" = "Search";
+"Suche..." = "Search...";
+"Verbinde einen Controller über Bluetooth oder USB" = "Connect a controller via Bluetooth or USB";
+"Version 1.0.0" = "Version 1.0.0";
+"Wähle Quelle und Ziel-Button" = "Select source and target button";
+"Zeige deinen aktuellen Spielstatus in Discord" = "Show your current game status in Discord";
+"Ziel (soll ausgelöst werden)" = "Target (button to simulate)";
+
+// Settings — Descriptions
+"Alle Beschreibungen löschen" = "Clear all descriptions";
+"Löscht alle %d Spielbeschreibungen. Danach können sie neu abgerufen werden." = "Clears all %d game descriptions. They can be re-fetched afterwards.";
+

@@ -52,6 +52,48 @@ struct ContentView: View {
         )
     }
 
+    private func toggleSidebar() {
+        withAnimation {
+            columnVisibility = columnVisibility == .all ? .detailOnly : .all
+        }
+    }
+
+    @ViewBuilder
+    private var extrasMenu: some View {
+        Menu {
+            Button {
+                if let id = selectedGameID, let game = viewModel.games.first(where: { $0.id == id }) {
+                    _ = viewModel.exportGameConfig(game)
+                }
+            } label: {
+                Label(tr("Spielkonfiguration exportieren"), systemImage: "square.and.arrow.up")
+            }
+            Button {
+                if let _ = viewModel.importGameConfig() {
+                    viewModel.saveLibrary()
+                }
+            } label: {
+                Label(tr("Spielkonfiguration importieren"), systemImage: "square.and.arrow.down")
+            }
+            Divider()
+            Button {
+                _ = viewModel.exportLibraryBackup()
+            } label: {
+                Label(tr("Bibliothek sichern..."), systemImage: "externaldrive.badge.checkmark")
+            }
+            Button {
+                if viewModel.importLibraryBackup() {
+                    viewModel.refreshLibrary()
+                }
+            } label: {
+                Label(tr("Bibliothek wiederherstellen..."), systemImage: "externaldrive.badge.arrow.clockwise")
+            }
+        } label: {
+            Label(tr("Extras"), systemImage: "ellipsis.circle")
+        }
+        .helpLText("Bibliothek sichern/wiederherstellen")
+    }
+
     // MARK: - Body
 
     var body: some View {
@@ -108,11 +150,7 @@ struct ContentView: View {
             .animation(.easeInOut(duration: 0.25), value: selectedGameID)
             .toolbar {
                 ToolbarItem(placement: .primaryAction) {
-                    Button {
-                        withAnimation {
-                            columnVisibility = columnVisibility == .all ? .detailOnly : .all
-                        }
-                    } label: {
+                    Button(action: toggleSidebar) {
                         Image(systemName: "sidebar.left")
                     }
                     .helpLText("Seitenleiste ein-/ausblenden")
@@ -136,38 +174,7 @@ struct ContentView: View {
                     .keyboardShortcut(Keybinds.shortcut(for: .newGame).key, modifiers: Keybinds.shortcut(for: .newGame).modifiers)
                 }
                 ToolbarItem(placement: .automatic) {
-                    Menu {
-                        Button {
-                            if let id = selectedGameID, let game = viewModel.games.first(where: { $0.id == id }) {
-                                _ = viewModel.exportGameConfig(game)
-                            }
-                        } label: {
-                            Label { LText("Spielkonfiguration exportieren") } icon: { Image(systemName: "square.and.arrow.up") }
-                        }
-                        Button {
-                            if let _ = viewModel.importGameConfig() {
-                                viewModel.saveLibrary()
-                            }
-                        } label: {
-                            Label { LText("Spielkonfiguration importieren") } icon: { Image(systemName: "square.and.arrow.down") }
-                        }
-                        Divider()
-                        Button {
-                            _ = viewModel.exportLibraryBackup()
-                        } label: {
-                            Label { LText("Bibliothek sichern...") } icon: { Image(systemName: "externaldrive.badge.checkmark") }
-                        }
-                        Button {
-                            if viewModel.importLibraryBackup() {
-                                viewModel.refreshLibrary()
-                            }
-                        } label: {
-                            Label { LText("Bibliothek wiederherstellen...") } icon: { Image(systemName: "externaldrive.badge.arrow.clockwise") }
-                        }
-                    } label: {
-                        Label { LText("Extras") } icon: { Image(systemName: "ellipsis.circle") }
-                    }
-                    .helpLText("Bibliothek sichern/wiederherstellen")
+                    extrasMenu
                 }
                 ToolbarItem(placement: .automatic) {
                     Button {
@@ -177,6 +184,14 @@ struct ContentView: View {
                     }
                     .helpLText("Wine-Einstellungen")
                 }
+                    ToolbarItem(placement: .automatic) {
+                        Button {
+                            WindowTransitionManager.switchToConsole()
+                        } label: {
+                            Label { LText("Console") } icon: { Image(systemName: "gamecontroller") }
+                        }
+                        .helpLText("Console Mode öffnen")
+                    }
                 ToolbarItem(placement: .automatic) {
                     Button {
                         Task {
@@ -318,13 +333,16 @@ struct ContentView: View {
 
         Task {
             do {
+                // Activate button mapping profile for this game
+                ControllerManager.shared.activateMapping(for: game.id)
                 // --- Steam Emulator path (sets RPC + launches via wine/runner) ---
                 if game.installPath.hasPrefix("steam://"), game.steamEmulatorEnabled == true {
                     let sid = GameSessionManager.shared.startSession(
                         gameID: game.id,
                         gameName: game.name,
                         coverURL: game.coverURL,
-                        names: [(game.installPath as NSString).lastPathComponent]
+                        names: [(game.installPath as NSString).lastPathComponent],
+                        discordRPCEnabled: game.runtimeSettings.discordRPC
                     )
                     _ = try await launchViaSteamEmulator(game: game, startTime: startTime, sessionID: sid)
                     let duration = Date().timeIntervalSince(startTime)
@@ -339,7 +357,8 @@ struct ContentView: View {
                         gameID: game.id,
                         gameName: game.name,
                         coverURL: game.coverURL,
-                        names: exeName.contains(".") ? [exeName] : []
+                        names: exeName.contains(".") ? [exeName] : [],
+                        discordRPCEnabled: game.runtimeSettings.discordRPC
                     )
                     let wineVersion = wineManager.resolveWineVersion(for: game.wineVersionName)
                     if wineVersion != nil || game.wineBinaryPath?.isEmpty == false {
@@ -362,7 +381,7 @@ struct ContentView: View {
                         throw LaunchError.steamLaunchDisabled
                     }
                     if let url = URL(string: game.installPath) {
-                        _ = GameSessionManager.shared.startSession(gameID: game.id, gameName: game.name, coverURL: game.coverURL, names: [url.host ?? url.scheme ?? ""])
+                        _ = GameSessionManager.shared.startSession(gameID: game.id, gameName: game.name, coverURL: game.coverURL, names: [url.host ?? url.scheme ?? ""], discordRPCEnabled: game.runtimeSettings.discordRPC)
                         NSWorkspace.shared.open(url)
                         let duration = Date().timeIntervalSince(startTime)
                         if duration > 10 { viewModel.recordPlaySession(gameID: game.id, duration: duration) }
@@ -384,7 +403,7 @@ struct ContentView: View {
                         return
                     }
                     if url.pathExtension == "app" {
-                        let sid = GameSessionManager.shared.startSession(gameID: game.id, gameName: game.name, coverURL: game.coverURL)
+                        let sid = GameSessionManager.shared.startSession(gameID: game.id, gameName: game.name, coverURL: game.coverURL, discordRPCEnabled: game.runtimeSettings.discordRPC)
                         let openConfig = NSWorkspace.OpenConfiguration()
                         openConfig.activates = true
                         openConfig.createsNewApplicationInstance = false
@@ -396,7 +415,7 @@ struct ContentView: View {
                             GameSessionManager.shared.addName(url.lastPathComponent, sessionID: sid)
                         }
                     } else {
-                        _ = GameSessionManager.shared.startSession(gameID: game.id, gameName: game.name, coverURL: game.coverURL, names: [url.lastPathComponent])
+                        _ = GameSessionManager.shared.startSession(gameID: game.id, gameName: game.name, coverURL: game.coverURL, names: [url.lastPathComponent], discordRPCEnabled: game.runtimeSettings.discordRPC)
                         NSWorkspace.shared.open(url)
                     }
                     let duration = Date().timeIntervalSince(startTime)
@@ -411,7 +430,8 @@ struct ContentView: View {
                     gameID: game.id,
                     gameName: game.name,
                     coverURL: game.coverURL,
-                    names: isCLIRunner ? [(game.installPath as NSString).lastPathComponent] : []
+                    names: isCLIRunner ? [(game.installPath as NSString).lastPathComponent] : [],
+                    discordRPCEnabled: game.runtimeSettings.discordRPC
                 )
                 let pid = try await runnerManager.launchGame(
                     installPath: game.installPath,

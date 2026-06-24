@@ -546,3 +546,56 @@
 "z.B. https://meinserver.de/remote.php/dav/files/benutzer" = "e.g. https://myserver.de/remote.php/dav/files/user";
 "Ziel" = "Target";
 
+// Console Mode
+"CONTINUE PLAYING" = "TIẾP TỤC CHƠI";
+"Play" = "Chơi";
+"Details" = "Chi tiết";
+"ALL GAMES" = "TẤT CẢ GAME";
+"ERGEBNISSE" = "KẾT QUẢ";
+"Spiel starten" = "Bắt đầu game";
+"BESCHREIBUNG" = "MÔ TẢ";
+"Keine Beschreibung verfügbar. Du kannst eine Beschreibung in den Spiele-Einstellungen hinzufügen." = "Không có mô tả. Bạn có thể thêm mô tả trong cài đặt game.";
+"SCREENSHOTS" = "ẢNH CHỤP MÀN HÌNH";
+"SORTIEREN" = "SẮP XẾP THEO";
+"FAVORITEN" = "YÊU THÍCH";
+"Keine Favoriten" = "Không có yêu thích";
+"FILTER" = "BỘ LỌC";
+"Keine Filter verfügbar" = "Không có bộ lọc nào";
+"Kein Controller" = "Không có tay cầm";
+"EINSTELLUNGEN" = "CÀI ĐẶT";
+"CONTROLLER" = "TAY CẦM";
+"ABOUT" = "GIỚI THIỆU";
+"WELCOME" = "CHÀO MỪNG";
+"Press A to continue" = "Nhấn A để tiếp tục";
+"RECENT" = "GẦN ĐÂY";
+"Library" = "Thư viện";
+"Favorites" = "Yêu thích";
+"Settings" = "Cài đặt";
+"Beschreibung abrufen" = "Lấy mô tả";
+"CONTINUE PLAYING (no banner)" = "TIẾP TỤC CHƠI (không banner)";
+"%d aktive Zuordnungen" = "%d ánh xạ đang hoạt động";
+"Alle löschen" = "Xóa tất cả";
+"Animationen reduzieren und Strom sparen" = "Giảm hoạt ảnh và tiết kiệm pin";
+"Automatisch mit WebDAV/SMB synchronisieren" = "Tự động đồng bộ với WebDAV/SMB";
+"Autostart" = "Khởi chạy khi đăng nhập";
+"Button-Mapping" = "Ánh xạ nút";
+"Cloud Sync" = "Đồng bộ đám mây";
+"Console-Modus beim Systemstart öffnen" = "Mở Chế độ Console khi đăng nhập";
+"Controller‑Layout" = "Bố cục tay cầm";
+"Discord RPC" = "Discord RPC";
+"Kein Profil" = "Không có hồ sơ";
+"Low Power Mode" = "Chế độ tiết kiệm pin";
+"LutrisForMac Console" = "LutrisForMac Console";
+"Quelle (drückst du)" = "Nguồn (nút bạn nhấn)";
+"Standard (keine Änderungen)" = "Mặc định (không thay đổi)";
+"Suche" = "Tìm kiếm";
+"Suche..." = "Tìm kiếm...";
+"Verbinde einen Controller über Bluetooth oder USB" = "Kết nối tay cầm qua Bluetooth hoặc USB";
+"Version 1.0.0" = "Phiên bản 1.0.0";
+"Wähle Quelle und Ziel-Button" = "Chọn nút nguồn và nút đích";
+"Zeige deinen aktuellen Spielstatus in Discord" = "Hiển thị trạng thái game hiện tại của bạn trong Discord";
+"Ziel (soll ausgelöst werden)" = "Đích (nút cần mô phỏng)";
+// Settings — Descriptions
+"Alle Beschreibungen löschen" = "Xóa tất cả mô tả";
+"Löscht alle %d Spielbeschreibungen. Danach können sie neu abgerufen werden." = "Xóa tất cả %d mô tả trò chơi. Sau đó có thể tìm nạp lại.";
+

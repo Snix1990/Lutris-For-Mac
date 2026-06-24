@@ -5,12 +5,16 @@ struct SettingsView: View {
     @StateObject private var desktopManager = DesktopIntegrationManager.shared
     @StateObject private var screenshotManager = ScreenshotManager.shared
     @StateObject private var cloudSettings = CloudSyncSettingsManager.shared
+    @StateObject private var library = GameLibraryViewModel.shared
     @AppStorage("steamGridDBApiKey") private var steamGridDBApiKey = "91e6b8297bb68f99548e95d4028be9fe"
     @State private var cloudPassword: String = ""
     @State private var cloudStatusMessage: String = ""
     @State private var cloudStatusIsError = false
     @State private var isTestingConnection = false
     @State private var isSigningIntoApple = false
+    @State private var isBackfilling = false
+    @State private var backfillProgress: Int = 0
+    @State private var backfillTotal: Int = 0
 
     var body: some View {
         TabView {
@@ -22,6 +26,11 @@ struct SettingsView: View {
             generalTab
                 .tabItem {
                     Label { LText("Allgemein") } icon: { Image(systemName: "gearshape") }
+                }
+
+            descriptionTab
+                .tabItem {
+                    Label { LText("Beschreibungen") } icon: { Image(systemName: "text.alignleft") }
                 }
 
             screenshotTab
@@ -363,6 +372,95 @@ struct SettingsView: View {
             cloudStatusMessage = trf("Fehler: %@", error.localizedDescription)
             cloudStatusIsError = true
         }
+    }
+
+    private var descriptionTab: some View {
+        Form {
+            Section(header: Text(verbatim: tr("Spielbeschreibungen nachladen"))) {
+                VStack(alignment: .leading, spacing: 12) {
+                    LText("Lade fehlende Spielbeschreibungen von Steam oder Wikipedia nach. Bereits vorhandene Beschreibungen werden übersprungen.")
+                        .font(.subheadline)
+                        .foregroundColor(.secondary)
+
+                    HStack(spacing: 12) {
+                        Button {
+                            Task { await runBackfill() }
+                        } label: {
+                            LText("Beschreibungen abrufen")
+                        }
+                        .disabled(isBackfilling)
+
+                        Button(role: .destructive) {
+                            let alert = NSAlert()
+                            alert.messageText = tr("Alle Beschreibungen löschen")
+                            alert.informativeText = trf("Löscht alle %d Spielbeschreibungen. Danach können sie neu abgerufen werden.", library.games.count)
+                            alert.addButton(withTitle: tr("Alle löschen"))
+                            alert.addButton(withTitle: tr("Abbrechen"))
+                            if alert.runModal() == .alertFirstButtonReturn {
+                                clearAllDescriptions()
+                            }
+                        } label: {
+                            LText("Alle löschen")
+                        }
+                        .disabled(isBackfilling)
+
+                        if isBackfilling {
+                            ProgressView()
+                                .scaleEffect(0.8)
+                            Text(verbatim: "\(backfillProgress) / \(backfillTotal)")
+                                .font(.caption)
+                                .foregroundColor(.secondary)
+                        }
+                    }
+
+                    if backfillTotal > 0, backfillProgress == backfillTotal {
+                        HStack(spacing: 4) {
+                            Image(systemName: "checkmark.circle.fill")
+                                .foregroundColor(.green)
+                            LText("Abgeschlossen")
+                                .font(.caption)
+                                .foregroundColor(.secondary)
+                        }
+                    }
+
+                    let total = library.games.count
+                    let empty = library.games.filter { $0.gameDescription.isEmpty }.count
+                    LText("\(empty) von \(total) Spielen haben noch keine Beschreibung.")
+                        .font(.caption)
+                        .foregroundColor(.secondary)
+                }
+            }
+        }
+        .formStyle(.grouped)
+        .padding()
+    }
+
+    private func runBackfill() async {
+        isBackfilling = true
+        backfillProgress = 0
+        let lang = UserDefaults.standard.string(forKey: "appLanguage") ?? "en"
+        let gamesCopy = library.games
+
+        await GameDescriptionService.backfillAll(
+            games: gamesCopy,
+            language: lang,
+            progressHandler: { completed, total in
+                backfillProgress = completed
+                backfillTotal = total
+            },
+            saveHandler: { updatedGames in
+                library.games = updatedGames
+                library.saveLibrary()
+            }
+        )
+        isBackfilling = false
+    }
+
+    private func clearAllDescriptions() {
+        for i in library.games.indices {
+            library.games[i].gameDescription = ""
+        }
+        library.saveLibrary()
     }
 
     private var keybindsTab: some View {

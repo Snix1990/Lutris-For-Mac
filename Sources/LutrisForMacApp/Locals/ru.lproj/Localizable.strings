@@ -545,3 +545,56 @@
 "z.B. https://meinserver.de/remote.php/dav/files/benutzer" = "e.g. https://myserver.de/remote.php/dav/files/user";
 "Ziel" = "Target";
 
+
+// Console Mode
+"CONTINUE PLAYING" = "ПРОДОЛЖИТЬ";
+"Play" = "Играть";
+"Details" = "Детали";
+"ALL GAMES" = "ВСЕ ИГРЫ";
+"ERGEBNISSE" = "РЕЗУЛЬТАТЫ";
+"Spiel starten" = "Запустить игру";
+"BESCHREIBUNG" = "ОПИСАНИЕ";
+"Keine Beschreibung verfügbar. Du kannst eine Beschreibung in den Spiele-Einstellungen hinzufügen." = "Описание недоступно. Вы можете добавить описание в настройках игры.";
+"SCREENSHOTS" = "СКРИНШОТЫ";
+"SORTIEREN" = "СОРТИРОВКА";
+"FAVORITEN" = "ИЗБРАННОЕ";
+"Keine Favoriten" = "Нет избранного";
+"FILTER" = "ФИЛЬТР";
+"Keine Filter verfügbar" = "Нет доступных фильтров";
+"Kein Controller" = "Нет контроллера";
+"EINSTELLUNGEN" = "НАСТРОЙКИ";
+"CONTROLLER" = "КОНТРОЛЛЕР";
+"ABOUT" = "О ПРОГРАММЕ";
+"WELCOME" = "ДОБРО ПОЖАЛОВАТЬ";
+"Press A to continue" = "Нажмите A, чтобы продолжить";
+"RECENT" = "НЕДАВНИЕ";
+"Library" = "Библиотека";
+"Favorites" = "Избранное";
+"Settings" = "Настройки";
+"Beschreibung abrufen" = "Загрузить описание";
+"CONTINUE PLAYING (no banner)" = "ПРОДОЛЖИТЬ (без баннера)";
+"%d aktive Zuordnungen" = "%d активных назначений";
+"Alle löschen" = "Очистить всё";
+"Animationen reduzieren und Strom sparen" = "Уменьшить анимацию и экономить энергию";
+"Automatisch mit WebDAV/SMB synchronisieren" = "Автосинхронизация с WebDAV/SMB";
+"Autostart" = "Автозапуск";
+"Button-Mapping" = "Назначение кнопок";
+"Cloud Sync" = "Облачная синхронизация";
+"Console-Modus beim Systemstart öffnen" = "Открывать консольный режим при входе в систему";
+"Controller‑Layout" = "Раскладка контроллера";
+"Discord RPC" = "Discord RPC";
+"Kein Profil" = "Нет профиля";
+"Low Power Mode" = "Энергосберегающий режим";
+"LutrisForMac Console" = "LutrisForMac Console";
+"Quelle (drückst du)" = "Источник (какую кнопку нажимаешь)";
+"Standard (keine Änderungen)" = "Стандартное (без изменений)";
+"Suche" = "Поиск";
+"Suche..." = "Поиск...";
+"Verbinde einen Controller über Bluetooth oder USB" = "Подключите контроллер через Bluetooth или USB";
+"Version 1.0.0" = "Версия 1.0.0";
+"Wähle Quelle und Ziel-Button" = "Выберите источник и целевую кнопку";
+"Zeige deinen aktuellen Spielstatus in Discord" = "Показывать текущий статус игры в Discord";
+"Ziel (soll ausgelöst werden)" = "Цель (какая кнопка должна сработать)";
+// Settings — Descriptions
+"Alle Beschreibungen löschen" = "Очистить все описания";
+"Löscht alle %d Spielbeschreibungen. Danach können sie neu abgerufen werden." = "Очищает все %d описания игр. Затем их можно заново получить.";

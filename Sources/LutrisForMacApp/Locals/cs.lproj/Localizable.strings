@@ -545,3 +545,56 @@
 "z.B. https://meinserver.de/remote.php/dav/files/benutzer" = "e.g. https://myserver.de/remote.php/dav/files/user";
 "Ziel" = "Target";
 
+
+// Console Mode
+"CONTINUE PLAYING" = "POKRAČOVAT VE HŘE";
+"Play" = "Hrát";
+"Details" = "Podrobnosti";
+"ALL GAMES" = "VŠECHNY HRY";
+"ERGEBNISSE" = "VÝSLEDKY";
+"Spiel starten" = "Spustit hru";
+"BESCHREIBUNG" = "POPIS";
+"Keine Beschreibung verfügbar. Du kannst eine Beschreibung in den Spiele-Einstellungen hinzufügen." = "Popis není k dispozici. Popis můžete přidat v nastavení hry.";
+"SCREENSHOTS" = "SNÍMKY OBRAZOVKY";
+"SORTIEREN" = "ŘADIT";
+"FAVORITEN" = "OBLÍBENÉ";
+"Keine Favoriten" = "Žádné oblíbené";
+"FILTER" = "FILTR";
+"Keine Filter verfügbar" = "Žádné dostupné filtry";
+"Kein Controller" = "Žádný ovladač";
+"EINSTELLUNGEN" = "NASTAVENÍ";
+"CONTROLLER" = "OVLADAČ";
+"ABOUT" = "O APLIKACI";
+"WELCOME" = "VÍTEJTE";
+"Press A to continue" = "Stiskněte A pro pokračování";
+"RECENT" = "NEDÁVNÉ";
+"Library" = "Knihovna";
+"Favorites" = "Oblíbené";
+"Settings" = "Nastavení";
+"Beschreibung abrufen" = "Načíst popis";
+"CONTINUE PLAYING (no banner)" = "POKRAČOVAT VE HŘE (bez banneru)";
+"%d aktive Zuordnungen" = "%d aktivních přiřazení";
+"Alle löschen" = "Vymazat vše";
+"Animationen reduzieren und Strom sparen" = "Omezit animace a šetřit energii";
+"Automatisch mit WebDAV/SMB synchronisieren" = "Automaticky synchronizovat s WebDAV/SMB";
+"Autostart" = "Spustit při přihlášení";
+"Button-Mapping" = "Mapování tlačítek";
+"Cloud Sync" = "Cloudová synchronizace";
+"Console-Modus beim Systemstart öffnen" = "Otevřít konzolový režim při přihlášení";
+"Controller‑Layout" = "Rozložení ovladače";
+"Discord RPC" = "Discord RPC";
+"Kein Profil" = "Žádný profil";
+"Low Power Mode" = "Úsporný režim";
+"LutrisForMac Console" = "LutrisForMac Console";
+"Quelle (drückst du)" = "Zdroj (tlačítko, které stisknete)";
+"Standard (keine Änderungen)" = "Výchozí (beze změn)";
+"Suche" = "Hledat";
+"Suche..." = "Hledat...";
+"Verbinde einen Controller über Bluetooth oder USB" = "Připojte ovladač přes Bluetooth nebo USB";
+"Version 1.0.0" = "Verze 1.0.0";
+"Wähle Quelle und Ziel-Button" = "Vyberte zdroj a cílové tlačítko";
+"Zeige deinen aktuellen Spielstatus in Discord" = "Zobrazit aktuální stav hry na Discordu";
+"Ziel (soll ausgelöst werden)" = "Cíl (tlačítko k simulaci)";
+// Settings — Descriptions
+"Alle Beschreibungen löschen" = "Vymazat všechny popisy";
+"Löscht alle %d Spielbeschreibungen. Danach können sie neu abgerufen werden." = "Vymaže všech %d popisů her. Lze je znovu načíst.";

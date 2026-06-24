@@ -98,6 +98,7 @@ struct LutrisForMacApp: App {
                 }
 
                 WineMenuCommands(wineManager: wineManager)
+                ConsoleMenuCommands()
             }
 
         Settings {
@@ -163,7 +164,9 @@ final class AppDelegate: NSObject, NSApplicationDelegate {
         Task { await checkForUpdate() }
         OSDManager.installCarbonHandler()
         OSDManager.shared.registerGlobalHotkey()
+
     }
+
 
     private func runtimeLog(_ message: String) {
         let logURL = URL(fileURLWithPath: "/tmp/lutris_runtime_app.log")
@@ -255,7 +258,8 @@ final class AppDelegate: NSObject, NSApplicationDelegate {
             gameID: gameID,
             gameName: info.gameName,
             coverURL: info.coverURL,
-            names: names
+            names: names,
+            discordRPCEnabled: info.runtimeSettings.discordRPC
         )
         runtimeLog("Session gestartet: \(sid)")
         // Kurz warten, dann RPC-Status loggen
@@ -385,7 +389,4 @@ final class AppDelegate: NSObject, NSApplicationDelegate {
     }
 }
 
-extension Notification.Name {
-    static let launchGame = Notification.Name("launchGame")
-    static let importGameConfig = Notification.Name("importGameConfig")
-}
+

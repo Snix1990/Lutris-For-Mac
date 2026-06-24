@@ -141,6 +141,22 @@ Build a SwiftUI macOS game library manager (LutrisForMac) with fully integrated 
 - **Error dialogs**: launch error `.sheet()` (480×400, ScrollView), ROM scan NSAlert with scrollable accessoryView, `.alert()` truncates at 200 chars
 - **Keyboard shortcuts**: ⌘N, ⌘F, ⌘⌫, ⌘R, ⌘⇧S (all configurable via Keybinds)
 
+**Console Mode (Controller Navigation):**
+- `ControllerNavigationSystem` verwendet **Hardware-Polling** via 60fps `Timer` auf `RunLoop.main` (`.common` Modus) statt `valueChangedHandler`-Callbacks – Grund: GCD's `DispatchQueue.main.async` und GameController-Callbacks werden im Console-Prozess nicht ausgeliefert (kevent-Source wird nicht verarbeitet), sondern erst bei App-Resign. Der Timer als `CFRunLoopTimer`-Source läuft zuverlässig.
+- Polling liest `button.isPressed` direkt vom Hardware-State, vergleicht mit `prevState[id]` um nur auf Press-Übergänge zu reagieren
+- D-Pad: Vollausschlag (`value > 0.9`), Thumbsticks: Deadzone `> 0.5`
+- **Borderless Fullscreen**: `.styleMask = [.borderless, .resizable]`, Frame auf `screen.frame` (kein neuer Space)
+- `ControllerNavigationModifier` – ViewModifier der Boilerplate kapselt (onReceive/onChange/keyboardMonitor)
+- `navTabLeft/Right` nutzt `lastTopBarFocusIndex` statt `focusedIndex` → korrekte Tab-Zyklen
+- `ConsoleNavState.tabs` als Single Source of Truth (initial 3 Tabs: Library/Favorites/Settings)
+- `ConsoleMainView` synchronisiert `lastTopBarFocusIndex` via `.onChange(of: navState.activeScreen)`
+- Grid-Spaltenzahl (`gridColumnCount`) wird dynamisch aus `GeometryReader` gesetzt → korrekte D-Pad-Navigation
+- Scroll-to-Highlight via `ScrollViewReader` + `proxy.scrollTo` in Library, Favorites, Settings
+- `ScrollController` mit `NSClipView.scroll(to:)` für Right-Thumbstick-Scroll
+- Eigenständige `ConsoleFavoritesView` mit vollem Controller-Support
+- Settings mit `isLinearMode` + Ein-Spalten-Navigation
+- On-Screen-Keyboard nur bei Controller-aktivierter Suche (`searchActivatedByController`)
+
 ### Known / Blocked
 - Some download URLs reference Gcenx/wine-on-mac releases; actual builds may need arch verification
 - **Session Management (Pause/Resume/Savestate)** nicht umsetzbar – macOS hat kein CRIU-Äquivalent, Wine-Prozesse + GPU-Contexts lassen sich nicht serialisieren. VM-Lösung wäre mit 40-50% Overhead nicht spielbar. Nur Spielzeit-Tracking + Exit-Hooks bleiben.
@@ -155,6 +171,8 @@ Build a SwiftUI macOS game library manager (LutrisForMac) with fully integrated 
 - **`.compositingGroup()` vor `.offset()`** – Background + View als Einheit rendern, Shadow-Artefakte vermeiden.
 - **Kein Bundle-Swizzling** – `object_setClass`/`LocalizedBundle` entfernt. Pure Dictionary-Ansätze mit `LanguageStore` + `LText` View.
 - **`LText` statt `Text`** – `@StateObject var lang = LanguageManager.shared`, Update via `@Published refreshID`.
+- **Console Controller-Polling statt Callbacks**: GameController's `valueChangedHandler` und `DispatchQueue.main.async` werden im Console-Prozess nicht ausgeliefert (GCD kevent-Source hängt). 60fps `Timer` als `CFRunLoopTimer`-Source auf `.common` läuft zuverlässig. `isPressed` per Direktabfrage vom Hardware-State statt vom `element`-Parameter (der im Callback false zurückgab).
+- **Borderless Fullscreen**: `.styleMask = [.borderless, .resizable]` + `screen.frame` statt `toggleFullScreen` – kein neuer Space.
 - **`tr()` aus nonisolated-Kontext** – `LanguageStore` (non-isolated, Sendable).
 - **SPM-Lowercase-Problem** – `.lproj` Lookup mit `code.lowercased()`. `.copy("Locals")` in Package.swift.
 - **Sidebar-Breite fixiert** – `min == ideal == max = 180` verhindert Resize per Drag.
@@ -164,6 +182,7 @@ Build a SwiftUI macOS game library manager (LutrisForMac) with fully integrated 
 - **`selectedRunner` filtert auch `serviceName`** – für korrekte Drittanbieter-Filterung.
 - **Section-Header** – `Section(header: Text(verbatim: tr("..."))) { }` statt `Section { } header: { LText }` (Rendering-Bug in List).
 - **Folder-Struktur** – App/Locals/Models/Services/ViewModels/Views/
+- **ControllerNavigationModifier** – `ViewModifier` das die gesamte Controller-Navigation-Boilerplate kapselt: KeyboardMonitor (physische Tastatur → Search-Aktivierung), alle `.onReceive`/`.onChange`-Handler für `consoleConfirm`/`Back`/`SearchToggle`/`KeyboardPage` sowie `ConsoleState`/`ConsoleFocusManager`-Properties. Views liefern nur per Closure die view-spezifischen Actions (`onConfirm`, `onBack`, `onSearchToggle`, `onUpdateFocusState`, `onSearchActiveChanged`). Spart ~80 Zeilen Boilerplate pro View. `keyboardMonitor`-Lebenszyklus wird automatisch verwaltet.
 
 ## Relevant Files
 - `App/LutrisForMacApp.swift`: Entry with WindowGroup(id:"installer"), WindowGroup(id:"wine-settings")
@@ -183,6 +202,13 @@ Build a SwiftUI macOS game library manager (LutrisForMac) with fully integrated 
 - `Services/SteamEmulatorManager.swift`: Steamless + Goldberg
 - `Services/EmulatorManager.swift`: 18 Emulatoren detect/install/update
 - `Services/UpdaterService.swift`: GitHub-Auto-Update-Check beim Start, NSAlert mit Release-Notes
+- `Sources/LutrisForMacConsole/ControllerNavigationModifier.swift`: ViewModifier für gesamte Controller-Navigation-Boilerplate (onReceive/onChange/keyboardMonitor)
+- `Sources/LutrisForMacConsole/ConsoleFavoritesView.swift`: Separate Favoriten-Seite mit Controller-Unterstützung (Suche, Tastatur, Grid)
+- `Sources/LutrisForMacConsole/ConsoleLibraryView.swift`: Hauptbibliothek mit Hero/Recent/Grid/Filter und Controller-Navigation
+- `Sources/LutrisForMacConsole/ConsoleSettingsView.swift`: Einstellungen mit isLinearMode + Scroll-to-Highlight
+- `Sources/LutrisForMacConsole/ControllerNavigationSystem.swift`: Hardware-Polling (60fps Timer), `button.isPressed` lesen, prevState-Übergänge
+- `Sources/LutrisForMacConsole/ConsoleMainView.swift`: Root-View mit Tab-Dispatch + lastTopBarFocusIndex-Sync
+- `Sources/LutrisForMacConsole/ConsoleNavBar.swift`: NavBar mit topBarItemCount-Sync und .consoleConfirm-Handler
 - `Services/ProcessRunner.swift`: Static async Process.run utility
 - `Services/ProcessError.swift`: Error types
 - `ViewModels/GameLibraryViewModel.swift`: Filter, sort, search, stats computed properties, `serviceName`-Filter
@@ -191,7 +217,4 @@ Build a SwiftUI macOS game library manager (LutrisForMac) with fully integrated 
 - `Package.swift`: `.copy("Locals")` resource, Info.plist linker setting
 
 ## To Do
-- **Lutris.net Account-Sync** (Library/Installer-Index)
-- **Screenshots/Galerie** pro Spiel
-- **Multi-Executable** (versch. launch configs pro Spiel)
-- **Import: Amazon Games, Ubisoft, Humble Bundle**
+- (none – Desktop-App-Features bleiben Desktop-exklusiv)

@@ -545,3 +545,56 @@
 "z.B. https://meinserver.de/remote.php/dav/files/benutzer" = "e.g. https://myserver.de/remote.php/dav/files/user";
 "Ziel" = "Target";
 
+
+// Console Mode
+"CONTINUE PLAYING" = "KONTYNUUJ GRĘ";
+"Play" = "Graj";
+"Details" = "Szczegóły";
+"ALL GAMES" = "WSZYSTKIE GRY";
+"ERGEBNISSE" = "WYNIKI";
+"Spiel starten" = "Uruchom grę";
+"BESCHREIBUNG" = "OPIS";
+"Keine Beschreibung verfügbar. Du kannst eine Beschreibung in den Spiele-Einstellungen hinzufügen." = "Brak opisu. Możesz dodać opis w ustawieniach gry.";
+"SCREENSHOTS" = "ZRZUTY EKRANU";
+"SORTIEREN" = "SORTUJ";
+"FAVORITEN" = "ULUBIONE";
+"Keine Favoriten" = "Brak ulubionych";
+"FILTER" = "FILTR";
+"Keine Filter verfügbar" = "Brak dostępnych filtrów";
+"Kein Controller" = "Brak kontrolera";
+"EINSTELLUNGEN" = "USTAWIENIA";
+"CONTROLLER" = "KONTROLER";
+"ABOUT" = "O PROGRAMIE";
+"WELCOME" = "WITAJ";
+"Press A to continue" = "Naciśnij A, aby kontynuować";
+"RECENT" = "OSTATNIE";
+"Library" = "Biblioteka";
+"Favorites" = "Ulubione";
+"Settings" = "Ustawienia";
+"Beschreibung abrufen" = "Pobierz opis";
+"CONTINUE PLAYING (no banner)" = "KONTYNUUJ GRĘ (bez banera)";
+"%d aktive Zuordnungen" = "%d aktywnych przypisań";
+"Alle löschen" = "Wyczyść wszystko";
+"Animationen reduzieren und Strom sparen" = "Zmniejsz animacje i oszczędzaj energię";
+"Automatisch mit WebDAV/SMB synchronisieren" = "Automatycznie synchronizuj z WebDAV/SMB";
+"Autostart" = "Uruchom przy logowaniu";
+"Button-Mapping" = "Mapowanie przycisków";
+"Cloud Sync" = "Synchronizacja w chmurze";
+"Console-Modus beim Systemstart öffnen" = "Otwórz tryb konsoli przy logowaniu";
+"Controller‑Layout" = "Układ kontrolera";
+"Discord RPC" = "Discord RPC";
+"Kein Profil" = "Brak profilu";
+"Low Power Mode" = "Tryb oszczędzania energii";
+"LutrisForMac Console" = "LutrisForMac Console";
+"Quelle (drückst du)" = "Źródło (przycisk, który naciskasz)";
+"Standard (keine Änderungen)" = "Domyślne (bez zmian)";
+"Suche" = "Szukaj";
+"Suche..." = "Szukaj...";
+"Verbinde einen Controller über Bluetooth oder USB" = "Podłącz kontroler przez Bluetooth lub USB";
+"Version 1.0.0" = "Wersja 1.0.0";
+"Wähle Quelle und Ziel-Button" = "Wybierz źródło i przycisk docelowy";
+"Zeige deinen aktuellen Spielstatus in Discord" = "Pokaż swój aktualny stan gry na Discordzie";
+"Ziel (soll ausgelöst werden)" = "Cel (przycisk do symulacji)";
+// Settings — Descriptions
+"Alle Beschreibungen löschen" = "Wyczyść wszystkie opisy";
+"Löscht alle %d Spielbeschreibungen. Danach können sie neu abgerufen werden." = "Czyści wszystkie %d opisy gier. Można je ponownie pobrać.";

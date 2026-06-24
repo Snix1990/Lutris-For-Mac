@@ -545,3 +545,56 @@
 "z.B. https://meinserver.de/remote.php/dav/files/benutzer" = "e.g. https://myserver.de/remote.php/dav/files/user";
 "Ziel" = "Target";
 
+// Console Mode
+"CONTINUE PLAYING" = "FORTSÄTT SPELA";
+"Play" = "Spela";
+"Details" = "Detaljer";
+"ALL GAMES" = "ALLA SPEL";
+"ERGEBNISSE" = "RESULTAT";
+"Spiel starten" = "Starta spel";
+"BESCHREIBUNG" = "BESKRIVNING";
+"Keine Beschreibung verfügbar. Du kannst eine Beschreibung in den Spiele-Einstellungen hinzufügen." = "Ingen beskrivning tillgänglig. Du kan lägga till en beskrivning i spelinställningarna.";
+"SCREENSHOTS" = "SKÄRMBILDER";
+"SORTIEREN" = "SORTERA";
+"FAVORITEN" = "FAVORITER";
+"Keine Favoriten" = "Inga favoriter";
+"FILTER" = "FILTER";
+"Keine Filter verfügbar" = "Inga filter tillgängliga";
+"Kein Controller" = "Ingen kontrollenhet";
+"EINSTELLUNGEN" = "INSTÄLLNINGAR";
+"CONTROLLER" = "KONTROLLENHET";
+"ABOUT" = "OM";
+"WELCOME" = "VÄLKOMMEN";
+"Press A to continue" = "Tryck A för att fortsätta";
+"RECENT" = "SENAST";
+"Library" = "Bibliotek";
+"Favorites" = "Favoriter";
+"Settings" = "Inställningar";
+"Beschreibung abrufen" = "Hämta beskrivning";
+"CONTINUE PLAYING (no banner)" = "FORTSÄTT SPELA (ingen banner)";
+"%d aktive Zuordnungen" = "%d aktiva mappningar";
+"Alle löschen" = "Rensa alla";
+"Animationen reduzieren und Strom sparen" = "Minska animationer och spara ström";
+"Automatisch mit WebDAV/SMB synchronisieren" = "Synka automatiskt med WebDAV/SMB";
+"Autostart" = "Autostart";
+"Button-Mapping" = "Knappmappning";
+"Cloud Sync" = "Molnsynk";
+"Console-Modus beim Systemstart öffnen" = "Öppna konsolläge vid systemstart";
+"Controller‑Layout" = "Kontrollenhetslayout";
+"Discord RPC" = "Discord RPC";
+"Kein Profil" = "Ingen profil";
+"Low Power Mode" = "Energisparläge";
+"LutrisForMac Console" = "LutrisForMac-konsol";
+"Quelle (drückst du)" = "Källa (knapp du trycker)";
+"Standard (keine Änderungen)" = "Standard (inga ändringar)";
+"Suche" = "Sök";
+"Suche..." = "Sök…";
+"Verbinde einen Controller über Bluetooth oder USB" = "Anslut en kontrollenhet via Bluetooth eller USB";
+"Version 1.0.0" = "Version 1.0.0";
+"Wähle Quelle und Ziel-Button" = "Välj källa och målknapp";
+"Zeige deinen aktuellen Spielstatus in Discord" = "Visa din nuvarande spelstatus i Discord";
+"Ziel (soll ausgelöst werden)" = "Mål (ska utlösas)";
+// Settings — Descriptions
+"Alle Beschreibungen löschen" = "Rensa alla beskrivningar";
+"Löscht alle %d Spielbeschreibungen. Danach können sie neu abgerufen werden." = "Rensar alla %d spelbeskrivningar. De kan hämtas igen.";
+

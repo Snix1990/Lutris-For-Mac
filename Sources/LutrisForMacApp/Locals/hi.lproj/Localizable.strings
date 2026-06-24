@@ -546,3 +546,56 @@
 "z.B. https://meinserver.de/remote.php/dav/files/benutzer" = "e.g. https://myserver.de/remote.php/dav/files/user";
 "Ziel" = "Target";
 
+// Console Mode
+"CONTINUE PLAYING" = "जारी रखें";
+"Play" = "खेलें";
+"Details" = "विवरण";
+"ALL GAMES" = "सभी गेम";
+"ERGEBNISSE" = "परिणाम";
+"Spiel starten" = "गेम शुरू करें";
+"BESCHREIBUNG" = "विवरण";
+"Keine Beschreibung verfügbar. Du kannst eine Beschreibung in den Spiele-Einstellungen hinzufügen." = "कोई विवरण उपलब्ध नहीं। आप गेम सेटिंग्स में विवरण जोड़ सकते हैं।";
+"SCREENSHOTS" = "स्क्रीनशॉट";
+"SORTIEREN" = "क्रमबद्ध करें";
+"FAVORITEN" = "पसंदीदा";
+"Keine Favoriten" = "कोई पसंदीदा नहीं";
+"FILTER" = "फ़िल्टर";
+"Keine Filter verfügbar" = "कोई फ़िल्टर उपलब्ध नहीं";
+"Kein Controller" = "कोई नियंत्रक नहीं";
+"EINSTELLUNGEN" = "सेटिंग्स";
+"CONTROLLER" = "नियंत्रक";
+"ABOUT" = "बारे में";
+"WELCOME" = "स्वागत";
+"Press A to continue" = "जारी रखने के लिए A दबाएं";
+"RECENT" = "हाल ही के";
+"Library" = "लाइब्रेरी";
+"Favorites" = "पसंदीदा";
+"Settings" = "सेटिंग्स";
+"Beschreibung abrufen" = "विवरण प्राप्त करें";
+"CONTINUE PLAYING (no banner)" = "जारी रखें (कोई बैनर नहीं)";
+"%d aktive Zuordnungen" = "%d सक्रिय मैपिंग";
+"Alle löschen" = "सभी साफ़ करें";
+"Animationen reduzieren und Strom sparen" = "एनिमेशन कम करें और बिजली बचाएं";
+"Automatisch mit WebDAV/SMB synchronisieren" = "WebDAV/SMB के साथ स्वचालित सिंक";
+"Autostart" = "लॉगिन पर लॉन्च करें";
+"Button-Mapping" = "बटन मैपिंग";
+"Cloud Sync" = "क्लाउड सिंक";
+"Console-Modus beim Systemstart öffnen" = "लॉगिन पर कंसोल मोड खोलें";
+"Controller‑Layout" = "नियंत्रक लेआउट";
+"Discord RPC" = "Discord RPC";
+"Kein Profil" = "कोई प्रोफ़ाइल नहीं";
+"Low Power Mode" = "लो पावर मोड";
+"LutrisForMac Console" = "LutrisForMac कंसोल";
+"Quelle (drückst du)" = "स्रोत (आप जो बटन दबाते हैं)";
+"Standard (keine Änderungen)" = "डिफ़ॉल्ट (कोई बदलाव नहीं)";
+"Suche" = "खोजें";
+"Suche..." = "खोजें...";
+"Verbinde einen Controller über Bluetooth oder USB" = "Bluetooth या USB के माध्यम से नियंत्रक कनेक्ट करें";
+"Version 1.0.0" = "संस्करण 1.0.0";
+"Wähle Quelle und Ziel-Button" = "स्रोत और लक्ष्य बटन चुनें";
+"Zeige deinen aktuellen Spielstatus in Discord" = "Discord में अपनी वर्तमान गेम स्थिति दिखाएं";
+"Ziel (soll ausgelöst werden)" = "लक्ष्य (जिस बटन को अनुकरण करना है)";
+// Settings — Descriptions
+"Alle Beschreibungen löschen" = "सभी विवरण साफ़ करें";
+"Löscht alle %d Spielbeschreibungen. Danach können sie neu abgerufen werden." = "सभी %d गेम विवरण साफ़ करता है। बाद में उन्हें फिर से प्राप्त किया जा सकता है।";
+

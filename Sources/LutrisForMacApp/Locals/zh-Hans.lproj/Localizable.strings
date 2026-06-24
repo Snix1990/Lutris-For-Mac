@@ -546,3 +546,56 @@
 "z.B. https://meinserver.de/remote.php/dav/files/benutzer" = "e.g. https://myserver.de/remote.php/dav/files/user";
 "Ziel" = "Target";
 
+// Console Mode
+"CONTINUE PLAYING" = "继续游戏";
+"Play" = "开始游戏";
+"Details" = "详情";
+"ALL GAMES" = "所有游戏";
+"ERGEBNISSE" = "结果";
+"Spiel starten" = "启动游戏";
+"BESCHREIBUNG" = "描述";
+"Keine Beschreibung verfügbar. Du kannst eine Beschreibung in den Spiele-Einstellungen hinzufügen." = "暂无描述。您可以在游戏设置中添加描述。";
+"SCREENSHOTS" = "截图";
+"SORTIEREN" = "排序";
+"FAVORITEN" = "收藏";
+"Keine Favoriten" = "无收藏";
+"FILTER" = "筛选";
+"Keine Filter verfügbar" = "无可用筛选";
+"Kein Controller" = "无控制器";
+"EINSTELLUNGEN" = "设置";
+"CONTROLLER" = "控制器";
+"ABOUT" = "关于";
+"WELCOME" = "欢迎";
+"Press A to continue" = "按 A 继续";
+"RECENT" = "最近";
+"Library" = "游戏库";
+"Favorites" = "收藏";
+"Settings" = "设置";
+"Beschreibung abrufen" = "获取描述";
+"CONTINUE PLAYING (no banner)" = "继续游戏（无横幅）";
+"%d aktive Zuordnungen" = "%d 个活动映射";
+"Alle löschen" = "清除全部";
+"Animationen reduzieren und Strom sparen" = "减少动画并省电";
+"Automatisch mit WebDAV/SMB synchronisieren" = "通过 WebDAV/SMB 自动同步";
+"Autostart" = "开机自启";
+"Button-Mapping" = "按钮映射";
+"Cloud Sync" = "云同步";
+"Console-Modus beim Systemstart öffnen" = "开机时打开控制台模式";
+"Controller‑Layout" = "控制器布局";
+"Discord RPC" = "Discord RPC";
+"Kein Profil" = "无配置文件";
+"Low Power Mode" = "低电量模式";
+"LutrisForMac Console" = "LutrisForMac 控制台";
+"Quelle (drückst du)" = "来源（您按的按钮）";
+"Standard (keine Änderungen)" = "默认（无更改）";
+"Suche" = "搜索";
+"Suche..." = "搜索…";
+"Verbinde einen Controller über Bluetooth oder USB" = "通过蓝牙或 USB 连接控制器";
+"Version 1.0.0" = "版本 1.0.0";
+"Wähle Quelle und Ziel-Button" = "选择来源和目标按钮";
+"Zeige deinen aktuellen Spielstatus in Discord" = "在 Discord 中显示当前游戏状态";
+"Ziel (soll ausgelöst werden)" = "目标（要模拟的按钮）";
+// Settings — Descriptions
+"Alle Beschreibungen löschen" = "清除所有描述";
+"Löscht alle %d Spielbeschreibungen. Danach können sie neu abgerufen werden." = "清除全部 %d 条游戏描述。之后可以重新获取。";
+

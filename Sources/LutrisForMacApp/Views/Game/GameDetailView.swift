@@ -23,7 +23,7 @@ struct GameDetailView: View {
 
                     GameEditorView(game: $game, onCommitPending: onCommitPending)
 
-                    ScreenshotGalleryView(gameName: game.name)
+                    ScreenshotGalleryView(gameName: game.name, screenshotPaths: $game.screenshotPaths)
                         .padding(.top, 8)
                 }
                 .padding(.horizontal, 10)

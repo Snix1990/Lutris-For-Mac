@@ -2,8 +2,9 @@ import SwiftUI
 
 struct ScreenshotGalleryView: View {
     let gameName: String
+    @Binding var screenshotPaths: [String]
 
-    @State private var screenshots: [URL] = []
+    @State private var folderScreenshots: [URL] = []
     @State private var selectedURL: URL?
 
     var body: some View {
@@ -11,14 +12,14 @@ struct ScreenshotGalleryView: View {
             VStack(alignment: .leading, spacing: 8) {
                 LText("Screenshots").font(.headline)
 
-                if screenshots.isEmpty {
+                if folderScreenshots.isEmpty && screenshotPaths.isEmpty {
                     LText("Noch keine Screenshots").font(.caption).foregroundColor(.secondary)
                 } else {
                     LazyVGrid(columns: [
                         GridItem(.adaptive(minimum: 100, maximum: 200), spacing: 6)
                     ], spacing: 6) {
-                        ForEach(0..<screenshots.count, id: \.self) { i in
-                            let url = screenshots[i]
+                        ForEach(0..<folderScreenshots.count, id: \.self) { i in
+                            let url = folderScreenshots[i]
                             let img = (try? Data(contentsOf: url)).flatMap { NSImage(data: $0) } ?? NSImage()
                             Image(nsImage: img)
                                 .resizable()
@@ -28,8 +29,8 @@ struct ScreenshotGalleryView: View {
                                 .cornerRadius(4)
                                 .shadow(color: .black.opacity(0.12), radius: 2)
                                 .onTapGesture {
-                                    selectedURL = screenshots[i]
-                                    showLightbox(imageURL: screenshots[i])
+                                    selectedURL = folderScreenshots[i]
+                                    showLightbox(imageURL: folderScreenshots[i])
                                 }
                                 .contextMenu {
                                     Button {
@@ -39,6 +40,34 @@ struct ScreenshotGalleryView: View {
                                     }
                                 }
                         }
+                        ForEach(screenshotPaths.indices, id: \.self) { i in
+                            let path = screenshotPaths[i]
+                            if let img = NSImage(contentsOfFile: path) {
+                                ZStack(alignment: .topTrailing) {
+                                    Image(nsImage: img)
+                                        .resizable()
+                                        .aspectRatio(contentMode: .fill)
+                                        .frame(minWidth: 0, maxWidth: .infinity, maxHeight: 110)
+                                        .clipped()
+                                        .cornerRadius(4)
+                                        .shadow(color: .black.opacity(0.12), radius: 2)
+                                        .onTapGesture {
+                                            if let url = URL(string: path) {
+                                                showLightbox(imageURL: url)
+                                            }
+                                        }
+                                    Button {
+                                        screenshotPaths.remove(at: i)
+                                    } label: {
+                                        Image(systemName: "xmark.circle.fill")
+                                            .foregroundColor(.red)
+                                            .background(Circle().fill(.white))
+                                    }
+                                    .buttonStyle(.plain)
+                                    .offset(x: 4, y: -4)
+                                }
+                            }
+                        }
                     }
                 }
             }
@@ -46,7 +75,7 @@ struct ScreenshotGalleryView: View {
         }
         .frame(maxWidth: .infinity)
         .onAppear {
-            loadScreenshots()
+            loadFolderScreenshots()
         }
     }
 
@@ -95,7 +124,7 @@ struct ScreenshotGalleryView: View {
         window.makeKeyAndOrderFront(nil)
     }
 
-    private func loadScreenshots() {
+    private func loadFolderScreenshots() {
         let folder = ScreenshotManager.shared.screenshotFolder
             .appendingPathComponent(sanitizeFolderName(gameName))
         guard FileManager.default.fileExists(atPath: folder.path),
@@ -112,7 +141,7 @@ struct ScreenshotGalleryView: View {
             }
         }
         results.sort { $0.date > $1.date }
-        screenshots = results.map(\.url)
+        folderScreenshots = results.map(\.url)
     }
 
     private func sanitizeFolderName(_ name: String) -> String {

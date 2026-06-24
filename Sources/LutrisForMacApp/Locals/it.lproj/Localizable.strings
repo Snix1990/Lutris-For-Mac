@@ -545,3 +545,58 @@
 "z.B. https://meinserver.de/remote.php/dav/files/benutzer" = "ex. https://monserveur.de/remote.php/dav/files/utilisateur";
 "Ziel" = "Cible";
 
+// Console Mode — Console Section
+"CONTINUE PLAYING" = "CONTINUA A GIOCARE";
+"Play" = "Gioca";
+"Details" = "Dettagli";
+"ALL GAMES" = "TUTTI I GIOCHI";
+"ERGEBNISSE" = "RISULTATI";
+"Spiel starten" = "Avvia gioco";
+"BESCHREIBUNG" = "DESCRIZIONE";
+"Keine Beschreibung verfügbar. Du kannst eine Beschreibung in den Spiele-Einstellungen hinzufügen." = "Nessuna descrizione disponibile. Puoi aggiungere una descrizione nelle impostazioni del gioco.";
+"SCREENSHOTS" = "SCREENSHOT";
+"SORTIEREN" = "ORDINA";
+"FAVORITEN" = "PREFERITI";
+"Keine Favoriten" = "Nessun preferito";
+"FILTER" = "FILTRO";
+"Keine Filter verfügbar" = "Nessun filtro disponibile";
+"Kein Controller" = "Nessun controller";
+"EINSTELLUNGEN" = "IMPOSTAZIONI";
+"CONTROLLER" = "CONTROLLER";
+"ABOUT" = "INFO";
+"WELCOME" = "BENVENUTO";
+"Press A to continue" = "Premi A per continuare";
+"RECENT" = "RECENTI";
+"Library" = "Libreria";
+"Favorites" = "Preferiti";
+"Settings" = "Impostazioni";
+"Beschreibung abrufen" = "Recupera descrizione";
+"CONTINUE PLAYING (no banner)" = "CONTINUA A GIOCARE (senza banner)";
+
+// Console Mode — Settings & UI
+"%d aktive Zuordnungen" = "%d assegnazioni attive";
+"Alle löschen" = "Cancella tutto";
+"Animationen reduzieren und Strom sparen" = "Riduci animazioni e risparmia energia";
+"Automatisch mit WebDAV/SMB synchronisieren" = "Sincronizza automaticamente con WebDAV/SMB";
+"Autostart" = "Avvio automatico";
+"Button-Mapping" = "Mapping pulsanti";
+"Cloud Sync" = "Sinc. cloud";
+"Console-Modus beim Systemstart öffnen" = "Apri modalità Console all'avvio";
+"Controller‑Layout" = "Layout controller";
+"Discord RPC" = "Discord RPC";
+"Kein Profil" = "Nessun profilo";
+"Low Power Mode" = "Modalità risparmio energetico";
+"LutrisForMac Console" = "Console LutrisForMac";
+"Quelle (drückst du)" = "Sorgente (pulsante premuto)";
+"Standard (keine Änderungen)" = "Predefinito (nessuna modifica)";
+"Suche" = "Ricerca";
+"Suche..." = "Cerca...";
+"Verbinde einen Controller über Bluetooth oder USB" = "Collega un controller tramite Bluetooth o USB";
+"Version 1.0.0" = "Versione 1.0.0";
+"Wähle Quelle und Ziel-Button" = "Seleziona sorgente e pulsante destinazione";
+"Zeige deinen aktuellen Spielstatus in Discord" = "Mostra il tuo stato di gioco attuale in Discord";
+"Ziel (soll ausgelöst werden)" = "Destinazione (pulsante da simulare)";
+// Settings — Descriptions
+"Alle Beschreibungen löschen" = "Cancella tutte le descrizioni";
+"Löscht alle %d Spielbeschreibungen. Danach können sie neu abgerufen werden." = "Cancella tutte le %d descrizioni dei giochi. Possono essere recuperate di nuovo.";
+

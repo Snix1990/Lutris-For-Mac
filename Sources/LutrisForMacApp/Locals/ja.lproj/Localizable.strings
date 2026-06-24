@@ -546,3 +546,56 @@
 "z.B. https://meinserver.de/remote.php/dav/files/benutzer" = "e.g. https://myserver.de/remote.php/dav/files/user";
 "Ziel" = "Target";
 
+// Console Mode
+"CONTINUE PLAYING" = "続けてプレイ";
+"Play" = "プレイ";
+"Details" = "詳細";
+"ALL GAMES" = "すべてのゲーム";
+"ERGEBNISSE" = "結果";
+"Spiel starten" = "ゲームを開始";
+"BESCHREIBUNG" = "説明";
+"Keine Beschreibung verfügbar. Du kannst eine Beschreibung in den Spiele-Einstellungen hinzufügen." = "説明はありません。ゲーム設定で説明を追加できます。";
+"SCREENSHOTS" = "スクリーンショット";
+"SORTIEREN" = "並び替え";
+"FAVORITEN" = "お気に入り";
+"Keine Favoriten" = "お気に入りはありません";
+"FILTER" = "フィルター";
+"Keine Filter verfügbar" = "利用可能なフィルターはありません";
+"Kein Controller" = "コントローラーなし";
+"EINSTELLUNGEN" = "設定";
+"CONTROLLER" = "コントローラー";
+"ABOUT" = "このアプリについて";
+"WELCOME" = "ようこそ";
+"Press A to continue" = "Aを押して続行";
+"RECENT" = "最近";
+"Library" = "ライブラリ";
+"Favorites" = "お気に入り";
+"Settings" = "設定";
+"Beschreibung abrufen" = "説明を取得";
+"CONTINUE PLAYING (no banner)" = "続けてプレイ（バナーなし）";
+"%d aktive Zuordnungen" = "%dのアクティブな割り当て";
+"Alle löschen" = "すべてクリア";
+"Animationen reduzieren und Strom sparen" = "アニメーションを減らして省電力";
+"Automatisch mit WebDAV/SMB synchronisieren" = "WebDAV/SMBで自動同期";
+"Autostart" = "自動起動";
+"Button-Mapping" = "ボタンマッピング";
+"Cloud Sync" = "クラウド同期";
+"Console-Modus beim Systemstart öffnen" = "システム起動時にコンソールモードを開く";
+"Controller‑Layout" = "コントローラーレイアウト";
+"Discord RPC" = "Discord RPC";
+"Kein Profil" = "プロフィールなし";
+"Low Power Mode" = "低電力モード";
+"LutrisForMac Console" = "LutrisForMac コンソール";
+"Quelle (drückst du)" = "ソース（押すボタン）";
+"Standard (keine Änderungen)" = "デフォルト（変更なし）";
+"Suche" = "検索";
+"Suche..." = "検索…";
+"Verbinde einen Controller über Bluetooth oder USB" = "BluetoothまたはUSBでコントローラーを接続";
+"Version 1.0.0" = "バージョン 1.0.0";
+"Wähle Quelle und Ziel-Button" = "ソースとターゲットボタンを選択";
+"Zeige deinen aktuellen Spielstatus in Discord" = "Discordで現在のゲームステータスを表示";
+"Ziel (soll ausgelöst werden)" = "ターゲット（シミュレートするボタン）";
+// Settings — Descriptions
+"Alle Beschreibungen löschen" = "すべての説明をクリア";
+"Löscht alle %d Spielbeschreibungen. Danach können sie neu abgerufen werden." = "%d件のゲーム説明をすべてクリアします。後で再取得できます。";
+

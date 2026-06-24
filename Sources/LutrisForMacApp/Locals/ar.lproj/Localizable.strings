@@ -546,3 +546,56 @@
 "z.B. https://meinserver.de/remote.php/dav/files/benutzer" = "e.g. https://myserver.de/remote.php/dav/files/user";
 "Ziel" = "Target";
 
+// Console Mode
+"CONTINUE PLAYING" = "متابعة اللعب";
+"Play" = "تشغيل";
+"Details" = "التفاصيل";
+"ALL GAMES" = "جميع الألعاب";
+"ERGEBNISSE" = "النتائج";
+"Spiel starten" = "ابدأ اللعبة";
+"BESCHREIBUNG" = "الوصف";
+"Keine Beschreibung verfügbar. Du kannst eine Beschreibung in den Spiele-Einstellungen hinzufügen." = "لا يوجد وصف متاح. يمكنك إضافة وصف في إعدادات اللعبة.";
+"SCREENSHOTS" = "لقطات الشاشة";
+"SORTIEREN" = "ترتيب حسب";
+"FAVORITEN" = "المفضلة";
+"Keine Favoriten" = "لا توجد مفضلات";
+"FILTER" = "تصفية";
+"Keine Filter verfügbar" = "لا توجد فلاتر متاحة";
+"Kein Controller" = "لا توجد وحدة تحكم";
+"EINSTELLUNGEN" = "الإعدادات";
+"CONTROLLER" = "وحدة التحكم";
+"ABOUT" = "حول";
+"WELCOME" = "مرحباً";
+"Press A to continue" = "اضغط A للمتابعة";
+"RECENT" = "الأخيرة";
+"Library" = "المكتبة";
+"Favorites" = "المفضلة";
+"Settings" = "الإعدادات";
+"Beschreibung abrufen" = "الحصول على الوصف";
+"CONTINUE PLAYING (no banner)" = "متابعة اللعب (بدون لافتة)";
+"%d aktive Zuordnungen" = "%d تعيينات نشطة";
+"Alle löschen" = "مسح الكل";
+"Animationen reduzieren und Strom sparen" = "تقليل الرسوم المتحركة وتوفير الطاقة";
+"Automatisch mit WebDAV/SMB synchronisieren" = "مزامنة تلقائية مع WebDAV/SMB";
+"Autostart" = "التشغيل عند تسجيل الدخول";
+"Button-Mapping" = "تعيين الأزرار";
+"Cloud Sync" = "مزامنة السحابة";
+"Console-Modus beim Systemstart öffnen" = "فتح وضع وحدة التحكم عند تسجيل الدخول";
+"Controller‑Layout" = "تخطيط وحدة التحكم";
+"Discord RPC" = "Discord RPC";
+"Kein Profil" = "لا يوجد ملف تعريف";
+"Low Power Mode" = "وضع الطاقة المنخفضة";
+"LutrisForMac Console" = "LutrisForMac وحدة التحكم";
+"Quelle (drückst du)" = "المصدر (الزر الذي تضغطه)";
+"Standard (keine Änderungen)" = "الافتراضي (بدون تغييرات)";
+"Suche" = "بحث";
+"Suche..." = "بحث...";
+"Verbinde einen Controller über Bluetooth oder USB" = "قم بتوصيل وحدة تحكم عبر Bluetooth أو USB";
+"Version 1.0.0" = "الإصدار 1.0.0";
+"Wähle Quelle und Ziel-Button" = "اختر زر المصدر والهدف";
+"Zeige deinen aktuellen Spielstatus in Discord" = "اعرض حالة لعبتك الحالية في Discord";
+"Ziel (soll ausgelöst werden)" = "الهدف (الزر المطلوب محاكاته)";
+// Settings — Descriptions
+"Alle Beschreibungen löschen" = "مسح جميع الأوصاف";
+"Löscht alle %d Spielbeschreibungen. Danach können sie neu abgerufen werden." = "يمسح جميع أوصاف الألعاب %d. يمكن إعادة جلبها لاحقًا.";
+

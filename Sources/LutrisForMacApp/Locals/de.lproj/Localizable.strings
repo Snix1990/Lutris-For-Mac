@@ -538,3 +538,59 @@
 "Überspringen" = "Überspringen";
 "✅ Emulator installiert" = "✅ Emulator installiert";
 
+// Console Mode
+"CONTINUE PLAYING" = "WEITERSPIELEN";
+"Play" = "Spielen";
+"Details" = "Details";
+"ALL GAMES" = "ALLE SPIELE";
+"ERGEBNISSE" = "ERGEBNISSE";
+"Spiel starten" = "Spiel starten";
+"BESCHREIBUNG" = "BESCHREIBUNG";
+"Keine Beschreibung verfügbar. Du kannst eine Beschreibung in den Spiele-Einstellungen hinzufügen." = "Keine Beschreibung verfügbar. Du kannst eine Beschreibung in den Spiele-Einstellungen hinzufügen.";
+"SCREENSHOTS" = "SCREENSHOTS";
+"SORTIEREN" = "SORTIEREN";
+"FAVORITEN" = "FAVORITEN";
+"Keine Favoriten" = "Keine Favoriten";
+"FILTER" = "FILTER";
+"Keine Filter verfügbar" = "Keine Filter verfügbar";
+"Kein Controller" = "Kein Controller";
+"EINSTELLUNGEN" = "EINSTELLUNGEN";
+"CONTROLLER" = "CONTROLLER";
+"ABOUT" = "ABOUT";
+"WELCOME" = "WILLKOMMEN";
+"Press A to continue" = "Drücke A um fortzufahren";
+"RECENT" = "LETZTLICH GESPIELT";
+"Library" = "Bibliothek";
+"Favorites" = "Favoriten";
+"Settings" = "Einstellungen";
+"Beschreibung abrufen" = "Beschreibung abrufen";
+"CONTINUE PLAYING (no banner)" = "WEITERSPIELEN";
+
+// Console Mode — Settings & UI (new)
+"%d aktive Zuordnungen" = "%d aktive Zuordnungen";
+"Alle löschen" = "Alle löschen";
+"Animationen reduzieren und Strom sparen" = "Animationen reduzieren und Strom sparen";
+"Automatisch mit WebDAV/SMB synchronisieren" = "Automatisch mit WebDAV/SMB synchronisieren";
+"Autostart" = "Autostart";
+"Button-Mapping" = "Button-Mapping";
+"Cloud Sync" = "Cloud Sync";
+"Console-Modus beim Systemstart öffnen" = "Console-Modus beim Systemstart öffnen";
+"Controller‑Layout" = "Controller‑Layout";
+"Discord RPC" = "Discord RPC";
+"Kein Profil" = "Kein Profil";
+"Low Power Mode" = "Low Power Mode";
+"LutrisForMac Console" = "LutrisForMac Console";
+"Quelle (drückst du)" = "Quelle (drückst du)";
+"Standard (keine Änderungen)" = "Standard (keine Änderungen)";
+"Suche" = "Suche";
+"Suche..." = "Suche...";
+"Verbinde einen Controller über Bluetooth oder USB" = "Verbinde einen Controller über Bluetooth oder USB";
+"Version 1.0.0" = "Version 1.0.0";
+"Wähle Quelle und Ziel-Button" = "Wähle Quelle und Ziel-Button";
+"Zeige deinen aktuellen Spielstatus in Discord" = "Zeige deinen aktuellen Spielstatus in Discord";
+"Ziel (soll ausgelöst werden)" = "Ziel (soll ausgelöst werden)";
+
+// Settings — Descriptions
+"Alle Beschreibungen löschen" = "Alle Beschreibungen löschen";
+"Löscht alle %d Spielbeschreibungen. Danach können sie neu abgerufen werden." = "Löscht alle %d Spielbeschreibungen. Danach können sie neu abgerufen werden.";
+

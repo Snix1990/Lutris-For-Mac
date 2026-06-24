@@ -545,3 +545,58 @@
 "z.B. https://meinserver.de/remote.php/dav/files/benutzer" = "ex. https://monserveur.de/remote.php/dav/files/utilisateur";
 "Ziel" = "Cible";
 
+// Console Mode — Console Section
+"CONTINUE PLAYING" = "CONTINUER";
+"Play" = "Jouer";
+"Details" = "Détails";
+"ALL GAMES" = "TOUS LES JEUX";
+"ERGEBNISSE" = "RÉSULTATS";
+"Spiel starten" = "Lancer le jeu";
+"BESCHREIBUNG" = "DESCRIPTION";
+"Keine Beschreibung verfügbar. Du kannst eine Beschreibung in den Spiele-Einstellungen hinzufügen." = "Aucune description disponible. Vous pouvez ajouter une description dans les paramètres du jeu.";
+"SCREENSHOTS" = "CAPTURES D'ÉCRAN";
+"SORTIEREN" = "TRIER";
+"FAVORITEN" = "FAVORIS";
+"Keine Favoriten" = "Aucun favori";
+"FILTER" = "FILTRE";
+"Keine Filter verfügbar" = "Aucun filtre disponible";
+"Kein Controller" = "Aucune manette";
+"EINSTELLUNGEN" = "PARAMÈTRES";
+"CONTROLLER" = "MANETTE";
+"ABOUT" = "À PROPOS";
+"WELCOME" = "BIENVENUE";
+"Press A to continue" = "Appuyez sur A pour continuer";
+"RECENT" = "RÉCENT";
+"Library" = "Bibliothèque";
+"Favorites" = "Favoris";
+"Settings" = "Paramètres";
+"Beschreibung abrufen" = "Récupérer la description";
+"CONTINUE PLAYING (no banner)" = "CONTINUER (sans bannière)";
+
+// Console Mode — Settings & UI
+"%d aktive Zuordnungen" = "%d assignations actives";
+"Alle löschen" = "Tout effacer";
+"Animationen reduzieren und Strom sparen" = "Réduire les animations et économiser l'énergie";
+"Automatisch mit WebDAV/SMB synchronisieren" = "Synchroniser automatiquement avec WebDAV/SMB";
+"Autostart" = "Lancement automatique";
+"Button-Mapping" = "Mapping des boutons";
+"Cloud Sync" = "Synchronisation Cloud";
+"Console-Modus beim Systemstart öffnen" = "Ouvrir le mode Console à la connexion";
+"Controller‑Layout" = "Disposition de la manette";
+"Discord RPC" = "Discord RPC";
+"Kein Profil" = "Aucun profil";
+"Low Power Mode" = "Mode faible consommation";
+"LutrisForMac Console" = "Console LutrisForMac";
+"Quelle (drückst du)" = "Source (bouton pressé)";
+"Standard (keine Änderungen)" = "Par défaut (aucune modification)";
+"Suche" = "Recherche";
+"Suche..." = "Recherche...";
+"Verbinde einen Controller über Bluetooth oder USB" = "Connectez une manette via Bluetooth ou USB";
+"Version 1.0.0" = "Version 1.0.0";
+"Wähle Quelle und Ziel-Button" = "Sélectionnez la source et le bouton cible";
+"Zeige deinen aktuellen Spielstatus in Discord" = "Affiche votre statut de jeu actuel dans Discord";
+"Ziel (soll ausgelöst werden)" = "Cible (bouton à simuler)";
+// Settings — Descriptions
+"Alle Beschreibungen löschen" = "Effacer toutes les descriptions";
+"Löscht alle %d Spielbeschreibungen. Danach können sie neu abgerufen werden." = "Efface les %d descriptions de jeu. Elles peuvent être récupérées à nouveau.";
+

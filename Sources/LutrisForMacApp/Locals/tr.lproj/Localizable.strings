@@ -545,3 +545,56 @@
 "z.B. https://meinserver.de/remote.php/dav/files/benutzer" = "e.g. https://myserver.de/remote.php/dav/files/user";
 "Ziel" = "Target";
 
+
+// Console Mode
+"CONTINUE PLAYING" = "OYUNA DEVAM ET";
+"Play" = "Oyna";
+"Details" = "Detaylar";
+"ALL GAMES" = "TÜM OYUNLAR";
+"ERGEBNISSE" = "SONUÇLAR";
+"Spiel starten" = "Oyunu Başlat";
+"BESCHREIBUNG" = "AÇIKLAMA";
+"Keine Beschreibung verfügbar. Du kannst eine Beschreibung in den Spiele-Einstellungen hinzufügen." = "Açıklama mevcut değil. Oyun ayarlarından bir açıklama ekleyebilirsiniz.";
+"SCREENSHOTS" = "EKRAN GÖRÜNTÜLERİ";
+"SORTIEREN" = "SIRALA";
+"FAVORITEN" = "FAVORİLER";
+"Keine Favoriten" = "Favori yok";
+"FILTER" = "FİLTRE";
+"Keine Filter verfügbar" = "Kullanılabilir filtre yok";
+"Kein Controller" = "Kumanda yok";
+"EINSTELLUNGEN" = "AYARLAR";
+"CONTROLLER" = "KUMANDA";
+"ABOUT" = "HAKKINDA";
+"WELCOME" = "HOŞ GELDİNİZ";
+"Press A to continue" = "Devam etmek için A'ya basın";
+"RECENT" = "SON OYNANANLAR";
+"Library" = "Kütüphane";
+"Favorites" = "Favoriler";
+"Settings" = "Ayarlar";
+"Beschreibung abrufen" = "Açıklamayı getir";
+"CONTINUE PLAYING (no banner)" = "OYUNA DEVAM ET (bannersız)";
+"%d aktive Zuordnungen" = "%d aktif eşleme";
+"Alle löschen" = "Tümünü temizle";
+"Animationen reduzieren und Strom sparen" = "Animasyonları azalt ve güç tasarrufu yap";
+"Automatisch mit WebDAV/SMB synchronisieren" = "WebDAV/SMB ile otomatik senkronize et";
+"Autostart" = "Otomatik başlat";
+"Button-Mapping" = "Düğme Eşleme";
+"Cloud Sync" = "Bulut Senkronizasyonu";
+"Console-Modus beim Systemstart öffnen" = "Sistem açılışında Konsol Modunu aç";
+"Controller‑Layout" = "Kumanda Düzeni";
+"Discord RPC" = "Discord RPC";
+"Kein Profil" = "Profil yok";
+"Low Power Mode" = "Düşük Güç Modu";
+"LutrisForMac Console" = "LutrisForMac Konsol";
+"Quelle (drückst du)" = "Kaynak (bastığınız düğme)";
+"Standard (keine Änderungen)" = "Varsayılan (değişiklik yok)";
+"Suche" = "Ara";
+"Suche..." = "Ara...";
+"Verbinde einen Controller über Bluetooth oder USB" = "Bluetooth veya USB ile bir kumanda bağlayın";
+"Version 1.0.0" = "Sürüm 1.0.0";
+"Wähle Quelle und Ziel-Button" = "Kaynak ve hedef düğmeyi seçin";
+"Zeige deinen aktuellen Spielstatus in Discord" = "Geçerli oyun durumunuzu Discord'da gösterin";
+"Ziel (soll ausgelöst werden)" = "Hedef (simüle edilecek düğme)";
+// Settings — Descriptions
+"Alle Beschreibungen löschen" = "Tüm açıklamaları temizle";
+"Löscht alle %d Spielbeschreibungen. Danach können sie neu abgerufen werden." = "%d oyun açıklamasını temizler. Daha sonra yeniden alınabilir.";

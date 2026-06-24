@@ -26,6 +26,7 @@ struct GameEditorView: View {
     @State private var editIconURL: String = ""
     @State private var editCategory: String = ""
     @State private var editNotes: String = ""
+    @State private var editDescription: String = ""
     @State private var editEnvVars: String = ""
     @FocusState private var isNameFocused: Bool
     @FocusState private var isInstallPathFocused: Bool
@@ -36,6 +37,8 @@ struct GameEditorView: View {
     @FocusState private var isIconURLFocused: Bool
     @FocusState private var isCategoryFocused: Bool
     @FocusState private var isNotesFocused: Bool
+    @FocusState private var isDescriptionFocused: Bool
+    @State private var isFetchingDescription: Bool = false
     @FocusState private var isEnvVarsFocused: Bool
     private let runnerManager = RunnerManager.shared
     private let mediaStore = MediaStore.shared
@@ -160,7 +163,46 @@ struct GameEditorView: View {
             // Runner-spezifische Konfiguration
             if let runner = runnerManager.runners.first(where: { $0.name == game.runner }),
                !runner.configFields.isEmpty {
-                GroupBox {
+            GroupBox {
+                VStack(alignment: .leading, spacing: 8) {
+                    TextEditor(text: $editDescription)
+                        .focused($isDescriptionFocused)
+                        .frame(minHeight: 120)
+                    HStack {
+                        if isFetchingDescription {
+                            ProgressView()
+                                .scaleEffect(0.7)
+                            Text("Suche Beschreibung…")
+                                .font(.caption)
+                                .foregroundColor(.secondary)
+                        }
+                        Spacer()
+                        Button {
+                            Task {
+                                isFetchingDescription = true
+                                let lang = UserDefaults.standard.string(forKey: "appLanguage") ?? "en"
+                                let desc = await GameDescriptionService.fetchDescription(
+                                    gameName: editName,
+                                    steamAppID: editSteamAppID.isEmpty ? nil : editSteamAppID,
+                                    language: lang
+                                )
+                                if let desc = desc {
+                                    editDescription = desc
+                                }
+                                isFetchingDescription = false
+                            }
+                        } label: {
+                            LText("Beschreibung abrufen")
+                        }
+                        .disabled(isFetchingDescription || editName.isEmpty)
+                        .controlSize(.small)
+                    }
+                }
+            } label: {
+                LText("Beschreibung").font(.system(size: 16)).frame(maxWidth: .infinity)
+            }
+
+            GroupBox {
                     VStack(alignment: .leading, spacing: 12) {
                         ForEach(runner.configFields) { field in
                             configFieldView(field, runner: runner)
@@ -334,6 +376,62 @@ struct GameEditorView: View {
             }
 
             GroupBox {
+                VStack(alignment: .leading, spacing: 10) {
+                    if game.screenshotPaths.isEmpty {
+                        LText("Noch keine Screenshots").font(.caption).foregroundColor(.secondary)
+                    } else {
+                        ScrollView(.horizontal, showsIndicators: false) {
+                            HStack(spacing: 8) {
+                                ForEach(game.screenshotPaths.indices, id: \.self) { i in
+                                    let path = game.screenshotPaths[i]
+                                    if let img = NSImage(contentsOfFile: path) {
+                                        ZStack(alignment: .topTrailing) {
+                                            Image(nsImage: img)
+                                                .resizable()
+                                                .aspectRatio(contentMode: .fill)
+                                                .frame(width: 120, height: 80)
+                                                .clipped()
+                                                .cornerRadius(6)
+                                            Button {
+                                                game.screenshotPaths.remove(at: i)
+                                            } label: {
+                                                Image(systemName: "xmark.circle.fill")
+                                                    .foregroundColor(.red)
+                                                    .background(Circle().fill(.white))
+                                            }
+                                            .buttonStyle(.plain)
+                                            .offset(x: 6, y: -6)
+                                        }
+                                    }
+                                }
+                            }
+                        }
+                        .frame(height: 90)
+                    }
+                    Button {
+                        let panel = NSOpenPanel()
+                        panel.allowsMultipleSelection = true
+                        panel.canChooseFiles = true
+                        panel.allowedContentTypes = [.image]
+                        if panel.runModal() == .OK {
+                            for url in panel.urls {
+                                guard let dest = copyScreenshotToStore(url: url) else { continue }
+                                if !game.screenshotPaths.contains(dest) {
+                                    game.screenshotPaths.append(dest)
+                                }
+                            }
+                        }
+                    } label: {
+                        Label(tr("Screenshots"), systemImage: "plus.circle")
+                            .font(.subheadline)
+                    }
+                    .buttonStyle(.borderless)
+                }
+            } label: {
+                LText("Screenshots").font(.system(size: 16)).frame(maxWidth: .infinity)
+            }
+
+            GroupBox {
                 VStack(alignment: .leading, spacing: 6) {
                     LText("Eine pro Zeile (SCHLÜSSEL=WERT):")
                         .font(.footnote)
@@ -381,6 +479,7 @@ struct GameEditorView: View {
             editIconURL = game.iconURL
             editCategory = game.category
             editNotes = game.notes
+            editDescription = game.gameDescription
             editEnvVars = game.environmentVariables
         }
         .onChange(of: game.id) { oldID, newID in
@@ -405,6 +504,7 @@ struct GameEditorView: View {
             editIconURL = game.iconURL
             editCategory = game.category
             editNotes = game.notes
+            editDescription = game.gameDescription
             editEnvVars = game.environmentVariables
         }
         .onChange(of: isNameFocused) { _, focused in
@@ -433,6 +533,9 @@ struct GameEditorView: View {
         }
         .onChange(of: isNotesFocused) { _, focused in
             if !focused { commitNotes() }
+        }
+        .onChange(of: isDescriptionFocused) { _, focused in
+            if !focused { commitDescription() }
         }
         .onChange(of: isEnvVarsFocused) { _, focused in
             if !focused { commitEnvVars() }
@@ -546,6 +649,11 @@ struct GameEditorView: View {
         game.notes = editNotes
     }
 
+    private func commitDescription() {
+        guard editDescription != game.gameDescription else { return }
+        game.gameDescription = editDescription
+    }
+
     private func commitEnvVars() {
         guard editEnvVars != game.environmentVariables else { return }
         game.environmentVariables = editEnvVars
@@ -562,6 +670,17 @@ struct GameEditorView: View {
             editInstallPath = url.path
             commitInstallPath()
         }
+    }
+
+    private func copyScreenshotToStore(url: URL) -> String? {
+        let fm = FileManager.default
+        let appSupport = fm.urls(for: .applicationSupportDirectory, in: .userDomainMask).first!
+        let screenshotsDir = appSupport.appendingPathComponent("LutrisForMac/screenshots/\(game.id.uuidString)")
+        try? fm.createDirectory(at: screenshotsDir, withIntermediateDirectories: true)
+        let ext = url.pathExtension.isEmpty ? "png" : url.pathExtension
+        let dest = screenshotsDir.appendingPathComponent("\(UUID().uuidString).\(ext)")
+        guard (try? fm.copyItem(at: url, to: dest)) != nil else { return nil }
+        return dest.path
     }
 
     // MARK: - Runtime Options

@@ -546,3 +546,56 @@
 "z.B. https://meinserver.de/remote.php/dav/files/benutzer" = "e.g. https://myserver.de/remote.php/dav/files/user";
 "Ziel" = "Target";
 
+// Console Mode
+"CONTINUE PLAYING" = "계속 플레이";
+"Play" = "플레이";
+"Details" = "세부 정보";
+"ALL GAMES" = "모든 게임";
+"ERGEBNISSE" = "결과";
+"Spiel starten" = "게임 시작";
+"BESCHREIBUNG" = "설명";
+"Keine Beschreibung verfügbar. Du kannst eine Beschreibung in den Spiele-Einstellungen hinzufügen." = "설명이 없습니다. 게임 설정에서 설명을 추가할 수 있습니다.";
+"SCREENSHOTS" = "스크린샷";
+"SORTIEREN" = "정렬";
+"FAVORITEN" = "즐겨찾기";
+"Keine Favoriten" = "즐겨찾기 없음";
+"FILTER" = "필터";
+"Keine Filter verfügbar" = "사용 가능한 필터 없음";
+"Kein Controller" = "컨트롤러 없음";
+"EINSTELLUNGEN" = "설정";
+"CONTROLLER" = "컨트롤러";
+"ABOUT" = "정보";
+"WELCOME" = "환영합니다";
+"Press A to continue" = "A를 눌러 계속";
+"RECENT" = "최근";
+"Library" = "라이브러리";
+"Favorites" = "즐겨찾기";
+"Settings" = "설정";
+"Beschreibung abrufen" = "설명 가져오기";
+"CONTINUE PLAYING (no banner)" = "계속 플레이 (배너 없음)";
+"%d aktive Zuordnungen" = "%d개 활성 매핑";
+"Alle löschen" = "모두 지우기";
+"Animationen reduzieren und Strom sparen" = "애니메이션 줄이고 전원 절약";
+"Automatisch mit WebDAV/SMB synchronisieren" = "WebDAV/SMB로 자동 동기화";
+"Autostart" = "자동 실행";
+"Button-Mapping" = "버튼 매핑";
+"Cloud Sync" = "클라우드 동기화";
+"Console-Modus beim Systemstart öffnen" = "시스템 시작 시 콘솔 모드 열기";
+"Controller‑Layout" = "컨트롤러 레이아웃";
+"Discord RPC" = "Discord RPC";
+"Kein Profil" = "프로필 없음";
+"Low Power Mode" = "저전력 모드";
+"LutrisForMac Console" = "LutrisForMac 콘솔";
+"Quelle (drückst du)" = "소스 (누르는 버튼)";
+"Standard (keine Änderungen)" = "기본값 (변경 없음)";
+"Suche" = "검색";
+"Suche..." = "검색…";
+"Verbinde einen Controller über Bluetooth oder USB" = "Bluetooth 또는 USB로 컨트롤러 연결";
+"Version 1.0.0" = "버전 1.0.0";
+"Wähle Quelle und Ziel-Button" = "소스와 대상 버튼 선택";
+"Zeige deinen aktuellen Spielstatus in Discord" = "Discord에 현재 게임 상태 표시";
+"Ziel (soll ausgelöst werden)" = "대상 (시뮬레이션할 버튼)";
+// Settings — Descriptions
+"Alle Beschreibungen löschen" = "모든 설명 지우기";
+"Löscht alle %d Spielbeschreibungen. Danach können sie neu abgerufen werden." = "%d개의 게임 설명을 모두 지웁니다. 나중에 다시 가져올 수 있습니다.";
+
