@@ -24,6 +24,11 @@ open Package.swift
 
 > Release‑Build: `swift build -c release && swift run -c release`
 
+### Pre‑built Releases
+
+Ready‑to‑use `.app` bundles are available under [GitHub Releases](https://github.com/Snix1990/Lutris-For-Mac/releases).  
+Download the latest `LutrisForMac.app.zip`, extract, and move to your Applications folder.
+
 ## Systemrequirements
 
 - **macOS 14+** (Sonoma), tested on MacOS 26.5
