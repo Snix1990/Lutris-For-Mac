@@ -27,7 +27,7 @@ open Package.swift
 ### Pre‑built Releases
 
 Ready‑to‑use `.app` bundles are available under [GitHub Releases](https://github.com/Snix1990/Lutris-For-Mac/releases).  
-Download the latest `LutrisForMac.app.zip`, extract, and move to your Applications folder.
+Download the latest `LutrisForMac.zip`, extract, and move to your Applications folder.
 
 ## Systemrequirements
 
