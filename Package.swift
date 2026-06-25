@@ -39,5 +39,10 @@ let package = Package(
                 .unsafeFlags(["-Xlinker", "-sectcreate", "-Xlinker", "__TEXT", "-Xlinker", "__info_plist", "-Xlinker", "Sources/LutrisForMacConsole/Info.plist"])
             ]
         ),
+        .testTarget(
+            name: "LutrisForMacTests",
+            dependencies: ["LutrisForMacCore"],
+            path: "Tests/LutrisForMacTests"
+        ),
     ]
 )

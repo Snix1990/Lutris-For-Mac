@@ -19,12 +19,16 @@ public final class ControllerNavigationSystem {
 
     private let layoutService = UIControllerLayoutService.shared
 
-    // ── Gecachte Action-Map (wird nur bei actionMapVersion-Änderung neu gebaut) ──
-    private var cachedClosureMap: [PhysicalButton: @MainActor (ConsoleFocusManager) -> Void] = [:]
+    // ── Gecachte Action-Maps (per Controller-Instanz, nur bei actionMapVersion-Änderung neu gebaut) ──
+    private var perControllerMaps: [String: [PhysicalButton: @MainActor (ConsoleFocusManager) -> Void]] = [:]
     private var cachedLayoutVersion: UInt64 = 0
 
     // ── Combine-Cancellable für Layout-Änderungen ──
     private var layoutObserver: AnyCancellable?
+
+    // ── Hotplug-Observer: lösen rebuildCache bei Connect/Disconnect aus ──
+    private var connectObserver: NSObjectProtocol?
+    private var disconnectObserver: NSObjectProtocol?
 
     private init() {}
 
@@ -33,11 +37,9 @@ public final class ControllerNavigationSystem {
     public func activate(focusManager: ConsoleFocusManager) {
         self.focusManager = focusManager
         wiredControllerCount = GCController.controllers().count
-        layoutService.refreshDetectedLayouts()
-        rebuildCache()
-        startPolling()
 
-        // Auf Layout-Änderungen lauschen → Cache bei Bedarf invalidieren
+        // Observer VOR refreshDetectedLayouts einrichten → rebuildCache wird durch
+        // die actionMapVersion-Änderung getriggert, kein doppelter Aufruf.
         layoutObserver = layoutService.$actionMapVersion
             .dropFirst()
             .sink { [weak self] _ in
@@ -45,14 +47,34 @@ public final class ControllerNavigationSystem {
                     self?.rebuildCache()
                 }
             }
+
+        layoutService.refreshDetectedLayouts()
+        startPolling()
+
+        // Hotplug: ControllerConnect/Disconnect → actionMapVersion bump → rebuildCache
+        let nc = NotificationCenter.default
+        connectObserver = nc.addObserver(forName: .GCControllerDidConnect, object: nil, queue: .main) { [weak self] _ in
+            Task { @MainActor in
+                self?.layoutService.refreshDetectedLayouts()
+            }
+        }
+        disconnectObserver = nc.addObserver(forName: .GCControllerDidDisconnect, object: nil, queue: .main) { [weak self] _ in
+            Task { @MainActor in
+                self?.layoutService.refreshDetectedLayouts()
+            }
+        }
     }
 
     public func deactivate() {
         layoutObserver?.cancel()
         layoutObserver = nil
+        if let co = connectObserver { NotificationCenter.default.removeObserver(co) }
+        connectObserver = nil
+        if let do_ = disconnectObserver { NotificationCenter.default.removeObserver(do_) }
+        disconnectObserver = nil
         stopPolling()
         prevState.removeAll()
-        cachedClosureMap.removeAll()
+        perControllerMaps.removeAll()
         focusManager = nil
     }
 
@@ -63,14 +85,15 @@ public final class ControllerNavigationSystem {
 
     // MARK: - Cache
 
+    /// Baut pro Controller-Instanz eine Closure-Map.
     private func rebuildCache() {
-        let layout: UIControllerLayout
-        if let firstCtrl = GCController.controllers().first {
-            layout = layoutService.detectLayout(for: firstCtrl)
-        } else {
-            layout = .generic
+        var newMaps: [String: [PhysicalButton: @MainActor (ConsoleFocusManager) -> Void]] = [:]
+        for ctrl in GCController.controllers() {
+            let instanceKey = layoutService.controllerInstanceKey(for: ctrl)
+            let layout = layoutService.detectLayout(for: ctrl)
+            newMaps[instanceKey] = Self.buildClosureMap(layout: layout, layoutService: layoutService)
         }
-        cachedClosureMap = Self.buildClosureMap(layout: layout, layoutService: layoutService)
+        perControllerMaps = newMaps
         cachedLayoutVersion = layoutService.actionMapVersion
     }
 
@@ -123,10 +146,10 @@ public final class ControllerNavigationSystem {
             rebuildCache()
         }
 
-        let map = cachedClosureMap
-
         for controller in GCController.controllers() {
             guard let gp = controller.extendedGamepad else { continue }
+            let instanceKey = layoutService.controllerInstanceKey(for: controller)
+            guard let map = perControllerMaps[instanceKey] else { continue }
 
             pollButton(gp.buttonA,        .buttonA, map)
             pollButton(gp.buttonB,        .buttonB, map)

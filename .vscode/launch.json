@@ -1,0 +1,44 @@
+{
+    "configurations": [
+        {
+            "type": "swift",
+            "request": "launch",
+            "args": [],
+            "cwd": "${workspaceFolder:Lutris-For-Mac}",
+            "name": "Debug LutrisForMac",
+            "target": "LutrisForMac",
+            "configuration": "debug",
+            "preLaunchTask": "swift: Build Debug LutrisForMac"
+        },
+        {
+            "type": "swift",
+            "request": "launch",
+            "args": [],
+            "cwd": "${workspaceFolder:Lutris-For-Mac}",
+            "name": "Release LutrisForMac",
+            "target": "LutrisForMac",
+            "configuration": "release",
+            "preLaunchTask": "swift: Build Release LutrisForMac"
+        },
+        {
+            "type": "swift",
+            "request": "launch",
+            "args": [],
+            "cwd": "${workspaceFolder:Lutris-For-Mac}",
+            "name": "Debug LutrisForMacConsole",
+            "target": "LutrisForMacConsole",
+            "configuration": "debug",
+            "preLaunchTask": "swift: Build Debug LutrisForMacConsole"
+        },
+        {
+            "type": "swift",
+            "request": "launch",
+            "args": [],
+            "cwd": "${workspaceFolder:Lutris-For-Mac}",
+            "name": "Release LutrisForMacConsole",
+            "target": "LutrisForMacConsole",
+            "configuration": "release",
+            "preLaunchTask": "swift: Build Release LutrisForMacConsole"
+        }
+    ]
+}

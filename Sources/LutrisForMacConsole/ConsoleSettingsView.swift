@@ -60,151 +60,39 @@ public struct ConsoleSettingsView: View {
         ]
     }
 
-    // ── Action Dispatch (Single Source of Truth) ──
+    // ── Action Dispatch (Single Source of Truth, delegiert an testbaren Index-Logic) ──
 
-    private enum SettingAction {
-        case toggle(Int)
-        case controllerInfo(Int)
-        case uiNavHeader
-        case uiNavAutoDetection
-        case uiNavControllerLayout(Int)
-        case uiNavCustomHeader
-        case uiNavCustomMapping(Int)
-        case uiNavCustomAdd
-        case uiNavCustomReset
-        case hidRunnerHeader
-        case hidRunnerItem(Int)
-        case remappingHeader
-        case remappingItem(Int)
-        case remappingAdd
-        case about
-        case desktopExit
-    }
+    private typealias SettingAction = ConsoleSettingsIndexLogic.SettingAction
 
-    /// Ordnet einem flachen Index die entsprechende Aktion zu.
-    /// Alle Index-Logik ist hier zentralisiert – nur EINE Stelle mit Off-by-one-Risiko.
     private func actionForIndex(_ index: Int) -> SettingAction? {
-        var cursor = 0
-
-        // Toggles [cursor … cursor + count)
-        let toggleCount = toggleItems.count
-        if index < cursor + toggleCount {
-            return .toggle(index - cursor)
-        }
-        cursor += toggleCount
-
-        // Controller [cursor … cursor + count)
-        let ctrlCount = max(controllerManager.connectedControllers.count, 1)
-        if index < cursor + ctrlCount {
-            return .controllerInfo(index - cursor)
-        }
-        cursor += ctrlCount
-
-        // UI Navigation Header
-        guard index >= cursor else { return nil }
-        if index == cursor { return .uiNavHeader }
-        cursor += 1
-
-        if uiNavExpanded {
-            // Auto-Detection
-            if index == cursor { return .uiNavAutoDetection }
-            cursor += 1
-
-            // Controller-Layout Picker (nur wenn Controller verbunden)
-            let ctrlCount2 = controllerManager.connectedControllers.count
-            if index < cursor + ctrlCount2 {
-                return .uiNavControllerLayout(index - cursor)
-            }
-            cursor += ctrlCount2
-
-            // Custom Mapping Header
-            if index == cursor { return .uiNavCustomHeader }
-            cursor += 1
-
-            if uiCustomExpanded {
-                // Custom Mapping Items
-                let mappingCount = layoutService.customMappings.count
-                if index < cursor + mappingCount {
-                    return .uiNavCustomMapping(index - cursor)
-                }
-                cursor += mappingCount
-
-                // Add Button
-                if index == cursor { return .uiNavCustomAdd }
-                cursor += 1
-
-                // Reset Button (nur wenn Mappings existieren)
-                if mappingCount > 0 {
-                    if index == cursor { return .uiNavCustomReset }
-                    cursor += 1
-                }
-            }
-        }
-
-        // HID Runner Header
-        if index == cursor { return .hidRunnerHeader }
-        cursor += 1
-
-        if hidRunnerExpanded {
-            let runnerCount = RunnerManager.shared.runners.count
-            if index < cursor + runnerCount {
-                return .hidRunnerItem(index - cursor)
-            }
-            cursor += runnerCount
-        }
-
-        // Remapping Header
-        if index == cursor { return .remappingHeader }
-        cursor += 1
-
-        if remappingExpanded {
-            let remapCount = remappingManager.mappings.count
-            if index < cursor + remapCount {
-                return .remappingItem(index - cursor)
-            }
-            cursor += remapCount
-
-            // Add Button
-            if index == cursor { return .remappingAdd }
-            cursor += 1
-        }
-
-        // About
-        if index == cursor { return .about }
-        cursor += 1
-
-        // Desktop Exit
-        if index == cursor { return .desktopExit }
-
-        return nil
+        ConsoleSettingsIndexLogic.actionForIndex(
+            index,
+            toggleCount: toggleItems.count,
+            controllerCount: controllerManager.connectedControllers.count,
+            uiNavExpanded: uiNavExpanded,
+            uiCustomExpanded: uiCustomExpanded,
+            customMappingCount: layoutService.customMappings.count,
+            hidRunnerExpanded: hidRunnerExpanded,
+            runnerCount: RunnerManager.shared.runners.count,
+            remappingExpanded: remappingExpanded,
+            remappingCount: remappingManager.mappings.count
+        )
     }
 
-    /// itemCountFromActions ist immer konsistent mit actionForIndex.
-    private var itemCountFromActions: Int {
-        var cursor = 0
-        cursor += toggleItems.count
-        cursor += max(controllerManager.connectedControllers.count, 1)
-        cursor += 1 // uiNavHeader
-        if uiNavExpanded {
-            cursor += 1 // auto-detection
-            cursor += controllerManager.connectedControllers.count
-            cursor += 1 // custom header
-            if uiCustomExpanded {
-                cursor += layoutService.customMappings.count
-                cursor += 1 // add
-                if layoutService.customMappings.count > 0 { cursor += 1 /* reset */ }
-            }
-        }
-        cursor += 1 // hidRunnerHeader
-        if hidRunnerExpanded { cursor += RunnerManager.shared.runners.count }
-        cursor += 1 // remappingHeader
-        if remappingExpanded {
-            cursor += remappingManager.mappings.count
-            cursor += 1 // add
-        }
-        cursor += 1 // about
-        cursor += 1 // desktop exit
-        return cursor
+    private var itemCountFromActions: Int { boundaries.totalCount }
+
+    private var boundaries: ConsoleSettingsIndexLogic.SettingsBoundaries {
+        ConsoleSettingsIndexLogic.computeBoundaries(
+            toggleCount: toggleItems.count,
+            controllerCount: controllerManager.connectedControllers.count,
+            uiNavExpanded: uiNavExpanded,
+            uiCustomExpanded: uiCustomExpanded,
+            customMappingCount: layoutService.customMappings.count,
+            hidRunnerExpanded: hidRunnerExpanded,
+            runnerCount: RunnerManager.shared.runners.count,
+            remappingExpanded: remappingExpanded,
+            remappingCount: remappingManager.mappings.count
+        )
     }
 
     public var body: some View {
@@ -234,23 +122,20 @@ public struct ConsoleSettingsView: View {
                     }
 
                     // ── UI Navigation ──
-                    let uiNavStart = toggleItems.count + max(controllerManager.connectedControllers.count, 1)
-                    uiNavigationSection(startIndex: uiNavStart)
+                    let b = boundaries
+                    uiNavigationSection(startIndex: b.uiNavigationStart)
 
                     // ── Virtual HID for Games (Runner-Profile) ──
-                    let hidStart = uiNavStart + uiNavSectionCount
-                    hidForGamesSection(startIndex: hidStart)
+                    hidForGamesSection(startIndex: b.virtualHIDStart)
 
                     // ── Button-Remapping (Global) ──
-                    let remapStart = hidStart + 1 + (hidRunnerExpanded ? RunnerManager.shared.runners.count : 0)
-                    buttonRemappingSection(startIndex: remapStart)
+                    buttonRemappingSection(startIndex: b.remappingStart)
 
                     // ── About ──
-                    let aboutIndex = remapStart + 1 + (remappingExpanded ? remappingManager.mappings.count + 1 : 0)
                     sectionHeader(tr("ABOUT"))
                     infoRow(title: tr("LutrisForMac Console"), subtitle: tr("Version 1.0.0"),
-                            index: aboutIndex)
-                    desktopExitRow(index: aboutIndex + 1)
+                            index: b.aboutStart)
+                    desktopExitRow(index: b.aboutStart + 1)
                 }
                 .padding(.horizontal, 60)
                 .padding(.vertical, 40)
@@ -285,22 +170,6 @@ public struct ConsoleSettingsView: View {
         .onChange(of: uiCustomExpanded) { _, _ in updateItemCount() }
         .onChange(of: hidRunnerExpanded) { _, _ in updateItemCount() }
         .onChange(of: remappingExpanded) { _, _ in updateItemCount() }
-    }
-
-    // Wie viele Indizes belegt der UI-Navigation-Bereich?
-    private var uiNavSectionCount: Int {
-        var c = 1 // header
-        if uiNavExpanded {
-            c += 1 // auto-detection
-            c += controllerManager.connectedControllers.count
-            c += 1 // custom mapping header
-            if uiCustomExpanded {
-                c += layoutService.customMappings.count
-                c += 1 // add
-                if layoutService.customMappings.count > 0 { c += 1 /* reset */ }
-            }
-        }
-        return c
     }
 
     // MARK: - UI Navigation Section
@@ -346,7 +215,7 @@ public struct ConsoleSettingsView: View {
                 let layoutStart = autoIdx + 1
                 ForEach(Array(controllerManager.connectedControllers.enumerated()), id: \.offset) { offset, info in
                     let idx = layoutStart + offset
-                    let key = "\(info.vendorName)|\(info.productCategory)"
+                    let key = UIControllerLayoutService.controllerTypeKey(vendorName: info.vendorName, productCategory: info.productCategory)
                     let detected = layoutService.detectedLayouts[key] ?? .generic
                     let isFocused2 = focusManager.isFocused(section: .allGames, index: idx)
 
@@ -405,7 +274,7 @@ public struct ConsoleSettingsView: View {
 
     private var currentLayoutSummary: String {
         if let first = GCController.controllers().first {
-            let key = layoutService.controllerKey(for: first)
+            let key = layoutService.controllerTypeKey(for: first)
             let layout = layoutService.detectedLayouts[key] ?? .generic
             return "\(layoutDisplayName(layout)) – \(layoutService.customMappings.count) eigene Zuordnungen"
         }

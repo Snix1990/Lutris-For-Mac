@@ -36,7 +36,7 @@ public final class UIControllerLayoutService: ObservableObject {
     // MARK: - Layout Detection
 
     public func detectLayout(for controller: GCController) -> UIControllerLayout {
-        let key = controllerKey(for: controller)
+        let key = controllerTypeKey(for: controller)
         if let override = layoutOverrides[key] {
             return override
         }
@@ -76,7 +76,7 @@ public final class UIControllerLayoutService: ObservableObject {
     public func refreshDetectedLayouts() {
         var result: [String: UIControllerLayout] = [:]
         for ctrl in GCController.controllers() {
-            let key = controllerKey(for: ctrl)
+            let key = controllerTypeKey(for: ctrl)
             result[key] = detectLayout(for: ctrl)
         }
         detectedLayouts = result
@@ -164,14 +164,29 @@ public final class UIControllerLayoutService: ObservableObject {
         actionMapVersion &+= 1
     }
 
-    // MARK: - Controller Key (stabiler)
+    // MARK: - Controller Keys
 
+    /// Generiert einen stabilen Typ-Schlüssel (vendor|category), der für Override-Persistenz
+    /// und Layout-Detection verwendet wird. Zwei identische Controller teilen sich diesen Key.
+    public func controllerTypeKey(for controller: GCController) -> String {
+        Self.controllerTypeKey(vendorName: controller.vendorName ?? "unknown", productCategory: controller.productCategory)
+    }
+
+    public static func controllerTypeKey(vendorName: String, productCategory: String) -> String {
+        "\(vendorName)|\(productCategory)"
+    }
+
+    /// Generiert einen instanzspezifischen Schlüssel (vendor|category|#oid) für die
+    /// per-Device-Closure-Map. ObjectIdentifier ist über die Lebensdauer der
+    /// GCController-Instanz stabil und ändert sich bei neuem Connect.
+    public func controllerInstanceKey(for controller: GCController) -> String {
+        let oid = ObjectIdentifier(controller)
+        return "\(controllerTypeKey(for: controller))|#\(oid.hashValue)"
+    }
+
+    @available(*, deprecated, renamed: "controllerTypeKey(for:)")
     public func controllerKey(for controller: GCController) -> String {
-        let vendor = controller.vendorName ?? "unknown"
-        let category = controller.productCategory
-        // Mit Index, damit zwei identische Controller unterschiedliche Keys haben.
-        let index = GCController.controllers().firstIndex(of: controller) ?? 0
-        return "\(vendor)|\(category)|#\(index)"
+        controllerTypeKey(for: controller)
     }
 
     // MARK: - Persistence

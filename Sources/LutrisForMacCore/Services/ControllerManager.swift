@@ -146,7 +146,7 @@ public final class ControllerManager: ObservableObject {
     private func updateLayouts() {
         var layouts: [String: UIControllerLayout] = [:]
         for ctrl in GCController.controllers() {
-            let key = UIControllerLayoutService.shared.controllerKey(for: ctrl)
+            let key = UIControllerLayoutService.shared.controllerInstanceKey(for: ctrl)
             layouts[key] = UIControllerLayoutService.shared.detectLayout(for: ctrl)
         }
         controllerLayouts = layouts
