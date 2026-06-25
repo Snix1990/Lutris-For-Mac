@@ -1,12 +1,6 @@
 import Foundation
 import GameController
-
-// MARK: - Button Actions
-
-private struct ButtonAction {
-    let id: String
-    let action: @MainActor (ConsoleFocusManager) -> Void
-}
+import LutrisForMacCore
 
 // MARK: - ControllerNavigationSystem
 
@@ -18,37 +12,77 @@ public final class ControllerNavigationSystem {
     public var isActivated: Bool { focusManager != nil }
     public var wiredControllerCount: Int = 0
 
-
     private var pollTimer: Timer?
     private var prevState: [String: Bool] = [:]
-    private let buttonActions: [String: @MainActor (ConsoleFocusManager) -> Void] = [
-        "buttonA":            { $0.confirm() },
-        "buttonB":            { $0.back() },
-        "buttonX":            { $0.back() },
-        "buttonY":            { $0.confirm() },
-        "leftShoulder":       { $0.navTabLeft() },
-        "rightShoulder":      { $0.navTabRight() },
-        "buttonMenu":         { $0.menu() },
-        "buttonOptions":      { $0.toggleSearch() },
-        "leftTrigger":        { $0.moveLeft() },
-        "rightTrigger":       { $0.moveRight() },
-        "leftThumbStickUp":   { $0.moveUp() },
-        "leftThumbStickDown": { $0.moveDown() },
-        "leftThumbStickLeft": { $0.moveLeft() },
-        "leftThumbStickRight":{ $0.moveRight() },
-        "dpadUp":             { $0.cycleContentSectionUp() },
-        "dpadDown":           { $0.cycleContentSectionDown() },
-        "dpadLeft":           { $0.moveLeft() },
-        "dpadRight":          { $0.moveRight() },
-        "leftThumbstickButton": { $0.confirm() },
-        "rightThumbstickButton":{ $0.back() },
-    ]
+
+    /// The layout service for UI navigation mapping.
+    private let layoutService = UIControllerLayoutService.shared
 
     private init() {}
+
+    /// Build the button → action map dynamically based on detected controller layout.
+    private func buildActionMap() -> [String: @MainActor (ConsoleFocusManager) -> Void] {
+        var map: [String: @MainActor (ConsoleFocusManager) -> Void] = [:]
+
+        // We may have multiple controllers; collect all action maps.
+        // Use the first connected controller's layout.
+        let layout: UIControllerLayout
+        if let firstCtrl = GCController.controllers().first {
+            layout = layoutService.detectLayout(for: firstCtrl)
+        } else {
+            layout = .generic
+        }
+
+        // Get effective action map (layout defaults + custom overrides)
+        let effectiveMap = layoutService.effectiveActionMap(for: layout)
+
+        // Map each physical button ID to the corresponding closure
+        for (physicalID, action) in effectiveMap {
+            map[physicalID] = closure(for: action)
+        }
+
+        // Also keep thumbstick directionals from layout
+        // (they are already in effectiveMap)
+        // Ensure leftThumbstickButton and rightThumbstickButton have sensible defaults
+        if effectiveMap["leftThumbstickButton"] == nil {
+            map["leftThumbstickButton"] = { $0.confirm() }
+        }
+        if effectiveMap["rightThumbstickButton"] == nil {
+            map["rightThumbstickButton"] = { $0.back() }
+        }
+
+        // Also map leftTrigger/rightTrigger to moveLeft/moveRight for convenience
+        if map["leftTrigger"] == nil {
+            map["leftTrigger"] = { $0.moveLeft() }
+        }
+        if map["rightTrigger"] == nil {
+            map["rightTrigger"] = { $0.moveRight() }
+        }
+
+        return map
+    }
+
+    private func closure(for action: UIAction) -> @MainActor (ConsoleFocusManager) -> Void {
+        switch action {
+        case .confirm:               return { $0.confirm() }
+        case .back:                  return { $0.back() }
+        case .toggleSearch:          return { $0.toggleSearch() }
+        case .menu:                  return { $0.menu() }
+        case .navTabLeft:            return { $0.navTabLeft() }
+        case .navTabRight:           return { $0.navTabRight() }
+        case .moveUp:                return { $0.moveUp() }
+        case .moveDown:              return { $0.moveDown() }
+        case .moveLeft:              return { $0.moveLeft() }
+        case .moveRight:             return { $0.moveRight() }
+        case .cycleContentSectionUp:   return { $0.cycleContentSectionUp() }
+        case .cycleContentSectionDown: return { $0.cycleContentSectionDown() }
+        }
+    }
 
     public func activate(focusManager: ConsoleFocusManager) {
         self.focusManager = focusManager
         wiredControllerCount = GCController.controllers().count
+        layoutService.refreshDetectedLayouts()
         startPolling()
     }
 
@@ -80,23 +114,25 @@ public final class ControllerNavigationSystem {
     private func poll() {
         guard focusManager != nil else { return }
 
+        let actionMap = buildActionMap()
+
         for controller in GCController.controllers() {
             guard let gp = controller.extendedGamepad else { continue }
 
-            pollButton(gp.buttonA,        id: "buttonA")
-            pollButton(gp.buttonB,        id: "buttonB")
-            pollButton(gp.buttonX,        id: "buttonX")
-            pollButton(gp.buttonY,        id: "buttonY")
-            pollButton(gp.leftShoulder,   id: "leftShoulder")
-            pollButton(gp.rightShoulder,  id: "rightShoulder")
-            pollButton(gp.leftTrigger,    id: "leftTrigger")
-            pollButton(gp.rightTrigger,   id: "rightTrigger")
-            pollButton(gp.buttonMenu,     id: "buttonMenu")
-            if let opt = gp.buttonOptions { pollButton(opt, id: "buttonOptions") }
-            pollDpad(gp.dpad)
-            pollThumbstick(gp.leftThumbstick, "leftThumbStick")
-            if let btn = gp.leftThumbstickButton { pollButton(btn, id: "leftThumbstickButton") }
-            if let btn = gp.rightThumbstickButton { pollButton(btn, id: "rightThumbstickButton") }
+            pollButton(gp.buttonA,        id: "buttonA", actionMap: actionMap)
+            pollButton(gp.buttonB,        id: "buttonB", actionMap: actionMap)
+            pollButton(gp.buttonX,        id: "buttonX", actionMap: actionMap)
+            pollButton(gp.buttonY,        id: "buttonY", actionMap: actionMap)
+            pollButton(gp.leftShoulder,   id: "leftShoulder", actionMap: actionMap)
+            pollButton(gp.rightShoulder,  id: "rightShoulder", actionMap: actionMap)
+            pollButton(gp.leftTrigger,    id: "leftTrigger", actionMap: actionMap)
+            pollButton(gp.rightTrigger,   id: "rightTrigger", actionMap: actionMap)
+            pollButton(gp.buttonMenu,     id: "buttonMenu", actionMap: actionMap)
+            if let opt = gp.buttonOptions { pollButton(opt, id: "buttonOptions", actionMap: actionMap) }
+            pollDpad(gp.dpad, actionMap: actionMap)
+            pollThumbstick(gp.leftThumbstick, "leftThumbStick", actionMap: actionMap)
+            if let btn = gp.leftThumbstickButton { pollButton(btn, id: "leftThumbstickButton", actionMap: actionMap) }
+            if let btn = gp.rightThumbstickButton { pollButton(btn, id: "rightThumbstickButton", actionMap: actionMap) }
         }
 
         // Scroll via right thumbstick
@@ -114,18 +150,17 @@ public final class ControllerNavigationSystem {
         }
     }
 
-    private func pollButton(_ btn: GCControllerButtonInput, id: String) {
+    private func pollButton(_ btn: GCControllerButtonInput, id: String, actionMap: [String: @MainActor (ConsoleFocusManager) -> Void]) {
         let pressed = btn.isPressed
         let justPressed = pressed && prevState[id] == false
         prevState[id] = pressed
         guard justPressed, let fm = focusManager else { return }
-        if let action = buttonActions[id] {
+        if let action = actionMap[id] {
             action(fm)
         }
     }
 
-    private func pollDpad(_ dpad: GCControllerDirectionPad) {
-        // D-Pad: only report when fully pressed (value == 1.0)
+    private func pollDpad(_ dpad: GCControllerDirectionPad, actionMap: [String: @MainActor (ConsoleFocusManager) -> Void]) {
         func axisPressed(_ val: Float) -> Bool { val > 0.9 }
 
         let up    = axisPressed(dpad.up.value)
@@ -145,13 +180,13 @@ public final class ControllerNavigationSystem {
 
         guard let fm = focusManager else { return }
 
-        if up && !prevUp    { if let a = buttonActions["dpadUp"]    { a(fm) } }
-        if down && !prevDown  { if let a = buttonActions["dpadDown"]  { a(fm) } }
-        if left && !prevLeft  { if let a = buttonActions["dpadLeft"]  { a(fm) } }
-        if right && !prevRight { if let a = buttonActions["dpadRight"] { a(fm) } }
+        if up && !prevUp    { if let a = actionMap["dpadUp"]    { a(fm) } }
+        if down && !prevDown  { if let a = actionMap["dpadDown"]  { a(fm) } }
+        if left && !prevLeft  { if let a = actionMap["dpadLeft"]  { a(fm) } }
+        if right && !prevRight { if let a = actionMap["dpadRight"] { a(fm) } }
     }
 
-    private func pollThumbstick(_ stick: GCControllerDirectionPad, _ prefix: String) {
+    private func pollThumbstick(_ stick: GCControllerDirectionPad, _ prefix: String, actionMap: [String: @MainActor (ConsoleFocusManager) -> Void]) {
         let deadzone: Float = 0.5
         let x = stick.xAxis.value
         let y = stick.yAxis.value
@@ -173,9 +208,9 @@ public final class ControllerNavigationSystem {
 
         guard let fm = focusManager else { return }
 
-        if up && !prevUp             { if let a = buttonActions["\(prefix)Up"]    { a(fm) } }
-        else if down && !prevDown    { if let a = buttonActions["\(prefix)Down"]  { a(fm) } }
-        else if left && !prevLeft    { if let a = buttonActions["\(prefix)Left"]  { a(fm) } }
-        else if right && !prevRight  { if let a = buttonActions["\(prefix)Right"] { a(fm) } }
+        if up && !prevUp             { if let a = actionMap["\(prefix)Up"]    { a(fm) } }
+        else if down && !prevDown    { if let a = actionMap["\(prefix)Down"]  { a(fm) } }
+        else if left && !prevLeft    { if let a = actionMap["\(prefix)Left"]  { a(fm) } }
+        else if right && !prevRight  { if let a = actionMap["\(prefix)Right"] { a(fm) } }
     }
 }

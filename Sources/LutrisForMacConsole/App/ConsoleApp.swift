@@ -53,7 +53,7 @@ struct ConsoleApp: App {
         Task {
             do {
                 // Button-Mapping aktivieren
-                ControllerManager.shared.activateMapping(for: game.id)
+                ControllerManager.shared.activateMapping(for: game.id, runnerName: game.runner)
 
                 // --- Steam Emulator ---
                 if game.installPath.hasPrefix("steam://"), game.steamEmulatorEnabled == true {

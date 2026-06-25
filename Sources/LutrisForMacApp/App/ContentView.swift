@@ -333,8 +333,8 @@ struct ContentView: View {
 
         Task {
             do {
-                // Activate button mapping profile for this game
-                ControllerManager.shared.activateMapping(for: game.id)
+                // Activate button mapping profile for this game (runner-aware)
+                ControllerManager.shared.activateMapping(for: game.id, runnerName: game.runner)
                 // --- Steam Emulator path (sets RPC + launches via wine/runner) ---
                 if game.installPath.hasPrefix("steam://"), game.steamEmulatorEnabled == true {
                     let sid = GameSessionManager.shared.startSession(

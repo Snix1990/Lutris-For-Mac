@@ -30,6 +30,7 @@ public extension ControllerManager {
 
         HIDRemapper.shared.backend = .passThrough
         HIDRemapper.shared.clear()
+        UIControllerLayoutService.shared.refreshDetectedLayouts()
         ControllerNavigationSystem.shared.activate(focusManager: focusManager)
     }
 

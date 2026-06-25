@@ -169,6 +169,32 @@ public final class RemappingService: ObservableObject {
         log.info("Activated mapping for game \(gameID): \(effective.count) remappings")
     }
 
+    /// Activate mapping for a specific runner (used for per-runner HID profiles).
+    /// Falls back to game-specific config if no runner profile is set.
+    public func activate(runnerName: String, gameID: UUID?) {
+        let runnerProfileID = Self.loadRunnerProfileID(for: runnerName)
+        if let profileID = runnerProfileID,
+           let profile = profiles.first(where: { $0.id == profileID }) {
+            HIDRemapper.shared.apply(profile: profile)
+            activeProfile = profile
+            activeForGameID = gameID
+            log.info("Activated runner profile '\(profile.name)' for runner '\(runnerName)'")
+        } else if let gameID {
+            // Fallback to game-specific config
+            activate(for: gameID)
+        } else {
+            deactivate()
+        }
+    }
+
+    /// Load the saved HID profile ID for a specific runner.
+    private static func loadRunnerProfileID(for runnerName: String) -> UUID? {
+        guard let data = UserDefaults.standard.data(forKey: "runnerHIDProfileIDs"),
+              let dict = try? JSONDecoder().decode([String: String].self, from: data) else { return nil }
+        guard let idString = dict[runnerName] else { return nil }
+        return UUID(uuidString: idString)
+    }
+
     /// Deactivate all mappings (restore passthrough).
     public func deactivate() {
         HIDRemapper.shared.clear()

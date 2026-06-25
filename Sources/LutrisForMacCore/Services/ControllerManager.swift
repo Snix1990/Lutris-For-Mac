@@ -8,6 +8,7 @@ public final class ControllerManager: ObservableObject {
 
     @Published public var connectedControllers: [ControllerInfo] = []
     @Published public var lastActivity: String = ""
+    @Published public var controllerLayouts: [String: UIControllerLayout] = [:]
 
     private var observationTokens: [NSObjectProtocol] = []
     private var batteryPollTimer: Timer?
@@ -139,6 +140,16 @@ public final class ControllerManager: ObservableObject {
         connectedControllers = GCController.controllers().map { controller in
             makeControllerInfo(controller)
         }
+        updateLayouts()
+    }
+
+    private func updateLayouts() {
+        var layouts: [String: UIControllerLayout] = [:]
+        for ctrl in GCController.controllers() {
+            let key = UIControllerLayoutService.shared.controllerKey(for: ctrl)
+            layouts[key] = UIControllerLayoutService.shared.detectLayout(for: ctrl)
+        }
+        controllerLayouts = layouts
     }
 
     private func makeControllerInfo(_ controller: GCController) -> ControllerInfo {
@@ -210,9 +221,15 @@ public final class ControllerManager: ObservableObject {
     // MARK: - Remapping (delegated to HIDRemapper)
 
     /// Activate the mapping profile for a game launch.
-    public func activateMapping(for gameID: UUID) {
-        RemappingService.shared.activate(for: gameID)
-        lastActivity = "Mapping aktiviert für \(gameID)"
+    /// Checks per-runner HID profile first, then falls back to per-game config.
+    public func activateMapping(for gameID: UUID, runnerName: String? = nil) {
+        if let runnerName {
+            RemappingService.shared.activate(runnerName: runnerName, gameID: gameID)
+            lastActivity = "Runner-Mapping aktiviert für \(runnerName)"
+        } else {
+            RemappingService.shared.activate(for: gameID)
+            lastActivity = "Mapping aktiviert für \(gameID)"
+        }
     }
 
     /// Deactivate all mappings.
