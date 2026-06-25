@@ -13,17 +13,13 @@ public final class UIControllerLayoutService: ObservableObject {
 
     // MARK: - Published
 
-    /// Auto-detection toggle (default ON)
     @Published public var autoDetectionEnabled: Bool = true
-
-    /// Per-controller-key layout override (key = vendorName|productCategory)
     @Published public var layoutOverrides: [String: UIControllerLayout] = [:]
-
-    /// Custom UI action → physical button overrides (for custom UI mapping)
     @Published public var customMappings: [UICustomMapping] = []
-
-    /// Currently detected layouts per connected controller (key = controller uniqueID)
     @Published public var detectedLayouts: [String: UIControllerLayout] = [:]
+    /// Monoton steigender Zähler –每当 er sich ändert, muss
+    /// die actionMap in ControllerNavigationSystem neu gebaut werden.
+    @Published public var actionMapVersion: UInt64 = 0
 
     // MARK: - Persistence Keys
 
@@ -39,24 +35,18 @@ public final class UIControllerLayoutService: ObservableObject {
 
     // MARK: - Layout Detection
 
-    /// Determine the best layout for a controller.
-    /// 1) If override exists → use it
-    /// 2) If auto-detection ON → heuristic
-    /// 3) Fallback → .generic
     public func detectLayout(for controller: GCController) -> UIControllerLayout {
         let key = controllerKey(for: controller)
         if let override = layoutOverrides[key] {
             return override
         }
         guard autoDetectionEnabled else { return .generic }
-        let detected = Self.detectLayout(
+        return Self.detectLayout(
             fromVendorName: controller.vendorName,
             productCategory: controller.productCategory
         )
-        return detected
     }
 
-    /// Heuristic-based auto-detection.
     public static func detectLayout(fromVendorName vendorName: String?, productCategory: String) -> UIControllerLayout {
         let vendor = (vendorName ?? "").lowercased()
         let category = productCategory.lowercased()
@@ -76,15 +66,13 @@ public final class UIControllerLayoutService: ObservableObject {
             return .nintendo
         }
 
-        if combined.contains("xbox")
-            || combined.contains("microsoft") {
+        if combined.contains("xbox") || combined.contains("microsoft") {
             return .xbox
         }
 
         return .generic
     }
 
-    /// Refresh detected layouts for all currently connected controllers.
     public func refreshDetectedLayouts() {
         var result: [String: UIControllerLayout] = [:]
         for ctrl in GCController.controllers() {
@@ -92,6 +80,7 @@ public final class UIControllerLayoutService: ObservableObject {
             result[key] = detectLayout(for: ctrl)
         }
         detectedLayouts = result
+        actionMapVersion &+= 1
     }
 
     // MARK: - Override Management
@@ -108,64 +97,81 @@ public final class UIControllerLayoutService: ObservableObject {
         refreshDetectedLayouts()
     }
 
-    // MARK: - Custom Mapping Management
+    // MARK: - Custom Mapping Management (type-safe)
 
-    public func setCustomMapping(action: UIAction, physicalButtonID: String) {
+    public func setCustomMapping(action: UIAction, physicalButton: PhysicalButton) {
         if let idx = customMappings.firstIndex(where: { $0.action == action }) {
-            customMappings[idx].physicalButtonID = physicalButtonID
+            customMappings[idx].physicalButton = physicalButton
             customMappings[idx].isActive = true
         } else {
-            let mapping = UICustomMapping(action: action, physicalButtonID: physicalButtonID)
+            let mapping = UICustomMapping(action: action, physicalButton: physicalButton)
             customMappings.append(mapping)
         }
         save()
+        actionMapVersion &+= 1
     }
 
     public func removeCustomMapping(action: UIAction) {
         customMappings.removeAll { $0.action == action }
         save()
+        actionMapVersion &+= 1
     }
 
     public func toggleCustomMapping(action: UIAction) {
         guard let idx = customMappings.firstIndex(where: { $0.action == action }) else { return }
         customMappings[idx].isActive.toggle()
         save()
+        actionMapVersion &+= 1
     }
 
-    /// Get the effective physical button ID for an action, considering custom overrides.
-    public func effectivePhysicalButtonID(for action: UIAction, layout: UIControllerLayout) -> String {
+    /// Returns the effective PhysicalButton for an action (custom override wins).
+    public func effectivePhysicalButton(for action: UIAction, layout: UIControllerLayout) -> PhysicalButton {
         if let custom = customMappings.first(where: { $0.action == action && $0.isActive }) {
-            return custom.physicalButtonID
+            return custom.physicalButton
         }
-        return layout.physicalButtonID(for: action)
+        return layout.physicalButton(for: action)
     }
 
-    /// Build the full physical → action map for a given layout + custom overrides.
-    public func effectiveActionMap(for layout: UIControllerLayout) -> [String: UIAction] {
+    /// Build the full action map: PhysicalButton → UIAction (layout defaults + custom overrides).
+    public func effectiveActionMap(for layout: UIControllerLayout) -> [PhysicalButton: UIAction] {
         var map = layout.physicalToAction
         for custom in customMappings where custom.isActive {
-            // Remove old mapping for this action
+            // Remove any previous mapping for this action
             for (physID, action) in map where action == custom.action {
                 map.removeValue(forKey: physID)
             }
-            // Add new custom mapping
-            map[custom.physicalButtonID] = custom.action
+            map[custom.physicalButton] = custom.action
         }
         return map
     }
 
-    /// Reset all custom mappings to defaults.
+    /// Build the action map from PhysicalButton→UIAction for a given layout.
+    /// Convenience mappings (thumbstick buttons, triggers) are included.
+    public func effectiveActionMapWithConvenience(for layout: UIControllerLayout) -> [PhysicalButton: UIAction] {
+        var map = effectiveActionMap(for: layout)
+        map[.leftThumbstickButton] = .confirm
+        map[.rightThumbstickButton] = .back
+        map[.leftTrigger] = .moveLeft
+        map[.rightTrigger] = .moveRight
+        return map
+    }
+
+    // MARK: - Reset
+
     public func resetCustomMappings() {
         customMappings.removeAll()
         save()
+        actionMapVersion &+= 1
     }
 
-    // MARK: - Controller Key
+    // MARK: - Controller Key (stabiler)
 
     public func controllerKey(for controller: GCController) -> String {
         let vendor = controller.vendorName ?? "unknown"
         let category = controller.productCategory
-        return "\(vendor)|\(category)"
+        // Mit Index, damit zwei identische Controller unterschiedliche Keys haben.
+        let index = GCController.controllers().firstIndex(of: controller) ?? 0
+        return "\(vendor)|\(category)|#\(index)"
     }
 
     // MARK: - Persistence

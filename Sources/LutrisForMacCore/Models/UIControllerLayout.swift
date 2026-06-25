@@ -43,47 +43,68 @@ public enum UIAction: String, Codable, CaseIterable, Sendable {
     }
 }
 
-// MARK: - Physical Button IDs (matching GCController extended gamepad)
+// MARK: - Physical Button (type-safe replacement for raw strings)
 
-public let allPhysicalButtons: [String] = [
-    "buttonA", "buttonB", "buttonX", "buttonY",
-    "leftShoulder", "rightShoulder",
-    "leftTrigger", "rightTrigger",
-    "dpadUp", "dpadDown", "dpadLeft", "dpadRight",
-    "leftThumbStickUp", "leftThumbStickDown", "leftThumbStickLeft", "leftThumbStickRight",
-    "leftThumbstickButton", "rightThumbstickButton",
-    "buttonMenu", "buttonOptions",
-]
+public enum PhysicalButton: String, Codable, CaseIterable, Hashable, Sendable {
+    case buttonA
+    case buttonB
+    case buttonX
+    case buttonY
+    case leftShoulder
+    case rightShoulder
+    case leftTrigger
+    case rightTrigger
+    case dpadUp
+    case dpadDown
+    case dpadLeft
+    case dpadRight
+    case leftThumbStickUp
+    case leftThumbStickDown
+    case leftThumbStickLeft
+    case leftThumbStickRight
+    case leftThumbstickButton
+    case rightThumbstickButton
+    case buttonMenu
+    case buttonOptions
 
-public let physicalButtonDisplayNames: [String: String] = [
-    "buttonA": "A (Bottom)",
-    "buttonB": "B (Right)",
-    "buttonX": "X (Left)",
-    "buttonY": "Y (Top)",
-    "leftShoulder": "L1 (Left Shoulder)",
-    "rightShoulder": "R1 (Right Shoulder)",
-    "leftTrigger": "L2 (Left Trigger)",
-    "rightTrigger": "R2 (Right Trigger)",
-    "dpadUp": "DPad ↑",
-    "dpadDown": "DPad ↓",
-    "dpadLeft": "DPad ←",
-    "dpadRight": "DPad →",
-    "leftThumbStickUp": "L-Stick ↑",
-    "leftThumbStickDown": "L-Stick ↓",
-    "leftThumbStickLeft": "L-Stick ←",
-    "leftThumbStickRight": "L-Stick →",
-    "leftThumbstickButton": "L3 (L-Stick Button)",
-    "rightThumbstickButton": "R3 (R-Stick Button)",
-    "buttonMenu": "Menu",
-    "buttonOptions": "Options",
-]
+    public var displayName: String {
+        switch self {
+        case .buttonA: return "A (Bottom)"
+        case .buttonB: return "B (Right)"
+        case .buttonX: return "X (Left)"
+        case .buttonY: return "Y (Top)"
+        case .leftShoulder: return "L1 (Left Shoulder)"
+        case .rightShoulder: return "R1 (Right Shoulder)"
+        case .leftTrigger: return "L2 (Left Trigger)"
+        case .rightTrigger: return "R2 (Right Trigger)"
+        case .dpadUp: return "DPad ↑"
+        case .dpadDown: return "DPad ↓"
+        case .dpadLeft: return "DPad ←"
+        case .dpadRight: return "DPad →"
+        case .leftThumbStickUp: return "L-Stick ↑"
+        case .leftThumbStickDown: return "L-Stick ↓"
+        case .leftThumbStickLeft: return "L-Stick ←"
+        case .leftThumbStickRight: return "L-Stick →"
+        case .leftThumbstickButton: return "L3 (L-Stick Button)"
+        case .rightThumbstickButton: return "R3 (R-Stick Button)"
+        case .buttonMenu: return "Menu"
+        case .buttonOptions: return "Options"
+        }
+    }
+
+    /// The raw string key used by GCController polling and prevState dictionary.
+    /// (only needed internally by ControllerNavigationSystem)
+    public var pollKey: String {
+        rawValue.prefix(1).lowercased() + rawValue.dropFirst()
+    }
+}
 
 // MARK: - Default Mapping Per Layout
 
 public extension UIControllerLayout {
 
-    /// Returns the physical button ID for the given UI action under this layout.
-    func physicalButtonID(for action: UIAction) -> String {
+    /// Returns the physical button for the given UI action under this layout.
+    func physicalButton(for action: UIAction) -> PhysicalButton {
         switch self {
         case .xbox, .playstation, .generic:
             return xboxLikeMapping(for: action)
@@ -92,36 +113,18 @@ public extension UIControllerLayout {
         }
     }
 
-    /// The reverse mapping: for a given physical button ID, returns the UI action(s).
-    /// Used when polling to determine which action to fire.
-    func actionsForPhysicalButton(_ physicalID: String) -> [UIAction] {
-        // In rare cases one physical button could trigger multiple actions,
-        // but we keep it 1:1 for simplicity.
-        for action in UIAction.allCases {
-            if physicalButtonID(for: action) == physicalID {
-                return [action]
-            }
-        }
-        return []
+    /// Build a full mapping dictionary: PhysicalButton → UIAction
+    var physicalToAction: [PhysicalButton: UIAction] {
+        Dictionary(uniqueKeysWithValues: UIAction.allCases.map {
+            (physicalButton(for: $0), $0)
+        })
     }
 
-    /// Build a full mapping dictionary: physicalID → UIAction
-    var physicalToAction: [String: UIAction] {
-        var result: [String: UIAction] = [:]
-        for action in UIAction.allCases {
-            let phys = physicalButtonID(for: action)
-            result[phys] = action
-        }
-        return result
-    }
-
-    /// Build reverse mapping: UIAction → physicalID
-    var actionToPhysical: [UIAction: String] {
-        var result: [UIAction: String] = [:]
-        for action in UIAction.allCases {
-            result[action] = physicalButtonID(for: action)
-        }
-        return result
+    /// Build reverse mapping: UIAction → PhysicalButton
+    var actionToPhysical: [UIAction: PhysicalButton] {
+        Dictionary(uniqueKeysWithValues: UIAction.allCases.map {
+            ($0, physicalButton(for: $0))
+        })
     }
 }
 
@@ -129,38 +132,37 @@ public extension UIControllerLayout {
 
 private extension UIControllerLayout {
 
-    func xboxLikeMapping(for action: UIAction) -> String {
+    func xboxLikeMapping(for action: UIAction) -> PhysicalButton {
         switch action {
-        case .confirm:               return "buttonA"
-        case .back:                  return "buttonB"
-        case .toggleSearch:          return "buttonOptions"
-        case .menu:                  return "buttonMenu"
-        case .navTabLeft:            return "leftShoulder"
-        case .navTabRight:           return "rightShoulder"
-        case .moveUp:                return "leftThumbStickUp"
-        case .moveDown:              return "leftThumbStickDown"
-        case .moveLeft:              return "leftThumbStickLeft"
-        case .moveRight:             return "leftThumbStickRight"
-        case .cycleContentSectionUp: return "dpadUp"
-        case .cycleContentSectionDown: return "dpadDown"
+        case .confirm:               return .buttonA
+        case .back:                  return .buttonB
+        case .toggleSearch:          return .buttonOptions
+        case .menu:                  return .buttonMenu
+        case .navTabLeft:            return .leftShoulder
+        case .navTabRight:           return .rightShoulder
+        case .moveUp:                return .leftThumbStickUp
+        case .moveDown:              return .leftThumbStickDown
+        case .moveLeft:              return .leftThumbStickLeft
+        case .moveRight:             return .leftThumbStickRight
+        case .cycleContentSectionUp: return .dpadUp
+        case .cycleContentSectionDown: return .dpadDown
         }
     }
 
-    func nintendoMapping(for action: UIAction) -> String {
+    func nintendoMapping(for action: UIAction) -> PhysicalButton {
         switch action {
-        // Nintendo: right button (A) = confirm, bottom button (B) = back
-        case .confirm:               return "buttonB"
-        case .back:                  return "buttonA"
-        case .toggleSearch:          return "buttonOptions"
-        case .menu:                  return "buttonMenu"
-        case .navTabLeft:            return "leftShoulder"
-        case .navTabRight:           return "rightShoulder"
-        case .moveUp:                return "leftThumbStickUp"
-        case .moveDown:              return "leftThumbStickDown"
-        case .moveLeft:              return "leftThumbStickLeft"
-        case .moveRight:             return "leftThumbStickRight"
-        case .cycleContentSectionUp: return "dpadUp"
-        case .cycleContentSectionDown: return "dpadDown"
+        case .confirm:               return .buttonB
+        case .back:                  return .buttonA
+        case .toggleSearch:          return .buttonOptions
+        case .menu:                  return .buttonMenu
+        case .navTabLeft:            return .leftShoulder
+        case .navTabRight:           return .rightShoulder
+        case .moveUp:                return .leftThumbStickUp
+        case .moveDown:              return .leftThumbStickDown
+        case .moveLeft:              return .leftThumbStickLeft
+        case .moveRight:             return .leftThumbStickRight
+        case .cycleContentSectionUp: return .dpadUp
+        case .cycleContentSectionDown: return .dpadDown
         }
     }
 }
@@ -171,6 +173,13 @@ private extension UIControllerLayout {
 public struct UICustomMapping: Codable, Identifiable, Equatable, Sendable {
     public var id = UUID()
     public var action: UIAction
-    public var physicalButtonID: String
+    public var physicalButton: PhysicalButton
     public var isActive: Bool = true
+}
+
+// MARK: - Aliases for backward-compat string bridging
+
+extension PhysicalButton {
+    /// All physical buttons as an array (for pickers/settings UI)
+    public static let allPhysicalButtons: [PhysicalButton] = allCases
 }

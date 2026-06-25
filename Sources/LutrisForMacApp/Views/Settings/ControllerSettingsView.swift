@@ -158,7 +158,7 @@ struct ControllerSettingsView: View {
                 List {
                     ForEach(layoutService.customMappings) { mapping in
                         let actionName = mapping.action.displayName
-                        let physName = physicalButtonDisplayNames[mapping.physicalButtonID] ?? mapping.physicalButtonID
+                        let physName = mapping.physicalButton.displayName
                         HStack {
                             Toggle(isOn: Binding(
                                 get: { mapping.isActive },
@@ -225,20 +225,18 @@ struct ControllerSettingsView: View {
             LText("Wähle den physischen Button für diese UI-Aktion:")
                 .font(.subheadline)
 
-            let currentPhys = layoutService.customMappings.first(where: { $0.action == action })?.physicalButtonID
-                ?? layoutService.effectivePhysicalButtonID(for: action, layout: .generic)
-
-            @State var selectedPhysical: String = currentPhys
+            let currentPhys = layoutService.customMappings.first(where: { $0.action == action })?.physicalButton
+                ?? layoutService.effectivePhysicalButton(for: action, layout: .generic)
 
             Picker("", selection: Binding(
                 get: { currentPhys },
                 set: { newValue in
-                    layoutService.setCustomMapping(action: action, physicalButtonID: newValue)
+                    layoutService.setCustomMapping(action: action, physicalButton: newValue)
                     showActionPicker = nil
                 }
             )) {
-                ForEach(allPhysicalButtons, id: \.self) { physID in
-                    Text(verbatim: physicalButtonDisplayNames[physID] ?? physID).tag(physID)
+                ForEach(PhysicalButton.allCases, id: \.self) { phys in
+                    Text(verbatim: phys.displayName).tag(phys)
                 }
             }
             .labelsHidden()
