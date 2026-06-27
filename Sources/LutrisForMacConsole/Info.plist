@@ -9,9 +9,9 @@
     <key>CFBundleName</key>
     <string>LutrisForMac Console</string>
     <key>CFBundleShortVersionString</key>
-    <string>0.15</string>
+    <string>0.17</string>
     <key>CFBundleVersion</key>
-    <string>13</string>
+    <string>15</string>
     <key>CFBundlePackageType</key>
     <string>APPL</string>
     <key>LSMinimumSystemVersion</key>
