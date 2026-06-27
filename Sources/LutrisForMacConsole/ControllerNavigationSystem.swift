@@ -17,11 +17,28 @@ public final class ControllerNavigationSystem {
     /// prevState verwendet PhysicalButton.rawValue als Keys
     private var prevState: [String: Bool] = [:]
 
+    // ── Capture‑Modus: einmalig den nächsten Tastendruck abfangen ──
+    private var captureCompletion: (@MainActor (PhysicalButton) -> Void)?
+    public var isCapturing: Bool { captureCompletion != nil }
+
+    public func captureNextButton(completion: @escaping (PhysicalButton) -> Void) {
+        captureCompletion = completion
+    }
+
+    public func cancelCapture() {
+        captureCompletion = nil
+    }
+
     private let layoutService = UIControllerLayoutService.shared
 
     // ── Gecachte Action-Maps (per Controller-Instanz, nur bei actionMapVersion-Änderung neu gebaut) ──
     private var perControllerMaps: [String: [PhysicalButton: @MainActor (ConsoleFocusManager) -> Void]] = [:]
     private var cachedLayoutVersion: UInt64 = 0
+
+    /// Wenn gesetzt, überschreibt dieser Map den gesamten Action-Map für alle Controller
+    public var overrideActionMap: [PhysicalButton: UIAction]? = nil {
+        didSet { rebuildCache() }
+    }
 
     // ── Combine-Cancellable für Layout-Änderungen ──
     private var layoutObserver: AnyCancellable?
@@ -87,6 +104,16 @@ public final class ControllerNavigationSystem {
 
     /// Baut pro Controller-Instanz eine Closure-Map.
     private func rebuildCache() {
+        if let overrideMap = overrideActionMap {
+            perControllerMaps = [:]
+            let closureMap = Self.buildClosureMapFromActionMap(overrideMap)
+            for ctrl in GCController.controllers() {
+                let instanceKey = layoutService.controllerInstanceKey(for: ctrl)
+                perControllerMaps[instanceKey] = closureMap
+            }
+            return
+        }
+
         var newMaps: [String: [PhysicalButton: @MainActor (ConsoleFocusManager) -> Void]] = [:]
         for ctrl in GCController.controllers() {
             let instanceKey = layoutService.controllerInstanceKey(for: ctrl)
@@ -95,6 +122,14 @@ public final class ControllerNavigationSystem {
         }
         perControllerMaps = newMaps
         cachedLayoutVersion = layoutService.actionMapVersion
+    }
+
+    private static func buildClosureMapFromActionMap(_ actionMap: [PhysicalButton: UIAction]) -> [PhysicalButton: @MainActor (ConsoleFocusManager) -> Void] {
+        var map: [PhysicalButton: @MainActor (ConsoleFocusManager) -> Void] = [:]
+        for (physical, action) in actionMap {
+            map[physical] = Self.closure(for: action)
+        }
+        return map
     }
 
     private static func buildClosureMap(layout: UIControllerLayout, layoutService: UIControllerLayoutService) -> [PhysicalButton: @MainActor (ConsoleFocusManager) -> Void] {
@@ -189,7 +224,15 @@ public final class ControllerNavigationSystem {
         let pressed = btn.isPressed
         let justPressed = pressed && prevState[key] == false
         prevState[key] = pressed
-        guard justPressed, let fm = focusManager, let action = map[physical] else { return }
+        guard justPressed else { return }
+
+        if let completion = captureCompletion {
+            captureCompletion = nil
+            completion(physical)
+            return
+        }
+
+        guard let fm = focusManager, let action = map[physical] else { return }
         action(fm)
     }
 
@@ -204,15 +247,20 @@ public final class ControllerNavigationSystem {
             (.dpadRight, dpad.right.value, "dpadRight"),
         ]
 
-        guard let fm = focusManager else { return }
-
         for (physical, value, key) in dirs {
             let pressed = axisPressed(value)
             let justPressed = pressed && prevState[key] == false
             prevState[key] = pressed
-            if justPressed, let action = map[physical] {
-                action(fm)
+            guard justPressed else { continue }
+
+            if let completion = captureCompletion {
+                captureCompletion = nil
+                completion(physical)
+                return
             }
+
+            guard let fm = focusManager, let action = map[physical] else { continue }
+            action(fm)
         }
     }
 
@@ -229,14 +277,19 @@ public final class ControllerNavigationSystem {
             (.leftThumbStickRight, x > deadzone,  P.leftThumbStickRight.rawValue),
         ]
 
-        guard let fm = focusManager else { return }
-
         for (physical, pressed, key) in dirs {
             let justPressed = pressed && prevState[key] == false
             prevState[key] = pressed
-            if justPressed, let action = map[physical] {
-                action(fm)
+            guard justPressed else { continue }
+
+            if let completion = captureCompletion {
+                captureCompletion = nil
+                completion(physical)
+                return
             }
+
+            guard let fm = focusManager, let action = map[physical] else { continue }
+            action(fm)
         }
     }
 }

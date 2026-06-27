@@ -12,6 +12,7 @@ public struct ConsoleMainView: View {
     @StateObject private var focusManager = ConsoleFocusManager()
     @StateObject private var navState = ConsoleNavState()
     @State private var selectedDetailGame: Game?
+    @State private var showControllerSettings = false
     @AppStorage("console_low_power_mode") private var lowPowerMode = false
 
 
@@ -49,34 +50,49 @@ public struct ConsoleMainView: View {
                         })
                         .transition(.opacity)
                     } else {
-                        switch navState.activeScreen {
-case .settings:
-                            ConsoleSettingsView(onBack: { navState.navigate(to: .library) },
-                                                 onExitDesktop: {
-                                                     WindowTransitionManager.switchToDesktop()
-                                                 },
-                                                 consoleState: consoleState)
-                                 .environmentObject(focusManager)
-                                .transition(.opacity.combined(with: .move(edge: .trailing)))
-                        case .favorites:
-                            ConsoleFavoritesView(
-                                games: games,
-                                onBack: { navState.navigate(to: .library) },
-                                consoleState: consoleState,
-                                focusManager: focusManager,
-                                onLaunch: onLaunch,
-                                onShowDetails: onShowDetails
+                        // Falls Controller-Settings aktiv ist, diese anzeigen (statt Settings)
+                        if showControllerSettings {
+                            ConsoleControllerSettingsView(
+                                onBack: {
+                                    showControllerSettings = false
+                                },
+                                consoleState: consoleState
                             )
+                            .environmentObject(focusManager)
                             .transition(.opacity.combined(with: .move(edge: .trailing)))
-                        default:
-                            ConsoleLibraryView(
-                                games: games,
-                                consoleState: consoleState,
-                                focusManager: focusManager,
-                                onLaunch: onLaunch,
-                                onShowDetails: onShowDetails
-                            )
-                            .transition(.opacity.combined(with: .move(edge: .leading)))
+                        } else {
+                            switch navState.activeScreen {
+                            case .settings:
+                                ConsoleSettingsView(onBack: { navState.navigate(to: .library) },
+                                                     onExitDesktop: {
+                                                         WindowTransitionManager.switchToDesktop()
+                                                     },
+                                                     onOpenControllerSettings: {
+                                                         showControllerSettings = true
+                                                     },
+                                                     consoleState: consoleState)
+                                    .environmentObject(focusManager)
+                                    .transition(.opacity.combined(with: .move(edge: .trailing)))
+                            case .favorites:
+                                ConsoleFavoritesView(
+                                    games: games,
+                                    onBack: { navState.navigate(to: .library) },
+                                    consoleState: consoleState,
+                                    focusManager: focusManager,
+                                    onLaunch: onLaunch,
+                                    onShowDetails: onShowDetails
+                                )
+                                .transition(.opacity.combined(with: .move(edge: .trailing)))
+                            default:
+                                ConsoleLibraryView(
+                                    games: games,
+                                    consoleState: consoleState,
+                                    focusManager: focusManager,
+                                    onLaunch: onLaunch,
+                                    onShowDetails: onShowDetails
+                                )
+                                .transition(.opacity.combined(with: .move(edge: .leading)))
+                            }
                         }
                     }
                 }

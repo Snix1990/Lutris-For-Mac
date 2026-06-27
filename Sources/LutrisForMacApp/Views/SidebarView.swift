@@ -5,9 +5,9 @@ struct SidebarView: View {
     @Binding var selectedGameID: UUID?
     @ObservedObject private var runnerManager = RunnerManager.shared
     @ObservedObject private var serviceManager = ServiceManager.shared
+    @Environment(\.openWindow) private var openWindow
     @State private var showRunnerManager = false
     @State private var showServices = false
-    @State private var showControllers = false
     @State private var showDesktopIntegration = false
     @State private var showStatistics = false
     @State private var showEmulatorSetup = false
@@ -176,7 +176,7 @@ struct SidebarView: View {
                 .buttonStyle(.plain)
 
                 Button {
-                    showControllers = true
+                    openWindow(id: "controller-settings")
                 } label: {
                     HStack {
                         LText("Controller")
@@ -225,9 +225,6 @@ struct SidebarView: View {
         }
         .sheet(isPresented: $showServices) {
             ServiceSettingsView(viewModel: viewModel)
-        }
-        .sheet(isPresented: $showControllers) {
-            ControllerSettingsView()
         }
         .sheet(isPresented: $showDesktopIntegration) {
             DesktopIntegrationView()

@@ -99,6 +99,7 @@ struct LutrisForMacApp: App {
 
                 WineMenuCommands(wineManager: wineManager)
                 ConsoleMenuCommands()
+                ControllerMenuCommands()
             }
 
         Settings {
@@ -125,6 +126,13 @@ struct LutrisForMacApp: App {
         .defaultSize(width: 760, height: 560)
         .windowResizability(.contentMinSize)
         .windowStyle(HiddenTitleBarWindowStyle())
+
+        WindowGroup(id: "controller-settings") {
+            ControllerSettingsView()
+                .id(lang.refreshID)
+        }
+        .defaultSize(width: 620, height: 560)
+        .windowResizability(.contentMinSize)
     }
 }
 
